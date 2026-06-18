@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { CategoryId, Budget } from '../types';
-import { CATEGORIES } from '../data';
+import { CATEGORIES } from '../constants';
 
 interface AddBudgetFormProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export function AddBudgetForm({ isOpen, onClose, onAdd }: AddBudgetFormProps) {
               <h2 className="text-xl font-semibold text-white tracking-tight">Criar Orçamento</h2>
               <button 
                 onClick={onClose}
-                className="p-2 rounded-full bg-zinc-800/50 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-2 rounded-full bg-zinc-800/50 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -113,7 +113,7 @@ export function AddBudgetForm({ isOpen, onClose, onAdd }: AddBudgetFormProps) {
               {/* Add Button */}
               <button
                 type="submit"
-                className="mt-6 w-full bg-white hover:bg-zinc-200 text-black font-semibold text-lg py-4 rounded-xl transition-colors"
+                className="mt-6 w-full bg-white hover:bg-zinc-200 text-black font-semibold text-lg py-4 rounded-xl transition-colors cursor-pointer"
               >
                 Salvar Orçamento
               </button>

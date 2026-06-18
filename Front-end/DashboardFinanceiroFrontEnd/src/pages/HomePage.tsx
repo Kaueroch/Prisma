@@ -1,25 +1,15 @@
 import React, { useMemo } from 'react';
 import { Calendar, User } from 'lucide-react';
-import { Expense } from '../types';
-import { CATEGORIES } from '../data';
-import { DonutChart } from './DonutChart';
-import { CategoryList } from './CategoryList';
+import { CATEGORIES } from '../constants';
+import { DonutChart } from '../components/DonutChart';
+import { CategoryList } from '../components/CategoryList';
+import { useFinance } from '../hooks/useFinance';
+import { formatBRL } from '../utils/formatters';
 
-const formatBRL = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+export function HomePage() {
+  const { expenses, totalIncome, totalExpense, balance } = useFinance();
 
-interface HomeTabProps {
-  expenses: Expense[];
-}
-
-export function HomeTab({ expenses }: HomeTabProps) {
-  const incomes = useMemo(() => expenses.filter(e => e.type === 'income'), [expenses]);
   const outcomes = useMemo(() => expenses.filter(e => e.type === 'expense'), [expenses]);
-
-  const totalIncome = useMemo(() => incomes.reduce((sum, item) => sum + item.amount, 0), [incomes]);
-  const totalExpense = useMemo(() => outcomes.reduce((sum, item) => sum + item.amount, 0), [outcomes]);
-  const balance = totalIncome - totalExpense;
 
   const chartData = useMemo(() => {
     const grouped = outcomes.reduce((acc, item) => {
@@ -31,7 +21,7 @@ export function HomeTab({ expenses }: HomeTabProps) {
       name: CATEGORIES[id as keyof typeof CATEGORIES].name,
       value: value,
       color: CATEGORIES[id as keyof typeof CATEGORIES].color,
-      percent: totalExpense > 0 ? Math.round((value / totalExpense) * 100) : 0,
+      percent: totalExpense > 0 ? Math.round(((value as number) / totalExpense) * 100) : 0,
     }));
   }, [outcomes, totalExpense]);
 
@@ -46,7 +36,9 @@ export function HomeTab({ expenses }: HomeTabProps) {
             {['7D', '30D', '90D', 'Todos'].map((filter) => (
               <button 
                 key={filter}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${filter === '30D' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  filter === '30D' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+                }`}
               >
                 {filter}
               </button>

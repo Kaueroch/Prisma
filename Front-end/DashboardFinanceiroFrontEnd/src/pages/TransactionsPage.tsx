@@ -1,12 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Expense, CategoryId } from '../types';
-import { CATEGORIES } from '../data';
+import { CATEGORIES } from '../constants';
 import { Search, Utensils, Car, ShoppingBag, Receipt, Grid, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-
-const formatBRL = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+import { useFinance } from '../hooks/useFinance';
+import { formatBRL, formatDateBR } from '../utils/formatters';
 
 const ICONS = {
   food: Utensils,
@@ -17,20 +15,15 @@ const ICONS = {
   salary: DollarSign,
 };
 
-interface TransactionsTabProps {
-  expenses: Expense[];
-}
-
-export function TransactionsTab({ expenses }: TransactionsTabProps) {
+export function TransactionsPage() {
+  const { expenses } = useFinance();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all');
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null);
 
   const formatHeader = (dateStr: string) => {
-    const d = new Date(dateStr);
-    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-    return d.toLocaleDateString('pt-BR', { month: 'long', day: 'numeric', year: 'numeric' });
+    return formatDateBR(dateStr, { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
   const categoryGroups = useMemo(() => {
@@ -123,7 +116,9 @@ export function TransactionsTab({ expenses }: TransactionsTabProps) {
             return (
               <div 
                 key={id} 
-                className={`bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden transition-all duration-300 ${isExpanded ? 'ring-2 ring-zinc-700' : 'hover:border-zinc-700'}`}
+                className={`bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden transition-all duration-300 ${
+                  isExpanded ? 'ring-2 ring-zinc-700' : 'hover:border-zinc-700'
+                }`}
               >
                 {/* Card Header & Body */}
                 <div 
@@ -180,7 +175,7 @@ export function TransactionsTab({ expenses }: TransactionsTabProps) {
                               </span>
                             </div>
                             <span className="text-xs text-zinc-500 uppercase tracking-wider">
-                              {new Date(expense.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                              {formatDateBR(expense.date, { day: '2-digit', month: 'short' })}
                             </span>
                           </div>
                         ))}
@@ -196,4 +191,3 @@ export function TransactionsTab({ expenses }: TransactionsTabProps) {
     </div>
   );
 }
-

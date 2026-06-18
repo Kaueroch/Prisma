@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { Expense, CategoryId } from '../types';
-import { CATEGORIES } from '../data';
+import { CATEGORIES } from '../constants';
 import { Utensils, Car, ShoppingBag, Receipt, Grid, ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-
-const formatBRL = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+import { formatBRL, formatDateBR } from '../utils/formatters';
 
 interface CategoryListProps {
   expenses: Expense[];
@@ -64,7 +61,9 @@ export function CategoryList({ expenses }: CategoryListProps) {
           <div key={id} className="flex flex-col">
             <button
               onClick={() => toggleExpand(id)}
-              className={`group flex items-center justify-between p-5 rounded-2xl hover:bg-zinc-900/50 border transition-all cursor-pointer ${isExpanded ? 'bg-zinc-900/50 border-zinc-800/50' : 'border-transparent'}`}
+              className={`group flex items-center justify-between p-5 rounded-2xl hover:bg-zinc-900/50 border transition-all cursor-pointer ${
+                isExpanded ? 'bg-zinc-900/50 border-zinc-800/50' : 'border-transparent'
+              }`}
             >
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${catInfo.bgClass} ${catInfo.textClass}`}>
@@ -103,7 +102,7 @@ export function CategoryList({ expenses }: CategoryListProps) {
                         <div className="flex flex-col">
                           <span className="text-zinc-300 text-sm font-medium">{item.name}</span>
                           <span className="text-zinc-600 text-[10px] uppercase tracking-tighter mt-0.5">
-                            {new Date(item.date).toLocaleDateString('pt-BR')}
+                            {formatDateBR(item.date)}
                           </span>
                         </div>
                         <span className="text-zinc-400 text-sm font-semibold">{formatBRL(item.amount)}</span>

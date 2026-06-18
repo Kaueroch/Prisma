@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { CategoryId, Expense, TransactionType } from '../types';
-import { CATEGORIES } from '../data';
+import { CATEGORIES } from '../constants';
 
 interface AddExpenseFormProps {
   isOpen: boolean;
@@ -77,7 +77,7 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
               <h2 className="text-xl font-semibold text-white tracking-tight">Nova Transação</h2>
               <button 
                 onClick={onClose}
-                className="p-2 rounded-full bg-zinc-800/50 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-2 rounded-full bg-zinc-800/50 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -89,14 +89,14 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
                 <button
                   type="button"
                   onClick={() => setType('expense')}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${type === 'expense' ? 'bg-red-500/20 text-red-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${type === 'expense' ? 'bg-red-500/20 text-red-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Despesa
                 </button>
                 <button
                   type="button"
                   onClick={() => setType('income')}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Receita
                 </button>
@@ -151,13 +151,12 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
                   {(Object.keys(CATEGORIES) as CategoryId[]).map((cat) => {
                     const isSelected = categoryId === cat;
                     const info = CATEGORIES[cat];
-                    // Option to hide salary from expenses if they want, but let's just show all for now
                     return (
                       <button
                         key={cat}
                         type="button"
                         onClick={() => setCategoryId(cat)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-medium transition-all ${
+                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-medium transition-all cursor-pointer ${
                           isSelected 
                             ? `${info.bgClass} ${info.textClass} border-transparent shadow-lg` 
                             : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white'
@@ -173,7 +172,7 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
               {/* Add Button */}
               <button
                 type="submit"
-                className="mt-6 w-full bg-white hover:bg-zinc-200 text-black font-semibold text-lg py-4 rounded-xl transition-colors"
+                className="mt-6 w-full bg-white hover:bg-zinc-200 text-black font-semibold text-lg py-4 rounded-xl transition-colors cursor-pointer"
               >
                 Salvar Transação
               </button>

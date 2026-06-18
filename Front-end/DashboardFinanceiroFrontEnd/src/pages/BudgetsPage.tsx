@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { Expense, Budget } from '../types';
-import { CATEGORIES } from '../data';
+import { CATEGORIES } from '../constants';
 import { Utensils, Car, ShoppingBag, Receipt, Grid, Plus } from 'lucide-react';
-import { AddBudgetForm } from './AddBudgetForm';
-
-const formatBRL = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+import { AddBudgetForm } from '../components/AddBudgetForm';
+import { useFinance } from '../hooks/useFinance';
+import { formatBRL } from '../utils/formatters';
 
 const ICONS = {
   food: Utensils,
@@ -16,23 +13,9 @@ const ICONS = {
   other: Grid,
 };
 
-interface BudgetsTabProps {
-  expenses: Expense[];
-  budgets: Budget[];
-  setBudgets: React.Dispatch<React.SetStateAction<Budget[]>>;
-}
-
-export function BudgetsTab({ expenses, budgets, setBudgets }: BudgetsTabProps) {
+export function BudgetsPage() {
+  const { expenses, budgets, addBudget } = useFinance();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleCreateBudget = (newBudget: Omit<Budget, 'id'>) => {
-    // Override if category already exists, or just add. Let's filter out existing for same cat
-    const newBudgetEntry: Budget = { ...newBudget, id: Math.random().toString(36).substring(7) };
-    setBudgets(prev => {
-      const filtered = prev.filter(b => b.categoryId !== newBudgetEntry.categoryId);
-      return [...filtered, newBudgetEntry];
-    });
-  };
 
   return (
     <div className="p-10 max-w-6xl mx-auto w-full">
@@ -43,7 +26,7 @@ export function BudgetsTab({ expenses, budgets, setBudgets }: BudgetsTabProps) {
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-white hover:bg-zinc-200 text-black flex items-center justify-center gap-2 rounded-xl transition-all font-semibold shadow-lg px-6 py-3"
+          className="bg-white hover:bg-zinc-200 text-black flex items-center justify-center gap-2 rounded-xl transition-all font-semibold shadow-lg px-6 py-3 cursor-pointer"
         >
           <Plus className="w-5 h-5" strokeWidth={3} />
           Criar Orçamento
@@ -94,7 +77,7 @@ export function BudgetsTab({ expenses, budgets, setBudgets }: BudgetsTabProps) {
       <AddBudgetForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAdd={handleCreateBudget}
+        onAdd={addBudget}
       />
     </div>
   );
