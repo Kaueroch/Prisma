@@ -3,6 +3,20 @@
 **Live Demo:** [Em breve] | **Deploy:** VPS (Containers Docker)
 **Status:** 🚧 Em Desenvolvimento (Front-end concluído, Back-end em roadmap)
 
+## 📸 Interface
+
+### Visão Geral
+![Visão Geral](./01-dashboard.png)
+
+### Transações
+![Transações](./02-transactions.png)
+
+### Orçamentos
+![Orçamentos](./03-budgets.png)
+
+### Configurações
+![Configurações](./04-settings.png)
+
 ## 📌 O Problema
 O controle de finanças pessoais frequentemente sofre com interfaces engessadas ou planilhas difíceis de manter. O Prisma centraliza a gestão de receitas e despesas em uma interface fluida, permitindo visualizar rapidamente a saúde do fluxo de caixa e tomar decisões ágeis.
 

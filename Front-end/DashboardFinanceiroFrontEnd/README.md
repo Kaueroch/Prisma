@@ -6,19 +6,19 @@ Um dashboard financeiro moderno e intuitivo para gerenciamento de receitas, desp
 
 ### Visão Geral (Dashboard)
 A tela inicial fornece uma visão abrangente do seu saldo, despesas e receitas, com um gráfico interativo para visualização de gastos por categoria.
-![Visão Geral](./docs/images/01-dashboard.png)
+![Visão Geral](../../01-dashboard.png)
 
 ### Transações
 Lista completa e detalhada de todas as suas movimentações financeiras.
-![Transações](./docs/images/02-transactions.png)
+![Transações](../../02-transactions.png)
 
 ### Orçamentos
 Acompanhe os limites de gastos estabelecidos por categoria, garantindo o controle das suas finanças.
-![Orçamentos](./docs/images/03-budgets.png)
+![Orçamentos](../../03-budgets.png)
 
 ### Configurações
 Ajuste as preferências do sistema, gerencie as categorias e exporte seus dados de forma simples.
-![Configurações](./docs/images/04-settings.png)
+![Configurações](../../04-settings.png)
 
 ## Executando Localmente
 
