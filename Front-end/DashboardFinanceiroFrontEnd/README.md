@@ -1,20 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Dashboard Financeiro
 
-# Run and deploy your AI Studio app
+Um dashboard financeiro moderno e intuitivo para gerenciamento de receitas, despesas, transações e orçamentos.
 
-This contains everything you need to run your app locally.
+## Interface
 
-View your app in AI Studio: https://ai.studio/apps/b962397a-1e67-4cc6-8d44-a1e693a129f9
+### Visão Geral (Dashboard)
+A tela inicial fornece uma visão abrangente do seu saldo, despesas e receitas, com um gráfico interativo para visualização de gastos por categoria.
+![Visão Geral](./docs/images/01-dashboard.png)
 
-## Run Locally
+### Transações
+Lista completa e detalhada de todas as suas movimentações financeiras.
+![Transações](./docs/images/02-transactions.png)
 
-**Prerequisites:**  Node.js
+### Orçamentos
+Acompanhe os limites de gastos estabelecidos por categoria, garantindo o controle das suas finanças.
+![Orçamentos](./docs/images/03-budgets.png)
 
+### Configurações
+Ajuste as preferências do sistema, gerencie as categorias e exporte seus dados de forma simples.
+![Configurações](./docs/images/04-settings.png)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Executando Localmente
+
+**Pré-requisitos:** Node.js
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Configure o arquivo `.env.local` (utilize o `.env.example` como base).
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
