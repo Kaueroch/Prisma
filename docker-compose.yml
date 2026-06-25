@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Serviço de Banco de Dados (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: prisma-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: prisma_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - prisma-db-data:/var/lib/postgresql/data
+    networks:
+      - prisma-network
+    restart: unless-stopped
+
+  # Serviço do Back-end (Spring Boot)
+  backend:
+    build:
+      context: ./Back-end/Sistema para controle Financeiro/Sistema-para-controle-Financeiro
+      dockerfile: Dockerfile
+    container_name: prisma-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prisma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      # Configurações do Hibernate para criar as tabelas automaticamente
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - db
+    networks:
+      - prisma-network
+    restart: unless-stopped
+
+  # Serviço do Front-end (React/Vite)
+  frontend:
+    build:
+      context: ./Front-end/DashboardFinanceiroFrontEnd
+      dockerfile: Dockerfile
+    container_name: prisma-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - prisma-network
+    restart: unless-stopped
+
+networks:
+  prisma-network:
+    driver: bridge
+
+volumes:
+  prisma-db-data:
