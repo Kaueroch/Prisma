@@ -6,8 +6,8 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.infra.security.Security;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
 
 public class AutenticacaoRegisterService {
-    private Security security;
-    private UserRepository userRepository;
+    private final Security security;
+    private final UserRepository userRepository;
     public AutenticacaoRegisterService(Security _security, UserRepository _userRepository){
         this.security = _security;
         this.userRepository = _userRepository;
@@ -15,9 +15,9 @@ public class AutenticacaoRegisterService {
 
 
     public User RegistrarUsuario(String email, String senha,String nome){
-        verificacaoExistencia_Email(email);
+        emailExiste(email);
         String senhaHash = criptografarSenha(senha);
-        User usuarioNovo = new User(nome,email,senha,senhaHash);
+        User usuarioNovo = new User(nome,email,senha);
         return userRepository.save(usuarioNovo);
     }
 
@@ -27,7 +27,7 @@ public class AutenticacaoRegisterService {
      return senha;
     }
 
-    public void verificacaoExistencia_Email(String email){
+    public void emailExiste(String email){
         if(userRepository.existsByEmail(email)){
           throw new EmailExistente("Email já Cadastrado");
         }

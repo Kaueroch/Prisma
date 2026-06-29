@@ -1,6 +1,7 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaInsuficiente;
+import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoRegisterService;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -25,25 +26,29 @@ public class User {
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
-
+    private AutenticacaoRegisterService autenticacaoRegisterService;
     protected User(){}
 
-    public User(String _nome,String _email, String _senhaPlana,String SenhaHash){
+    public User(String _nome,String _email, String _senhaPlana){
         validacaoSenha(_senhaPlana);
         validarEmail(_email);
         this.nome = _nome;
         this.email = _email;
-        this.senha = SenhaHash;
+        this.senha = _senhaPlana;
     }
 
     public void validacaoSenha(String senha){
-        if(senha.length() < 8 || senha.length() >=16){
-          throw new SenhaInsuficiente("A senha precisa ter no minimo 8 e no máximo 16 caracteres.");
+        if(senha.length() < 8 || senha.length() >=16) {
+            throw new SenhaInsuficiente("A senha precisa ter no minimo 8 e no máximo 16 caracteres.");
+        }else{
+            autenticacaoRegisterService.criptografarSenha(senha);
         }
     }
-    public static boolean validarEmail(String email){
+    public void validarEmail(String email){
         Matcher matcher;
         matcher = pattern.matcher(email);
-        return matcher.matches();
+        if(matcher.matches()){
+            autenticacaoRegisterService.emailExiste(email);
+        }
     }
 }
