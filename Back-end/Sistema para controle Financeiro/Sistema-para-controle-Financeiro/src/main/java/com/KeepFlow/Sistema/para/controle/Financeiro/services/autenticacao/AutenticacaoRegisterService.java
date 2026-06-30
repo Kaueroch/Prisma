@@ -4,7 +4,9 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.EmailExistente;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.security.Security;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AutenticacaoRegisterService {
     private final Security security;
     private final UserRepository userRepository;
