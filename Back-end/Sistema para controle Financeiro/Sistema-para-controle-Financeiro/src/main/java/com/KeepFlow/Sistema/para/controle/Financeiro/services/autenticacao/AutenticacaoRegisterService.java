@@ -10,17 +10,19 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoRegisterService {
     private final Security security;
     private final UserRepository userRepository;
+
+
     public AutenticacaoRegisterService(Security _security, UserRepository _userRepository){
         this.security = _security;
         this.userRepository = _userRepository;
     }
 
 
-    public User RegistrarUsuario(String email, String senha,String nome){
+    public void RegistrarUsuario(String email, String senha,String nome){
         emailExiste(email);
         String senhaHash = criptografarSenha(senha);
-        User usuarioNovo = new User(nome,email,senha);
-        return userRepository.save(usuarioNovo);
+//        User usuarioNovo = new User(nome,email,senha);
+//        return userRepository.save(usuarioNovo);
     }
 
 

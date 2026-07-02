@@ -26,7 +26,6 @@ public class User {
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
-    private AutenticacaoRegisterService autenticacaoRegisterService;
     protected User(){}
 
     public User(String _nome,String _email, String _senhaPlana){
@@ -40,15 +39,10 @@ public class User {
     public void validacaoSenha(String senha){
         if(senha.length() < 8 || senha.length() >=16) {
             throw new SenhaInsuficiente("A senha precisa ter no minimo 8 e no máximo 16 caracteres.");
-        }else{
-            autenticacaoRegisterService.criptografarSenha(senha);
         }
     }
     public void validarEmail(String email){
         Matcher matcher;
-        matcher = pattern.matcher(email);
-        if(matcher.matches()){
-            autenticacaoRegisterService.emailExiste(email);
-        }
+        matcher = pattern.matcher(email);matcher.matches();
     }
 }
