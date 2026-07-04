@@ -10,19 +10,18 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoRegisterService {
     private final Security security;
     private final UserRepository userRepository;
-
+  //- Vou instanciar a classe user no Services e la sim,
+    // fazer o hash,validacao de email existente, e criar usuario,entendeu?
 
     public AutenticacaoRegisterService(Security _security, UserRepository _userRepository){
         this.security = _security;
         this.userRepository = _userRepository;
     }
-
-
-    public void RegistrarUsuario(String email, String senha,String nome){
-        emailExiste(email);
-        String senhaHash = criptografarSenha(senha);
-//        User usuarioNovo = new User(nome,email,senha);
-//        return userRepository.save(usuarioNovo);
+    public User RegistrarUsuario(String _nome, String _email,String _senha){
+        emailExiste(_email);
+        String senhaHash = criptografarSenha(_senha);
+        User usuarioNovo = new User(_nome, _email, _senha);
+        return userRepository.save(usuarioNovo);
     }
 
 

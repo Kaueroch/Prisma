@@ -3,6 +3,7 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaInsuficiente;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoRegisterService;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -10,10 +11,12 @@ import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "tb_users")
+@Getter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cd_id;
+    @Column(name = "cd_id")
+    private UUID id;
     @Column(name = "nm_nome")
     private String nome;
     @Column(name = "ds_email",unique = true)
@@ -28,12 +31,12 @@ public class User {
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
     protected User(){}
 
-    public User(String _nome,String _email, String _senhaPlana){
-        validacaoSenha(_senhaPlana);
-        validarEmail(_email);
-        this.nome = _nome;
-        this.email = _email;
-        this.senha = _senhaPlana;
+    public User(String nome,String email, String senhaPlana){
+        validacaoSenha(senhaPlana);
+        validarEmail(email);
+        this.nome = nome;
+        this.email = email;
+        this.senha = senhaPlana;
     }
 
     public void validacaoSenha(String senha){
@@ -43,6 +46,7 @@ public class User {
     }
     public void validarEmail(String email){
         Matcher matcher;
-        matcher = pattern.matcher(email);matcher.matches();
+        matcher = pattern.matcher(email);
+        matcher.matches();
     }
 }
