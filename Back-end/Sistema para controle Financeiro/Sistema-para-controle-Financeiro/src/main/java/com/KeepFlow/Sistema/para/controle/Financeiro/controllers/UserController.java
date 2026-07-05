@@ -1,7 +1,9 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.controllers;
 
-import com.KeepFlow.Sistema.para.controle.Financeiro.record.UserDto;
+import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.UserDTO;
+import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.UserResponseDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoRegisterService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +18,10 @@ public class UserController {
         this.autenticacaoRegisterService = _autenticacaoRegisterService;
     }
     @PostMapping("/registrar")
-    public ResponseEntity criarUsuario(@RequestBody UserDto userDto){
-      autenticacaoRegisterService.RegistrarUsuario(userDto.nome(), userDto.email(), userDto.senha());
-      return ResponseEntity.ok("Usuario criado com sucesso.");
+    public ResponseEntity criarUsuario(@RequestBody UserDTO userDTO){
+      autenticacaoRegisterService.RegistrarUsuario(userDTO.nome(), userDTO.email(), userDTO.senha());
+      UserResponseDTO responseDTO = new UserResponseDTO(userDTO.nome(), "O seu registro foi completo! Muito obrigado");
+      return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
     }
 }

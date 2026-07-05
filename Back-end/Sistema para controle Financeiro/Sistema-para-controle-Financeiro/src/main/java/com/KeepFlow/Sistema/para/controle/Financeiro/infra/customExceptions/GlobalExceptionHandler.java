@@ -22,6 +22,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSenhaInsuficiente(SenhaInsuficiente ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+    @ExceptionHandler(SenhaIncorreta.class)
+    public ResponseEntity<String> handleSenhaIncorreta(SenhaIncorreta ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
