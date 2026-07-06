@@ -1,80 +1,80 @@
 # 💎 Prisma Dashboard
 
-**Live Demo:** [Em breve] | **Deploy:** VPS (Containers Docker)
-**Status:** 🚧 Em Desenvolvimento (Front-end concluído, Back-end em roadmap)
+**Live Demo:** [Coming Soon] | **Deploy:** VPS (Docker Containers)
+**Status:** 🚧 In Development (Front-end completed, Back-end on roadmap)
 
 ## 📸 Interface
 
-### Visão Geral
-![Visão Geral](./01-dashboard.png)
+### Overview
+![Overview](./01-dashboard.png)
 
-### Transações
-![Transações](./02-transactions.png)
+### Transactions
+![Transactions](./02-transactions.png)
 
-### Orçamentos
-![Orçamentos](./03-budgets.png)
+### Budgets
+![Budgets](./03-budgets.png)
 
-### Configurações
-![Configurações](./04-settings.png)
+### Settings
+![Settings](./04-settings.png)
 
-## 📌 O Problema
-O controle de finanças pessoais frequentemente sofre com interfaces engessadas ou planilhas difíceis de manter. O Prisma centraliza a gestão de receitas e despesas em uma interface fluida, permitindo visualizar rapidamente a saúde do fluxo de caixa e tomar decisões ágeis.
+## 📌 The Problem
+Personal finance control often suffers from rigid interfaces or difficult-to-maintain spreadsheets. Prisma centralizes the management of income and expenses in a fluid interface, allowing you to quickly visualize cash flow health and make agile decisions.
 
-## 🏗️ Decisões Arquiteturais
-A stack foi escolhida com foco em paridade entre desenvolvimento e produção, priorizando integridade de dados financeiros:
+## 🏗️ Architectural Decisions
+The stack was chosen focusing on parity between development and production, prioritizing financial data integrity:
 
-* **Backend (Java/Spring Boot):** Maturidade em segurança (Spring Security/JWT) e estabilidade para o core financeiro.
-* **Frontend (Angular):** Organização estrutural forte e tipagem estrita (TypeScript) para manipulação de estados na interface.
-* **Banco de Dados (PostgreSQL):** Integridade transacional (ACID) estrita, essencial para lidar com saldos e transações.
-* **Infraestrutura (Docker):** Conteinerização desde o dia zero para garantir deploys previsíveis e sem fricção na VPS.
+* **Backend (Java/Spring Boot):** Maturity in security (Spring Security/JWT) and stability for the financial core.
+* **Frontend (Angular):** Strong structural organization and strict typing (TypeScript) for manipulating states in the interface.
+* **Database (PostgreSQL):** Strict transactional integrity (ACID), essential for handling balances and transactions.
+* **Infrastructure (Docker):** Containerization from day one to ensure predictable and frictionless deployments on the VPS.
 
-### 🗄️ Entidades do Sistema (Banco de Dados)
-A API foi projetada de forma relacional, conectando as seguintes entidades:
-* **Usuários:** Dados de acesso (protegidos com Hash Bcrypt) e gerenciamento de sessões Stateless.
-* **Categorias:** Sistema de labels personalizadas (tags) para agrupar as finanças.
-* **Transações:** O núcleo do sistema. Entradas (Receitas) ou saídas (Despesas), obrigatoriamente vinculadas a um Usuário e a uma Categoria.
+### 🗄️ System Entities (Database)
+The API was designed in a relational way, connecting the following entities:
+* **Users:** Access data (protected with Bcrypt Hash) and Stateless session management.
+* **Categories:** Custom label system (tags) to group finances.
+* **Transactions:** The core of the system. Incomes (Revenue) or expenses, mandatorily linked to a User and a Category.
 
-## ⚙️ Setup Local
+## ⚙️ Local Setup
 
-Todo o ecossistema da aplicação foi conteinerizado. Você não precisa instalar dependências (como Java ou Node.js) diretamente na sua máquina para testar o projeto.
+The entire application ecosystem has been containerized. You do not need to install dependencies (such as Java or Node.js) directly on your machine to test the project.
 
-### Pré-requisitos
+### Prerequisites
 * Git
-* Docker e Docker Compose
+* Docker and Docker Compose
 
-### Passos para Inicialização
+### Initialization Steps
 
-**1. Clone o repositório**
+**1. Clone the repository**
 ```bash
 git clone https://github.com/seu-usuario/prisma-dashboard.git
 cd prisma-dashboard
 ```
 
-**2. Configure as Variáveis de Ambiente**
-Faça uma cópia do arquivo de exemplo para criar o seu arquivo de ambiente local:
+**2. Configure Environment Variables**
+Make a copy of the example file to create your local environment file:
 ```bash
 cp .env.example .env
 ```
-*(Abra o arquivo `.env` gerado e preencha as variáveis padrão, como as credenciais do banco de dados e a secret key do JWT).*
+*(Open the generated `.env` file and fill in the default variables, such as the database credentials and the JWT secret key).*
 
-**3. Build e Execução**
-Suba toda a infraestrutura com um único comando:
+**3. Build and Run**
+Bring up the entire infrastructure with a single command:
 ```bash
 docker compose up --build -d
 ```
 
-**Acessando a aplicação:**
+**Accessing the application:**
 * **Dashboard (Frontend Angular):** `http://localhost:4200`
-* **API REST (Backend Spring):** `http://localhost:8080`
+* **REST API (Backend Spring):** `http://localhost:8080`
 
-## 🛣️ Roadmap Técnico
-O projeto é iterativo. Abaixo estão as etapas de desenvolvimento:
+## 🛣️ Technical Roadmap
+The project is iterative. Below are the development stages:
 
-- [x] Design UI/UX e interface Angular desenvolvidos.
-- [ ] Construção da API (Spring Boot) e persistência (PostgreSQL).
-- [ ] Implementação de Autenticação e Autorização (Spring Security).
-- [ ] Deploy do banco de dados e API na VPS.
-- [ ] Deploy do frontend na Vercel (ou similar).
+- [x] UI/UX design and Angular interface developed.
+- [ ] API construction (Spring Boot) and persistence (PostgreSQL).
+- [ ] Implementation of Authentication and Authorization (Spring Security).
+- [ ] Deployment of the database and API on VPS.
+- [ ] Deployment of the frontend on Vercel (or similar).
 
 ---
-*Projeto desenvolvido para portfólio e uso pessoal, com foco em boas práticas de engenharia de software.*
+*Project developed for portfolio and personal use, focusing on software engineering best practices.*

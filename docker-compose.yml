@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Serviço de Banco de Dados (PostgreSQL)
+  # Database Service (PostgreSQL)
   db:
     image: postgres:15-alpine
     container_name: prisma-db
@@ -17,7 +17,7 @@ services:
       - prisma-network
     restart: unless-stopped
 
-  # Serviço do Back-end (Spring Boot)
+  # Back-end Service (Spring Boot)
   backend:
     build:
       context: ./Back-end/Sistema para controle Financeiro/Sistema-para-controle-Financeiro
@@ -29,7 +29,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prisma_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      # Configurações do Hibernate para criar as tabelas automaticamente
+      # Hibernate configurations to create tables automatically
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
     depends_on:
@@ -38,7 +38,7 @@ services:
       - prisma-network
     restart: unless-stopped
 
-  # Serviço do Front-end (React/Vite)
+  # Front-end Service (React/Vite)
   frontend:
     build:
       context: ./Front-end/DashboardFinanceiroFrontEnd
