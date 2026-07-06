@@ -1,9 +1,7 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaInsuficiente;
-import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoRegisterService;
 import jakarta.persistence.*;
-import lombok.Getter;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -31,12 +29,12 @@ public class User {
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);
     protected User(){}
 
-    public User(String nome,String email, String senhaPlana){
+    public User(String nome,String email, String senhaPlana,String senhaHash){
         validacaoSenha(senhaPlana);
         validarEmail(email);
         this.nome = nome;
         this.email = email;
-        this.senha = senhaPlana;
+        this.senha = senhaHash;
     }
 
     public void validacaoSenha(String senha){

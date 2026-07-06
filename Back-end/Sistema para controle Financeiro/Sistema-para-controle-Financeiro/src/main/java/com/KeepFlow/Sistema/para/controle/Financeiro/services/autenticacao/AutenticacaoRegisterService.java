@@ -20,8 +20,8 @@ public class AutenticacaoRegisterService {
     public User RegistrarUsuario(String _nome, String _email,String _senha){
         emailExiste(_email);
         String senhaHash = criptografarSenha(_senha);
-        User usuarioNovo = new User(_nome, _email, _senha);
-       
+        User usuarioNovo = new User(_nome, _email, _senha, senhaHash);
+
         return userRepository.save(usuarioNovo);
     }
 
