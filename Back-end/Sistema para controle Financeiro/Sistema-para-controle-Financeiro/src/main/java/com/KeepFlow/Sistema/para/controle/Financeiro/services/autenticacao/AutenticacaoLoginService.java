@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoLoginService {
 
     UserRepository userRepository;
-   Security security;
+    Security security;
     public AutenticacaoLoginService(UserRepository _userRepository, Security _security){
         this.userRepository = _userRepository;
         this.security = _security;
@@ -20,6 +20,9 @@ public class AutenticacaoLoginService {
     public void logarUsuario(UserDTO userDTO){
     //vai chamar os metodos de validar se o email existe e se senha hasheada esta correta,
     // e se tudo isso retornar true, aqui ira chamar o metodo para gerar o Token
+        validarEmail(userDTO.email());
+        validarSenhaCriptografada(userDTO);
+
     }
   private boolean validarEmail(String email){
    if(!userRepository.existsByEmail(email)){
@@ -28,10 +31,10 @@ public class AutenticacaoLoginService {
    return true;
   }
   private boolean validarSenhaCriptografada(UserDTO userDTO){
-      UserDTO userBanco = userRepository.existsByUsuario(userDTO.email());
+       UserDTO userBanco = userRepository.findByEmail(userDTO.email());
         String senhaPlana = userDTO.senha();
         String senhaBanco = userBanco.senha();
-        if(!security.passwordEncoder().matches(senhaBanco,senhaPlana)){
+        if(!security.passwordEncoder().matches(senhaPlana,senhaBanco)){
             throw new SenhaIncorreta("Senha incorreta.");
         }
         return true;

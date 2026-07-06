@@ -21,6 +21,7 @@ public class AutenticacaoRegisterService {
         emailExiste(_email);
         String senhaHash = criptografarSenha(_senha);
         User usuarioNovo = new User(_nome, _email, _senha);
+       
         return userRepository.save(usuarioNovo);
     }
 

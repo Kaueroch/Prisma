@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "tb_users")
-@Getter
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
