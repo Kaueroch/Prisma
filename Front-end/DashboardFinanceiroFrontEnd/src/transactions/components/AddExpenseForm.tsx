@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
-import { CategoryId, Expense, TransactionType } from '../types';
-import { CATEGORIES } from '../constants';
+import { CategoryId, Expense, TransactionType } from '../../shared/types';
+import { CATEGORIES } from '../../shared/constants';
 
 interface AddExpenseFormProps {
   isOpen: boolean;

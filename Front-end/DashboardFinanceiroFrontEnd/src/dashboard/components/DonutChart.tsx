@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts';
-import { formatBRL } from '../utils/formatters';
+import { formatBRL } from '../../shared/utils/formatters';
 
 interface DonutChartProps {
   data: Array<{ name: string; value: number; color: string; percent?: number }>;

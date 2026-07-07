@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Expense, Budget } from '../types';
-import { financeService } from '../services/financeService';
+import { Expense, Budget } from '../shared/types';
+import { financeService } from '../shared/services/financeService';
 
 interface FinanceContextType {
   expenses: Expense[];

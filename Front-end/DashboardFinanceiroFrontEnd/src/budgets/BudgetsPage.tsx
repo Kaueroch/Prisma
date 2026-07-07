@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { CATEGORIES } from '../constants';
+import { CATEGORIES } from '../shared/constants';
 import { Utensils, Car, ShoppingBag, Receipt, Grid, Plus } from 'lucide-react';
-import { AddBudgetForm } from '../components/AddBudgetForm';
-import { useFinance } from '../hooks/useFinance';
-import { formatBRL } from '../utils/formatters';
+import { AddBudgetForm } from './components/AddBudgetForm';
+import { useFinance } from '../finance/useFinance';
+import { formatBRL } from '../shared/utils/formatters';
 
 const ICONS = {
   food: Utensils,

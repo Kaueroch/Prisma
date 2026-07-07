@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
-import { CategoryId, Budget } from '../types';
-import { CATEGORIES } from '../constants';
+import { CategoryId, Budget } from '../../shared/types';
+import { CATEGORIES } from '../../shared/constants';
 
 interface AddBudgetFormProps {
   isOpen: boolean;

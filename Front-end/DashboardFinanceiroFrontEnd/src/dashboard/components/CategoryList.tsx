@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Expense, CategoryId } from '../types';
-import { CATEGORIES } from '../constants';
+import { Expense, CategoryId } from '../../shared/types';
+import { CATEGORIES } from '../../shared/constants';
 import { Utensils, Car, ShoppingBag, Receipt, Grid, ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { formatBRL, formatDateBR } from '../utils/formatters';
+import { formatBRL, formatDateBR } from '../../shared/utils/formatters';
 
 interface CategoryListProps {
   expenses: Expense[];

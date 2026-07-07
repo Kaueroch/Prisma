@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { Calendar, User } from 'lucide-react';
-import { CATEGORIES } from '../constants';
-import { DonutChart } from '../components/DonutChart';
-import { CategoryList } from '../components/CategoryList';
-import { useFinance } from '../hooks/useFinance';
-import { formatBRL } from '../utils/formatters';
+import { CATEGORIES } from '../shared/constants';
+import { DonutChart } from './components/DonutChart';
+import { CategoryList } from './components/CategoryList';
+import { useFinance } from '../finance/useFinance';
+import { formatBRL } from '../shared/utils/formatters';
 
 export function HomePage() {
   const { expenses, totalIncome, totalExpense, balance } = useFinance();

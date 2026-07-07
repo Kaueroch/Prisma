@@ -4,16 +4,29 @@
  */
 
 import React, { useState } from 'react';
-import { Sidebar, Tab } from './components/Sidebar';
-import { AddExpenseForm } from './components/AddExpenseForm';
-import { HomePage } from './pages/HomePage';
-import { TransactionsPage } from './pages/TransactionsPage';
-import { BudgetsPage } from './pages/BudgetsPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { FinanceProvider } from './contexts/FinanceContext';
-import { useFinance } from './hooks/useFinance';
+import { Sidebar, Tab } from './layout/Sidebar';
+import { AddExpenseForm } from './transactions/components/AddExpenseForm';
+import { HomePage } from './dashboard/HomePage';
+import { TransactionsPage } from './transactions/TransactionsPage';
+import { BudgetsPage } from './budgets/BudgetsPage';
+import { ProfilePage } from './profile/ProfilePage';
+import { AuthPage } from './auth/AuthPage';
+import { FinanceProvider } from './finance/FinanceContext';
+import { AuthProvider, useAuth } from './auth/AuthContext';
+import { useFinance } from './finance/useFinance';
 
 function AppShell() {
+  const { user } = useAuth();
+
+  // If not authenticated, show the auth page
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+function AuthenticatedApp() {
   const { addExpense } = useFinance();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -49,8 +62,10 @@ function AppShell() {
 
 export default function App() {
   return (
-    <FinanceProvider>
-      <AppShell />
-    </FinanceProvider>
+    <AuthProvider>
+      <FinanceProvider>
+        <AppShell />
+      </FinanceProvider>
+    </AuthProvider>
   );
 }

@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { Expense, CategoryId } from '../types';
-import { CATEGORIES } from '../constants';
+import { Expense, CategoryId } from '../shared/types';
+import { CATEGORIES } from '../shared/constants';
 import { Search, Utensils, Car, ShoppingBag, Receipt, Grid, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useFinance } from '../hooks/useFinance';
-import { formatBRL, formatDateBR } from '../utils/formatters';
+import { useFinance } from '../finance/useFinance';
+import { formatBRL, formatDateBR } from '../shared/utils/formatters';
 
 const ICONS = {
   food: Utensils,

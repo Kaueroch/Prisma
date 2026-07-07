@@ -1,7 +1,10 @@
 import React from 'react';
 import { User, Palette, Download, Settings as SettingsIcon, LogOut, ChevronRight } from 'lucide-react';
+import { useAuth } from '../auth/AuthContext';
 
 export function ProfilePage() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="p-10 max-w-3xl mx-auto w-full">
       {/* Profile Header */}
@@ -9,8 +12,8 @@ export function ProfilePage() {
         <div className="w-24 h-24 bg-zinc-900 border-2 border-zinc-800 rounded-full flex items-center justify-center mb-4">
           <User className="w-10 h-10 text-zinc-500" strokeWidth={2} />
         </div>
-        <h2 className="text-2xl font-semibold tracking-tight text-white mb-1">João Silva</h2>
-        <p className="text-zinc-500 text-sm">joao.silva@exemplo.com.br</p>
+        <h2 className="text-2xl font-semibold tracking-tight text-white mb-1">{user?.name || 'Usuário'}</h2>
+        <p className="text-zinc-500 text-sm">{user?.email || ''}</p>
       </div>
 
       {/* Settings list */}
@@ -43,7 +46,10 @@ export function ProfilePage() {
           <span className="flex-1 text-left text-white font-medium">Exportar Dados</span>
         </button>
         
-        <button className="w-full flex items-center gap-4 p-5 hover:bg-zinc-800/50 transition-colors cursor-pointer">
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-4 p-5 hover:bg-zinc-800/50 transition-colors cursor-pointer"
+        >
           <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
             <LogOut className="w-5 h-5 text-red-500" />
           </div>
