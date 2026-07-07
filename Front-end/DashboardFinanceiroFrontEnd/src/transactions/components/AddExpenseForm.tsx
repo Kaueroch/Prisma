@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, Check } from 'lucide-react';
+import { useFinance } from '../../finance/useFinance';
 import { CategoryId, Expense, TransactionType } from '../../shared/types';
-import { CATEGORIES } from '../../shared/constants';
 
 interface AddExpenseFormProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (expense: Omit<Expense, 'id'>) => void;
+  initialType?: TransactionType;
 }
 
-export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) {
+export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense' }: AddExpenseFormProps) {
+  const { categories } = useFinance();
   const [amount, setAmount] = useState('');
   const [name, setName] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [categoryId, setCategoryId] = useState<CategoryId>('food');
-  const [type, setType] = useState<TransactionType>('expense');
+  const [type, setType] = useState<TransactionType>(initialType);
+
+  // Sync initial type when opening
+  React.useEffect(() => {
+    if (isOpen) {
+      setType(initialType);
+    }
+  }, [isOpen, initialType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +72,7 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-xl"
             onClick={onClose}
           />
           <motion.div
@@ -71,13 +80,13 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            className="relative w-full max-w-lg glass-modal rounded-2xl shadow-2xl shadow-black/30 overflow-hidden flex flex-col"
           >
-            <div className="flex items-center justify-between p-6 pb-4 border-b border-zinc-800/50">
+            <div className="flex items-center justify-between p-6 pb-4 border-b border-white/[0.06]">
               <h2 className="text-xl font-semibold text-white tracking-tight">Nova Transação</h2>
               <button 
                 onClick={onClose}
-                className="p-2 rounded-full bg-zinc-800/50 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-glass cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -85,18 +94,17 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
 
             <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-6">
               {/* Type Toggle */}
-              <div className="flex bg-zinc-950 p-1 rounded-xl border border-zinc-800">
+              <div className="flex bg-black/30 p-1 rounded-xl border border-white/[0.06]">
                 <button
                   type="button"
-                  onClick={() => setType('expense')}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${type === 'expense' ? 'bg-red-500/20 text-red-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  onClick={() => setType('expense')}                    className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-glass cursor-pointer ${type === 'expense' ? 'bg-red-500/20 text-red-400' : 'text-white/40 hover:text-white/70'}`}
                 >
                   Despesa
                 </button>
                 <button
                   type="button"
                   onClick={() => setType('income')}
-                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-glass cursor-pointer ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-white/40 hover:text-white/70'}`}
                 >
                   Receita
                 </button>
@@ -104,14 +112,14 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
 
               {/* Amount Input */}
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-zinc-400">Valor</label>
+                <label className="text-sm font-medium text-white/40">Valor</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-medium text-zinc-500">R$</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-medium text-white/40">R$</span>
                   <input
                     type="text"
                     inputMode="numeric"
                     placeholder="0,00"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-4 pl-14 pr-4 text-3xl font-semibold text-white outline-none focus:border-zinc-700 transition-colors"
+                    className="w-full glass-input rounded-xl py-4 pl-14 pr-4 text-3xl font-semibold text-white outline-none"
                     value={amount}
                     onChange={handleAmountChange}
                     required
@@ -122,21 +130,21 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
               {/* Name & Date */}
               <div className="flex gap-4">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-sm font-medium text-zinc-400">Descrição</label>
+                  <label className="text-sm font-medium text-white/40">Descrição</label>
                   <input
                     type="text"
                     placeholder="Ex: Padaria"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-3.5 px-4 text-base text-white outline-none focus:border-zinc-700 transition-colors placeholder:text-zinc-600"
+                    className="w-full glass-input rounded-xl py-3.5 px-4 text-base text-white outline-none placeholder:text-white/30"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-2 w-40">
-                  <label className="text-sm font-medium text-zinc-400">Data</label>
+                  <label className="text-sm font-medium text-white/40">Data</label>
                   <input
                     type="date"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-3.5 px-4 text-base text-white outline-none focus:border-zinc-700 transition-colors color-scheme-dark"
+                    className="w-full glass-input rounded-xl py-3.5 px-4 text-base text-white outline-none color-scheme-dark"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     required
@@ -146,25 +154,24 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
 
               {/* Category */}
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-zinc-400">Categoria</label>
+                <label className="text-sm font-medium text-white/40">Categoria</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {(Object.keys(CATEGORIES) as CategoryId[]).map((cat) => {
-                    const isSelected = categoryId === cat;
-                    const info = CATEGORIES[cat];
+                  {categories.map((info) => {
                     return (
                       <button
-                        key={cat}
+                        key={info.id}
                         type="button"
-                        onClick={() => setCategoryId(cat)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 text-sm font-medium transition-all cursor-pointer ${
-                          isSelected 
-                            ? `${info.bgClass} ${info.textClass} border-transparent shadow-lg` 
-                            : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                        onClick={() => setCategoryId(info.id as CategoryId)}
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                          categoryId === info.id
+                            ? 'bg-white/10 border-white/20'
+                            : 'border-white/5 hover:bg-white/[0.02]'
                         }`}
                       >
-                       {info.name.split(' ')[0]}
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center`} style={{ backgroundColor: info.color }}></div>
+                        <span className="text-white text-sm">{info.name}</span>
                       </button>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -172,7 +179,7 @@ export function AddExpenseForm({ isOpen, onClose, onAdd }: AddExpenseFormProps) 
               {/* Add Button */}
               <button
                 type="submit"
-                className="mt-6 w-full bg-white hover:bg-zinc-200 text-black font-semibold text-lg py-4 rounded-xl transition-colors cursor-pointer"
+                className="mt-6 w-full bg-white hover:bg-white/90 text-black font-semibold text-lg py-4 rounded-xl transition-glass cursor-pointer glow-primary"
               >
                 Salvar Transação
               </button>

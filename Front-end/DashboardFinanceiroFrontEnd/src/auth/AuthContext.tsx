@@ -8,23 +8,26 @@ import React, { createContext, useState, useEffect, useMemo, ReactNode, useConte
 interface User {
   email: string;
   name: string;
+  token?: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
-  register: (name: string, email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
 const AUTH_STORAGE_KEY = 'prisma_auth_user';
-const USERS_STORAGE_KEY = 'prisma_users';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
+
+// TODO: Altere esta URL para a URL real da sua API quando o back-end estiver pronto
+const API_URL = 'http://localhost:3333';
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(() => {
@@ -48,40 +51,69 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [user]);
 
-  const getUsers = (): Array<{ name: string; email: string; password: string }> => {
-    const data = localStorage.getItem(USERS_STORAGE_KEY);
-    if (!data) return [];
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      return JSON.parse(data);
-    } catch {
-      return [];
+      const response = await fetch(`${API_URL}/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) return false;
+      
+      const data = await response.json();
+      
+      if (data.token) {
+        // Salva o token do back-end
+        localStorage.setItem('prisma_auth_token', data.token);
+        
+        // Zera todos os dados financeiros locais para começar o dashboard zerado
+        localStorage.removeItem('finance_dashboard_expenses');
+        localStorage.removeItem('finance_dashboard_budgets');
+        localStorage.removeItem('finance_dashboard_categories');
+        localStorage.removeItem('finance_dashboard_goals');
+
+        // Define o usuário (isso já atualiza o nome lá em cima no TopNav)
+        setUser({ email, name: data.nome, token: data.token });
+        
+        // Recarrega a página para o FinanceContext montar com o LocalStorage zerado
+        window.location.href = '/';
+        return true;
+      } else if (data.nome) {
+        // Fallback temporário caso o token não venha mas a requisição dê sucesso
+        setUser({ email, name: data.nome });
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Erro no login:", error);
+      return false;
     }
   };
 
-  const saveUsers = (users: Array<{ name: string; email: string; password: string }>) => {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  };
-
-  const login = (email: string, password: string): boolean => {
-    const users = getUsers();
-    const found = users.find((u) => u.email === email && u.password === password);
-    if (!found) return false;
-    setUser({ email: found.email, name: found.name });
-    return true;
-  };
-
-  const register = (name: string, email: string, password: string): boolean => {
-    const users = getUsers();
-    const exists = users.some((u) => u.email === email);
-    if (exists) return false;
-    const updated = [...users, { name, email, password }];
-    saveUsers(updated);
-    setUser({ email, name });
-    return true;
+  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      
+      if (!response.ok) return false;
+      
+      const data = await response.json();
+      // Assumindo que seu back-end retorna { user: { email, name } }
+      setUser({ email: data.user.email, name: data.user.name });
+      return true;
+    } catch (error) {
+      console.error("Erro no registro:", error);
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('prisma_auth_token');
   };
 
   const value = useMemo(() => ({ user, login, register, logout }), [user]);

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type CategoryId = 'food' | 'transport' | 'shopping' | 'bills' | 'other' | 'salary';
+export type CategoryId = string;
 
 export interface CategoryInfo {
   id: CategoryId;
@@ -28,4 +28,12 @@ export interface Budget {
   id: string;
   categoryId: CategoryId;
   amount: number;
+}
+
+export interface Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  savedAmount: number;
+  monthlySavings: number;
 }

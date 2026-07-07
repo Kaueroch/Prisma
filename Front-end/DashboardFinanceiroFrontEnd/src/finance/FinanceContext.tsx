@@ -1,13 +1,19 @@
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Expense, Budget } from '../shared/types';
+import { Expense, Budget, CategoryInfo, Goal } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
 
 interface FinanceContextType {
   expenses: Expense[];
   budgets: Budget[];
+  categories: CategoryInfo[];
+  goals: Goal[];
+  addGoal: (goal: Omit<Goal, 'id'>) => void;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   addBudget: (budget: Omit<Budget, 'id'>) => void;
   setBudgets: React.Dispatch<React.SetStateAction<Budget[]>>;
+  addCategory: (category: Omit<CategoryInfo, 'id'>) => void;
+  updateCategory: (id: string, category: Partial<CategoryInfo>) => void;
+  deleteCategory: (id: string) => void;
   totalIncome: number;
   totalExpense: number;
   balance: number;
@@ -22,11 +28,15 @@ interface FinanceProviderProps {
 export function FinanceProvider({ children }: FinanceProviderProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [categories, setCategories] = useState<CategoryInfo[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   // Load initial data on mount
   useEffect(() => {
     setExpenses(financeService.getExpenses());
     setBudgets(financeService.getBudgets());
+    setCategories(financeService.getCategories());
+    setGoals(financeService.getGoals());
   }, []);
 
   // Save updates to localstorage
@@ -64,6 +74,46 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
+  const handleAddCategory = (newCategory: Omit<CategoryInfo, 'id'>) => {
+    const category: CategoryInfo = {
+      ...newCategory,
+      id: Math.random().toString(36).substring(7),
+    };
+    setCategories((prev) => {
+      const updated = [...prev, category];
+      financeService.saveCategories(updated);
+      return updated;
+    });
+  };
+
+  const handleUpdateCategory = (id: string, updates: Partial<CategoryInfo>) => {
+    setCategories((prev) => {
+      const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
+      financeService.saveCategories(updated);
+      return updated;
+    });
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    setCategories((prev) => {
+      const updated = prev.filter(c => c.id !== id);
+      financeService.saveCategories(updated);
+      return updated;
+    });
+  };
+
+  const handleAddGoal = (newGoal: Omit<Goal, 'id'>) => {
+    const goal: Goal = {
+      ...newGoal,
+      id: Math.random().toString(36).substring(7),
+    };
+    setGoals((prev) => {
+      const updated = [...prev, goal];
+      financeService.saveGoals(updated);
+      return updated;
+    });
+  };
+
   // Memoized computations
   const incomes = useMemo(() => expenses.filter(e => e.type === 'income'), [expenses]);
   const outcomes = useMemo(() => expenses.filter(e => e.type === 'expense'), [expenses]);
@@ -75,13 +125,19 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const value = useMemo(() => ({
     expenses,
     budgets,
+    categories,
+    goals,
+    addGoal: handleAddGoal,
     addExpense: handleAddExpense,
     addBudget: handleAddBudget,
     setBudgets: handleSetBudgets,
+    addCategory: handleAddCategory,
+    updateCategory: handleUpdateCategory,
+    deleteCategory: handleDeleteCategory,
     totalIncome,
     totalExpense,
     balance
-  }), [expenses, budgets, totalIncome, totalExpense, balance]);
+  }), [expenses, budgets, categories, goals, totalIncome, totalExpense, balance]);
 
   return (
     <FinanceContext.Provider value={value}>
