@@ -2,6 +2,7 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaInsuficiente;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -9,8 +10,8 @@ import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "tb_users")
-
 public class User {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "cd_id")
