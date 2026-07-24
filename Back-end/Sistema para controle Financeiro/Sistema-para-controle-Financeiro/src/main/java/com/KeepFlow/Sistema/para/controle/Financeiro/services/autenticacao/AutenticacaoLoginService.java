@@ -9,6 +9,8 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.infra.security.Security;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class AutenticacaoLoginService {
 
@@ -25,7 +27,7 @@ public class AutenticacaoLoginService {
     // e se tudo isso retornar true, aqui ira chamar o metodo para gerar o Token
         validarEmail(userDTO.email());
         validarSenhaCriptografada(userDTO);
-        tokenServices.gerarToken(user);
+        gerarToken(userDTO.email());
     }
   private boolean validarEmail(String email){
    if(!userRepository.existsByEmail(email)){
@@ -34,12 +36,16 @@ public class AutenticacaoLoginService {
    return true;
   }
   private boolean validarSenhaCriptografada(UserDTO userDTO){
-       UserDTO userBanco = userRepository.findByEmail(userDTO.email());
+        UserDTO userBanco = userRepository.findByEmail(userDTO.email());
         String senhaPlana = userDTO.senha();
         String senhaBanco = userBanco.senha();
         if(!security.passwordEncoder().matches(senhaPlana,senhaBanco)){
             throw new SenhaIncorreta("Senha incorreta.");
         }
         return true;
+  }
+  public void gerarToken(String email){
+        UserDTO userBanco = userRepository.findByEmail(email);
+        tokenServices.gerarToken(userBanco.uuid());
   }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 public class TokenServices {
@@ -17,18 +18,17 @@ public class TokenServices {
    @Value("${api.security.time.expiration.token.secret}")
     private long Jwtexpiration;
 
-    public void gerarToken(User user){
+    public void gerarToken(UUID uuid){
        try{
         // algoritmo que ira construir o conteudo do meu token
             Algorithm algorithm = Algorithm.HMAC256(Secretkey); //define o algoritmo que vamos usar para gerar o token
             JWT.create()
                     .withIssuer("Prisma")
-                    .withSubject(user.getId().toString())
+                    .withSubject(uuid.toString())
                     .withExpiresAt(Instant.now().plusSeconds(Jwtexpiration))
                     .sign(algorithm);
         }catch(JWTCreationException exception){
             throw new RuntimeException("Erro ao gerar token JWT");
         }
-
     }
 }
