@@ -22,12 +22,12 @@ public class AutenticacaoLoginService {
         this.security = _security;
         this.tokenServices = _tokenServices;
     }
-    public void logarUsuario(UserDTO userDTO){
+    public String logarUsuario(UserDTO userDTO){
     //vai chamar os metodos de validar se o email existe e se senha hasheada esta correta,
     // e se tudo isso retornar true, aqui ira chamar o metodo para gerar o Token
         validarEmail(userDTO.email());
         validarSenhaCriptografada(userDTO);
-        gerarToken(userDTO.email());
+        return gerarToken(userDTO.email());
     }
   private boolean validarEmail(String email){
    if(!userRepository.existsByEmail(email)){
@@ -44,8 +44,8 @@ public class AutenticacaoLoginService {
         }
         return true;
   }
-  public void gerarToken(String email){
+  public String gerarToken(String email){
         UserDTO userBanco = userRepository.findByEmail(email);
-        tokenServices.gerarToken(userBanco.uuid());
+        return tokenServices.gerarToken(userBanco.uuid());
   }
 }

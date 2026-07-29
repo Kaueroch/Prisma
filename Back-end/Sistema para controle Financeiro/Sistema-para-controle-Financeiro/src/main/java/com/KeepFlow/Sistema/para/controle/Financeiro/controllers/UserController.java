@@ -27,9 +27,8 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     @PostMapping("/login")
-    public ResponseEntity logarUsuario(UserDTO userDTO){
-        autenticacaoLoginService.logarUsuario(userDTO);
-        UserResponseDTO responseDTO = new UserResponseDTO( "Ola, " + userDTO.nome() + ", Seja bem-vindo de volta!");
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseDTO);
+    public ResponseEntity logarUsuario(@RequestBody UserDTO userDTO){
+        String token = autenticacaoLoginService.logarUsuario(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(new com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.TokenResponseDTO(token));
     }
 }

@@ -18,11 +18,11 @@ public class TokenServices {
    @Value("${api.security.time.expiration.token.secret}")
     private long Jwtexpiration;
 
-    public void gerarToken(UUID uuid){
+    public String gerarToken(UUID uuid){
        try{
         // algoritmo que ira construir o conteudo do meu token
             Algorithm algorithm = Algorithm.HMAC256(Secretkey); //define o algoritmo que vamos usar para gerar o token
-            JWT.create()
+            return JWT.create()
                     .withIssuer("Prisma")
                     .withSubject(uuid.toString())
                     .withExpiresAt(Instant.now().plusSeconds(Jwtexpiration))
