@@ -1,16 +1,11 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 export type CategoryId = string;
 
 export interface CategoryInfo {
   id: CategoryId;
   name: string;
-  color: string; // for the chart
-  bgClass: string; // for the icon background
-  textClass: string; // for the icon color
+  color: string;
+  bgClass: string;
+  textClass: string;
 }
 
 export type TransactionType = 'expense' | 'income';
@@ -22,6 +17,7 @@ export interface Expense {
   categoryId: CategoryId;
   name: string;
   type: TransactionType;
+  contactId?: string;
 }
 
 export interface Budget {
@@ -37,3 +33,28 @@ export interface Goal {
   savedAmount: number;
   monthlySavings: number;
 }
+
+export interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  type: 'client' | 'lead' | 'partner' | 'supplier';
+  notes: string;
+  createdAt: string;
+}
+
+export interface Deal {
+  id: string;
+  name: string;
+  contactId: string;
+  value: number;
+  stage: 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost';
+  probability: number;
+  expectedCloseDate: string;
+  notes: string;
+  createdAt: string;
+}
+
+export type Tab = 'home' | 'transactions' | 'budgets' | 'categories' | 'goals' | 'contacts' | 'profile';

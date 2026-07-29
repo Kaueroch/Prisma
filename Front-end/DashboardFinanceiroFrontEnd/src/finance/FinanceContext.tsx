@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Expense, Budget, CategoryInfo, Goal } from '../shared/types';
+import { Expense, Budget, CategoryInfo, Goal, Contact, Deal } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
 
 interface FinanceContextType {
@@ -7,6 +7,8 @@ interface FinanceContextType {
   budgets: Budget[];
   categories: CategoryInfo[];
   goals: Goal[];
+  contacts: Contact[];
+  deals: Deal[];
   addGoal: (goal: Omit<Goal, 'id'>) => void;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   addBudget: (budget: Omit<Budget, 'id'>) => void;
@@ -14,6 +16,11 @@ interface FinanceContextType {
   addCategory: (category: Omit<CategoryInfo, 'id'>) => void;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => void;
   deleteCategory: (id: string) => void;
+  addContact: (contact: Omit<Contact, 'id' | 'createdAt'>) => void;
+  updateContact: (id: string, contact: Partial<Contact>) => void;
+  deleteContact: (id: string) => void;
+  addDeal: (deal: Omit<Deal, 'id' | 'createdAt'>) => void;
+  updateDeal: (id: string, deal: Partial<Deal>) => void;
   totalIncome: number;
   totalExpense: number;
   balance: number;
@@ -30,16 +37,18 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [deals, setDeals] = useState<Deal[]>([]);
 
-  // Load initial data on mount
   useEffect(() => {
     setExpenses(financeService.getExpenses());
     setBudgets(financeService.getBudgets());
     setCategories(financeService.getCategories());
     setGoals(financeService.getGoals());
+    setContacts(financeService.getContacts());
+    setDeals(financeService.getDeals());
   }, []);
 
-  // Save updates to localstorage
   const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
     const expense: Expense = {
       ...newExpense,
@@ -58,7 +67,6 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       id: Math.random().toString(36).substring(7)
     };
     setBudgets((prev) => {
-      // If budget for this category already exists, replace it, otherwise add new
       const filtered = prev.filter((b) => b.categoryId !== newBudgetEntry.categoryId);
       const updated = [...filtered, newBudgetEntry];
       financeService.saveBudgets(updated);
@@ -114,7 +122,56 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  // Memoized computations
+  const handleAddContact = (newContact: Omit<Contact, 'id' | 'createdAt'>) => {
+    const contact: Contact = {
+      ...newContact,
+      id: Math.random().toString(36).substring(7),
+      createdAt: new Date().toISOString(),
+    };
+    setContacts((prev) => {
+      const updated = [...prev, contact];
+      financeService.saveContacts(updated);
+      return updated;
+    });
+  };
+
+  const handleUpdateContact = (id: string, updates: Partial<Contact>) => {
+    setContacts((prev) => {
+      const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
+      financeService.saveContacts(updated);
+      return updated;
+    });
+  };
+
+  const handleDeleteContact = (id: string) => {
+    setContacts((prev) => {
+      const updated = prev.filter(c => c.id !== id);
+      financeService.saveContacts(updated);
+      return updated;
+    });
+  };
+
+  const handleAddDeal = (newDeal: Omit<Deal, 'id' | 'createdAt'>) => {
+    const deal: Deal = {
+      ...newDeal,
+      id: Math.random().toString(36).substring(7),
+      createdAt: new Date().toISOString(),
+    };
+    setDeals((prev) => {
+      const updated = [...prev, deal];
+      financeService.saveDeals(updated);
+      return updated;
+    });
+  };
+
+  const handleUpdateDeal = (id: string, updates: Partial<Deal>) => {
+    setDeals((prev) => {
+      const updated = prev.map(d => d.id === id ? { ...d, ...updates } : d);
+      financeService.saveDeals(updated);
+      return updated;
+    });
+  };
+
   const incomes = useMemo(() => expenses.filter(e => e.type === 'income'), [expenses]);
   const outcomes = useMemo(() => expenses.filter(e => e.type === 'expense'), [expenses]);
 
@@ -123,10 +180,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const balance = useMemo(() => totalIncome - totalExpense, [totalIncome, totalExpense]);
 
   const value = useMemo(() => ({
-    expenses,
-    budgets,
-    categories,
-    goals,
+    expenses, budgets, categories, goals, contacts, deals,
     addGoal: handleAddGoal,
     addExpense: handleAddExpense,
     addBudget: handleAddBudget,
@@ -134,10 +188,13 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     addCategory: handleAddCategory,
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,
-    totalIncome,
-    totalExpense,
-    balance
-  }), [expenses, budgets, categories, goals, totalIncome, totalExpense, balance]);
+    addContact: handleAddContact,
+    updateContact: handleUpdateContact,
+    deleteContact: handleDeleteContact,
+    addDeal: handleAddDeal,
+    updateDeal: handleUpdateDeal,
+    totalIncome, totalExpense, balance
+  }), [expenses, budgets, categories, goals, contacts, deals, totalIncome, totalExpense, balance]);
 
   return (
     <FinanceContext.Provider value={value}>
