@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFinance } from '../finance/useFinance'
 import type { CategoryId, Expense } from '../shared/types'
-import { Grid, Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X } from 'lucide-react'
+import { Grid, Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, Utensils, Car, ShoppingCart, Zap, MoreHorizontal, Briefcase } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -99,6 +99,12 @@ export function CategoriesPage() {
           const isExpanded = expandedId === cat.id
           const isEditing = editingId === cat.id
 
+          const categoryIcon = (() => {
+            const icons: Record<string, typeof Grid> = { food: Utensils, transport: Car, shopping: ShoppingCart, bills: Zap, other: MoreHorizontal, salary: Briefcase }
+            return icons[cat.id] || Grid
+          })()
+          const CatIcon = categoryIcon
+
           return (
             <Card key={cat.id} className="overflow-hidden">
               <CardContent className="p-0">
@@ -108,7 +114,7 @@ export function CategoriesPage() {
                       className="w-12 h-12 rounded-2xl flex items-center justify-center"
                       style={{ backgroundColor: cat.color }}
                     >
-                      <Grid className="w-5 h-5 text-black" strokeWidth={2.5} />
+                      <CatIcon className="w-5 h-5 text-black" strokeWidth={2.5} />
                     </div>
                     {isEditing ? (
                       <div className="flex items-center gap-2">

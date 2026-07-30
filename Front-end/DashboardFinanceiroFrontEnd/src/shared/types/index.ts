@@ -58,3 +58,8 @@ export interface Deal {
 }
 
 export type Tab = 'home' | 'transactions' | 'budgets' | 'categories' | 'goals' | 'contacts' | 'profile';
+
+export interface MonthFilter {
+  month: number;
+  year: number;
+}

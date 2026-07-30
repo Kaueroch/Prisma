@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
-import { Search, ChevronDown, ChevronUp, Grid } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, Grid, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Select,
@@ -12,8 +13,8 @@ import {
 } from '@/components/ui/select'
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
-import { formatBRL, formatDateBR } from '../shared/utils/formatters'
-import type { CategoryId } from '../shared/types'
+import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
+import type { CategoryId, MonthFilter } from '../shared/types'
 
 export function TransactionsPage() {
   const { expenses, categories } = useFinance()
@@ -21,13 +22,29 @@ export function TransactionsPage() {
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
+
+  const goToPrevMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 0) return { month: 11, year: prev.year - 1 }
+      return { month: prev.month - 1, year: prev.year }
+    })
+  }
+
+  const goToNextMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 11) return { month: 0, year: prev.year + 1 }
+      return { month: prev.month + 1, year: prev.year }
+    })
+  }
 
   const categoryGroups = useMemo(() => {
     const filtered = expenses.filter(e => {
       const matchSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchCat = filterCategory === 'all' || e.categoryId === filterCategory
       const matchType = filterType === 'all' || e.type === filterType
-      return matchSearch && matchCat && matchType
+      const matchMonth = isSameMonth(e.date, selectedMonth.month, selectedMonth.year)
+      return matchSearch && matchCat && matchType && matchMonth
     })
 
     const groups: Record<string, { total: number; maxExpense: typeof filtered[0] | null; items: typeof filtered }> = {}
@@ -93,6 +110,17 @@ export function TransactionsPage() {
               <SelectItem value="expense">Despesas</SelectItem>
             </SelectContent>
           </Select>
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 border border-border">
+            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium px-2 min-w-[120px] text-center">
+              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
+            </span>
+            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 

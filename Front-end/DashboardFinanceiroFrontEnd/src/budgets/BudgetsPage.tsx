@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Grid } from 'lucide-react'
+import { Plus, Grid, Utensils, Car, ShoppingCart, Zap, MoreHorizontal, Briefcase, PiggyBank } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -26,8 +26,16 @@ export function BudgetsPage() {
 
       {budgets.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            Nenhum orçamento definido. Clique em "Criar Orçamento" para começar.
+          <CardContent className="py-16 flex flex-col items-center justify-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+              <PiggyBank className="w-8 h-8" />
+            </div>
+            <div>
+              <h2 className="text-xl font-medium mb-1 text-foreground">Nenhum orçamento</h2>
+              <p className="text-muted-foreground max-w-sm">
+                Defina limites mensais por categoria para controlar seus gastos.
+              </p>
+            </div>
           </CardContent>
         </Card>
       ) : (
@@ -40,6 +48,12 @@ export function BudgetsPage() {
             const percent = Math.min(100, Math.round((spent / b.amount) * 100)) || 0
             const isOver = spent > b.amount
 
+            const categoryIcon = (() => {
+              const icons: Record<string, typeof Grid> = { food: Utensils, transport: Car, shopping: ShoppingCart, bills: Zap, other: MoreHorizontal, salary: Briefcase }
+              return icons[b.categoryId] || Grid
+            })()
+            const CatIcon = categoryIcon
+
             return (
               <Card key={b.id || b.categoryId}>
                 <CardContent className="pt-6">
@@ -48,7 +62,7 @@ export function BudgetsPage() {
                       className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                       style={{ backgroundColor: `${catInfo.color}20` }}
                     >
-                      <Grid className="w-5 h-5" style={{ color: catInfo.color }} strokeWidth={2.5} />
+                      <CatIcon className="w-5 h-5" style={{ color: catInfo.color }} strokeWidth={2.5} />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="font-medium text-base truncate">{catInfo.name}</span>

@@ -20,7 +20,7 @@ interface AppSidebarProps {
 }
 
 const mainItems = [
-  { tab: 'home' as Tab, label: 'Dashboard', icon: Home },
+  { tab: 'home' as Tab, label: 'Painel', icon: Home },
   { tab: 'transactions' as Tab, label: 'Transações', icon: ArrowLeftRight },
   { tab: 'budgets' as Tab, label: 'Orçamentos', icon: PiggyBank },
   { tab: 'categories' as Tab, label: 'Categorias', icon: Tags },
@@ -34,9 +34,9 @@ const crmItems = [
 export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border pb-3">
+      <SidebarHeader className="border-b border-sidebar-border pb-4">
         <div className="flex items-center gap-3 px-2 py-1">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground text-sm font-bold">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground text-sm font-bold">
             P
           </div>
           <span className="text-base font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden">
@@ -111,7 +111,7 @@ export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: A
             <SidebarMenuButton
               onClick={onOpenTransactionForm}
               tooltip="Nova Transação"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+              className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 font-medium"
             >
               <Plus />
               <span>Nova Transação</span>

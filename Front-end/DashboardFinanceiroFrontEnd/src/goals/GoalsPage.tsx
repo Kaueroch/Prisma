@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Target, Plus } from 'lucide-react'
+import { Target, Plus, Trophy, Clock, Sparkles } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -40,7 +40,7 @@ export function GoalsPage() {
         <Card>
           <CardContent className="py-16 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-              <Target className="w-8 h-8" />
+              <Sparkles className="w-8 h-8" />
             </div>
             <div>
               <h2 className="text-xl font-medium mb-1">Nenhuma meta definida</h2>
@@ -61,7 +61,7 @@ export function GoalsPage() {
               <Card key={goal.id}>
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-muted text-muted-foreground flex items-center justify-center border border-border">
                       <Target className="w-5 h-5" />
                     </div>
                     <div>
@@ -80,7 +80,7 @@ export function GoalsPage() {
                     </div>
                     <Progress
                       value={progress}
-                      className={`h-2.5 ${isCompleted ? '[&>div]:bg-green-500' : '[&>div]:bg-purple-500'}`}
+                      className={`h-2.5 ${isCompleted ? '[&>div]:bg-green-500' : '[&>div]:bg-primary'}`}
                     />
                   </div>
 
@@ -96,17 +96,20 @@ export function GoalsPage() {
                   </div>
 
                   {!isCompleted && monthsLeft !== Infinity && (
-                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-sm text-muted-foreground text-center border border-border">
+                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-sm text-muted-foreground text-center border border-border flex items-center justify-center gap-2">
+                      <Clock className="w-4 h-4" />
                       Faltam <span className="text-foreground font-medium">{monthsLeft} {monthsLeft === 1 ? 'mês' : 'meses'}</span> para alcançar.
                     </div>
                   )}
                   {!isCompleted && monthsLeft === Infinity && (
-                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-sm text-muted-foreground text-center border border-border">
+                    <div className="bg-muted/50 rounded-xl px-4 py-3 text-sm text-muted-foreground text-center border border-border flex items-center justify-center gap-2">
+                      <Sparkles className="w-4 h-4" />
                       Defina um valor mensal para calcular o prazo.
                     </div>
                   )}
                   {isCompleted && (
-                    <div className="bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl px-4 py-3 text-sm font-medium text-center">
+                    <div className="bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl px-4 py-3 text-sm font-medium text-center flex items-center justify-center gap-2">
+                      <Trophy className="w-4 h-4" />
                       Meta Alcançada!
                     </div>
                   )}

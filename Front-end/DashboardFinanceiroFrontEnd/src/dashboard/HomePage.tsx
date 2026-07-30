@@ -1,31 +1,57 @@
 import { useState, useMemo } from 'react'
-import { ArrowDownLeft, ArrowUpRight, Plus, Calendar, Download, MoreHorizontal, CheckCircle2, ChevronDown } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Download, CheckCircle2, ChevronLeft, ChevronRight, Wallet, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useFinance } from '../finance/useFinance'
-import { formatBRL, formatDateBR } from '../shared/utils/formatters'
+import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
 import { AddExpenseForm } from '../transactions/components/AddExpenseForm'
 import { DonutChart } from './components/DonutChart'
-import type { Tab, TransactionType } from '../shared/types'
+import type { Tab, TransactionType, MonthFilter } from '../shared/types'
 
 interface HomePageProps {
   setActiveTab?: (tab: Tab) => void;
 }
 
 export function HomePage({ setActiveTab }: HomePageProps = {}) {
-  const { totalIncome, totalExpense, balance, expenses, categories, addExpense, contacts } = useFinance()
+  const { expenses, categories, addExpense, contacts } = useFinance()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalType, setModalType] = useState<TransactionType>('income')
+  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
+
+  const goToPrevMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 0) return { month: 11, year: prev.year - 1 }
+      return { month: prev.month - 1, year: prev.year }
+    })
+  }
+
+  const goToNextMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 11) return { month: 0, year: prev.year + 1 }
+      return { month: prev.month + 1, year: prev.year }
+    })
+  }
+
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter(e => isSameMonth(e.date, selectedMonth.month, selectedMonth.year))
+  }, [expenses, selectedMonth])
+
+  const filteredIncomes = useMemo(() => filteredExpenses.filter(e => e.type === 'income'), [filteredExpenses])
+  const filteredOutcomes = useMemo(() => filteredExpenses.filter(e => e.type === 'expense'), [filteredExpenses])
+
+  const totalIncome = useMemo(() => filteredIncomes.reduce((sum, item) => sum + item.amount, 0), [filteredIncomes])
+  const totalExpense = useMemo(() => filteredOutcomes.reduce((sum, item) => sum + item.amount, 0), [filteredOutcomes])
+  const balance = totalIncome - totalExpense
 
   const recentActivity = useMemo(() => {
-    return [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6)
-  }, [expenses])
+    return [...filteredExpenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6)
+  }, [filteredExpenses])
 
   const chartData = useMemo(() => {
     const expenseByCategory: Record<string, { name: string; value: number; color: string }> = {}
-    expenses.filter(e => e.type === 'expense').forEach(e => {
+    filteredOutcomes.forEach(e => {
       const cat = categories.find(c => c.id === e.categoryId)
       const name = cat?.name || 'Sem categoria'
       if (!expenseByCategory[name]) {
@@ -34,52 +60,49 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       expenseByCategory[name].value += e.amount
     })
     return Object.values(expenseByCategory)
-  }, [expenses, categories])
+  }, [filteredOutcomes, categories])
 
   return (
     <div className="p-6 lg:p-8 gap-6 flex flex-col max-w-[1400px] mx-auto w-full">
-      <div className="bg-gradient-to-r from-purple-600 to-purple-900 rounded-3xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center border border-purple-500/30 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
-        <div className="flex flex-col gap-2 z-10">
-          <span className="text-white/80 font-medium">Saldo Atual</span>
-          <div className="flex items-center gap-4">
-            <h1 className="text-5xl font-bold tracking-tight">{formatBRL(balance)}</h1>
-            <button className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
-              <ChevronDown className="w-4 h-4 text-white" />
-            </button>
-          </div>
-          <div className="flex items-center gap-3 mt-6">
+      <div className="bg-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-border relative overflow-hidden">
+        <div className="flex flex-col gap-1">
+          <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">Saldo Atual</span>
+          <h1 className="text-4xl font-bold tracking-tight">{formatBRL(balance)}</h1>
+          <div className="flex items-center gap-2 mt-4">
             <Button
               onClick={() => { setModalType('income'); setIsModalOpen(true) }}
-              className="bg-white text-purple-900 hover:bg-white/90 rounded-full"
+              size="sm"
+              className="rounded-full h-8"
             >
-              <ArrowDownLeft className="mr-2 h-4 w-4" />
+              <ArrowDownLeft className="mr-1.5 h-3.5 w-3.5" />
               Receber
             </Button>
             <Button
               onClick={() => { setModalType('expense'); setIsModalOpen(true) }}
               variant="secondary"
-              className="rounded-full bg-white/20 text-white hover:bg-white/30 border-0"
+              size="sm"
+              className="rounded-full h-8"
             >
-              <ArrowUpRight className="mr-2 h-4 w-4" />
+              <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
               Transferir
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full bg-white/20 text-white hover:bg-white/30">
-              <MoreHorizontal className="h-5 w-5" />
             </Button>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-4 mt-8 md:mt-0 z-10">
-          <div className="flex items-center gap-2 bg-black/20 rounded-full p-1 border border-white/10">
-            <Button variant="ghost" size="sm" className="rounded-full text-white/80 text-xs">
-              <Calendar className="mr-1 h-3 w-3" />
-              Este Mês
+        <div className="flex items-center gap-2 mt-4 md:mt-0">
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5 border border-border">
+            <Button variant="ghost" size="icon-xs" onClick={goToPrevMonth}>
+              <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="secondary" size="sm" className="rounded-full bg-white/20 text-white text-xs">
-              <Download className="mr-1 h-3 w-3" />
-              Exportar
+            <span className="text-xs font-medium px-2 min-w-[110px] text-center text-muted-foreground">
+              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
+            </span>
+            <Button variant="ghost" size="icon-xs" onClick={goToNextMonth}>
+              <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           </div>
+          <Button variant="ghost" size="icon-sm" className="rounded-lg">
+            <Download className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -109,27 +132,27 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatBRL(totalExpense)}</div>
-            <p className="text-muted-foreground text-xs mt-1 font-medium">Referente a este mês</p>
+            <p className="text-muted-foreground text-xs mt-1 font-medium">{formatMonthYear(selectedMonth.month, selectedMonth.year)}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-              <ArrowUpRight className="w-5 h-5 text-purple-500 rotate-45" />
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-foreground" />
             </div>
             <div className="text-sm text-muted-foreground font-medium">Economia (Líquido)</div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatBRL(totalIncome - totalExpense)}</div>
-            <p className="text-purple-400 text-xs mt-1 font-medium">Disponível para Metas</p>
+            <p className="text-muted-foreground text-xs mt-1 font-medium">Disponível para Metas</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-blue-500" />
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+              <Users className="w-5 h-5 text-foreground" />
             </div>
             <div className="text-sm text-muted-foreground font-medium">Contatos</div>
           </CardHeader>

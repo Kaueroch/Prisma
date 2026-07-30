@@ -23,3 +23,21 @@ export const formatDateBR = (dateStr: string, options?: Intl.DateTimeFormatOptio
   }
   return d.toLocaleDateString('pt-BR', options);
 };
+
+export const formatMonthYear = (month: number, year: number): string => {
+  const date = new Date(year, month);
+  return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+};
+
+export const getCurrentMonth = () => {
+  const now = new Date();
+  return { month: now.getMonth(), year: now.getFullYear() };
+};
+
+export const isSameMonth = (dateStr: string, month: number, year: number): boolean => {
+  const d = new Date(dateStr);
+  if (dateStr.length === 10) {
+    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+  }
+  return d.getMonth() === month && d.getFullYear() === year;
+};

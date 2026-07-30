@@ -39,8 +39,8 @@ function AuthenticatedApp() {
         <SidebarInset>
           <SiteHeader activeTab={activeTab} />
           <div className="flex-1 flex flex-col overflow-auto relative">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
             <div className="flex-1 relative z-10">
               {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
               {activeTab === 'transactions' && <TransactionsPage />}
