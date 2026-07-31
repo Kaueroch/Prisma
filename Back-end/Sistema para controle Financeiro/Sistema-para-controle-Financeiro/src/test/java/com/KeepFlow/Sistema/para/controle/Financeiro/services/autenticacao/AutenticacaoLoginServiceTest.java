@@ -64,10 +64,10 @@ class AutenticacaoLoginServiceTest {
 
         // Assert
         verify(userRepository).existsByEmail(email);
-        verify(userRepository, times(2)).findByEmail(email); // Chamado em validarSenhaCriptografada e gerarToken
+        verify(userRepository, times(2)).findByEmail(email); // Chamado em validarSenhaCriptografada e generateToken
         verify(security).passwordEncoder();
         verify(passwordEncoder).matches(senhaPlana, senhaCriptografada);
-        verify(tokenServices).gerarToken(userUuid);
+        verify(tokenServices).generateToken(userUuid);
     }
 
     @Test
@@ -80,7 +80,7 @@ class AutenticacaoLoginServiceTest {
         
         verify(userRepository).existsByEmail(email);
         verify(userRepository, never()).findByEmail(anyString());
-        verify(tokenServices, never()).gerarToken(any());
+        verify(tokenServices, never()).generateToken(any());
 
     }
 
@@ -99,6 +99,6 @@ class AutenticacaoLoginServiceTest {
         verify(userRepository).findByEmail(email);
         verify(security).passwordEncoder();
         verify(passwordEncoder).matches(senhaPlana, senhaCriptografada);
-        verify(tokenServices, never()).gerarToken(any());
+        verify(tokenServices, never()).generateToken(any());
     }
 }

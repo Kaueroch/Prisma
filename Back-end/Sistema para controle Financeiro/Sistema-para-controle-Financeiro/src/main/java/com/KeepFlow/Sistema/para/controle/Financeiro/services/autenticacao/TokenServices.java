@@ -1,7 +1,5 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao;
 
-import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
-import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.UserDTO;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -18,7 +16,7 @@ public class TokenServices {
    @Value("${api.security.time.expiration.token.secret}")
     private long Jwtexpiration;
 
-    public String gerarToken(UUID uuid){
+    public String generateToken(UUID uuid){
        try{
         // algoritmo que ira construir o conteudo do meu token
             Algorithm algorithm = Algorithm.HMAC256(Secretkey); //define o algoritmo que vamos usar para gerar o token
@@ -29,6 +27,18 @@ public class TokenServices {
                     .sign(algorithm);
         }catch(JWTCreationException exception){
             throw new RuntimeException("Erro ao gerar token JWT");
+        }
+    }
+    public String validarToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(Secretkey);
+            return JWT.require(algorithm)
+                    .withIssuer("Prisma")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (com.auth0.jwt.exceptions.JWTVerificationException exception) {
+            return exception.toString();
         }
     }
 }

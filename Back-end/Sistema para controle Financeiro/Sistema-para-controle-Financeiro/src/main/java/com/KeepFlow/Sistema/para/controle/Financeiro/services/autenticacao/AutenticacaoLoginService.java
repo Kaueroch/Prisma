@@ -1,15 +1,12 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao;
 
 
-import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.UserDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.EmailNaoEncontrado;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaIncorreta;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.security.Security;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class AutenticacaoLoginService {
@@ -46,6 +43,6 @@ public class AutenticacaoLoginService {
   }
   public String gerarToken(String email){
         UserDTO userBanco = userRepository.findByEmail(email);
-        return tokenServices.gerarToken(userBanco.uuid());
+        return tokenServices.generateToken(userBanco.uuid());
   }
 }
