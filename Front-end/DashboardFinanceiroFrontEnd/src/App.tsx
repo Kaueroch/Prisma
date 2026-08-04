@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
+import { Sparkles } from 'lucide-react'
 import { AppSidebar } from './layout/AppSidebar'
 import { SiteHeader } from './layout/SiteHeader'
 import { AddExpenseForm } from './transactions/components/AddExpenseForm'
@@ -25,10 +28,18 @@ function AppShell() {
 
 function AuthenticatedApp() {
   const { addExpense } = useFinance()
+  const { user } = useAuth()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('home')
+  const [showWelcome, setShowWelcome] = useState(() => localStorage.getItem('prisma_auth_show_welcome') === 'true')
+
+  const closeWelcome = () => {
+    localStorage.removeItem('prisma_auth_show_welcome')
+    setShowWelcome(false)
+  }
 
   return (
+    <>
       <TooltipProvider>
       <SidebarProvider defaultOpen={true}>
         <AppSidebar
@@ -59,6 +70,26 @@ function AuthenticatedApp() {
         />
       </SidebarProvider>
     </TooltipProvider>
+
+      <Dialog open={showWelcome} onOpenChange={(open) => !open && closeWelcome()}>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-yellow-400" />
+              Bem-vindo(a), {user?.name || 'usuário'}!
+            </DialogTitle>
+            <DialogDescription className="pt-1">
+              Que bom ter você aqui. Aproveite o seu painel financeiro!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button className="w-full sm:w-auto" onClick={closeWelcome}>
+              Começar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

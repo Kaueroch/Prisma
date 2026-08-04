@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { motion, AnimatePresence } from 'motion/react'
 import { useAuth } from './AuthContext'
 
@@ -19,6 +20,7 @@ export function AuthPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [popupMessage, setPopupMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [displayedText, setDisplayedText] = useState('')
 
@@ -66,8 +68,8 @@ export function AuthPage() {
     }
     setIsSubmitting(true)
     try {
-      const ok = await login(email.trim(), password)
-      if (!ok) setError('E-mail ou senha incorretos.')
+      const errorMessage = await login(email.trim(), password)
+      if (errorMessage) setPopupMessage(errorMessage)
     } catch {
       setError('Erro de conexão.')
     } finally {
@@ -115,9 +117,9 @@ export function AuthPage() {
     }
     setIsSubmitting(true)
     try {
-      const ok = await register(name.trim(), email.trim(), password)
-      if (!ok) {
-        setError('Este e-mail já está em uso.')
+      const errorMessage = await register(name.trim(), email.trim(), password)
+      if (errorMessage) {
+        setPopupMessage(errorMessage)
       } else {
         setSuccess('Conta criada com sucesso! Faça login.')
         setName('')
@@ -583,6 +585,25 @@ export function AuthPage() {
           </motion.div>
         </motion.div>
       </div>
+
+      <Dialog open={!!popupMessage} onOpenChange={(open) => !open && setPopupMessage('')}>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-500">
+              <AlertCircle className="w-5 h-5" />
+              Não foi possível continuar
+            </DialogTitle>
+            <DialogDescription className="pt-1">
+              {popupMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPopupMessage('')}>
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   )
 }

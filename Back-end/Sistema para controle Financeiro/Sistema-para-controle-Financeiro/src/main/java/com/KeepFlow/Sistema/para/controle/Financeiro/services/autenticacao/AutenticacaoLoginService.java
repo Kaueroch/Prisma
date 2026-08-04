@@ -2,6 +2,7 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao;
 
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.UserDTO;
+import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.LoginResponseDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.EmailNaoEncontrado;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaIncorreta;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.security.Security;
@@ -19,12 +20,12 @@ public class AutenticacaoLoginService {
         this.security = _security;
         this.tokenServices = _tokenServices;
     }
-    public String logarUsuario(UserDTO userDTO){
+    public LoginResponseDTO logarUsuario(UserDTO userDTO){
     //vai chamar os metodos de validar se o email existe e se senha hasheada esta correta,
     // e se tudo isso retornar true, aqui ira chamar o metodo para gerar o Token
         validarEmail(userDTO.email());
         validarSenhaCriptografada(userDTO);
-        return gerarToken(userDTO.email());
+        return gerarRespostaLogin(userDTO.email());
     }
   private boolean validarEmail(String email){
    if(!userRepository.existsByEmail(email)){
@@ -44,5 +45,10 @@ public class AutenticacaoLoginService {
   public String gerarToken(String email){
         UserDTO userBanco = userRepository.findByEmail(email);
         return tokenServices.generateToken(userBanco.uuid());
+  }
+  private LoginResponseDTO gerarRespostaLogin(String email){
+        UserDTO userBanco = userRepository.findByEmail(email);
+        String token = tokenServices.generateToken(userBanco.uuid());
+        return new LoginResponseDTO(token, userBanco.nome());
   }
 }

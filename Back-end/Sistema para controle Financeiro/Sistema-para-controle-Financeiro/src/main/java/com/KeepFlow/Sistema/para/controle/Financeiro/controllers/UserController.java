@@ -2,7 +2,7 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.controllers;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.UserDTO;
-import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.TokenResponseDTO;
+import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.LoginResponseDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.UserResponseDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoLoginService;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao.AutenticacaoRegisterService;
@@ -32,7 +32,7 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity logarUsuario(@RequestBody UserDTO userDTO){
-        String token = autenticacaoLoginService.logarUsuario(userDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(new TokenResponseDTO(token));
+        LoginResponseDTO responseDTO = autenticacaoLoginService.logarUsuario(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }
