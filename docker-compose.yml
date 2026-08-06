@@ -1,4 +1,4 @@
-version: '3.8'
+version: '2.8'
 
 services:
   # Database Service (PostgreSQL)
@@ -24,7 +24,8 @@ services:
       dockerfile: Dockerfile
     container_name: prisma-backend
     ports:
-      - "8080:8080"
+      - "8080"
+      - "8080:5000"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prisma_db
       SPRING_DATASOURCE_USERNAME: postgres
