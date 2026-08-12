@@ -11,26 +11,44 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { useFinance } from '../../finance/useFinance'
+import { useToast } from '../../shared/components/Toast'
 import type { CategoryId, Expense, TransactionType } from '../../shared/types'
 
-interface AddExpenseFormProps {
+interface AddTransactionFormProps {
   isOpen: boolean
   onClose: () => void
   onAdd: (expense: Omit<Expense, 'id'>) => void
   initialType?: TransactionType
 }
 
-export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense' }: AddExpenseFormProps) {
+const DEFAULT_CATEGORY: Record<TransactionType, CategoryId> = {
+  income: 'salary',
+  expense: 'food',
+}
+
+export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expense' }: AddTransactionFormProps) {
   const { categories } = useFinance()
+  const { showToast } = useToast()
   const [amount, setAmount] = useState('')
   const [name, setName] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [categoryId, setCategoryId] = useState<CategoryId>('food')
+  const [categoryId, setCategoryId] = useState<CategoryId>(DEFAULT_CATEGORY[initialType])
   const [type, setType] = useState<TransactionType>(initialType)
 
   useEffect(() => {
-    if (isOpen) setType(initialType)
+    if (isOpen) {
+      setType(initialType)
+      setCategoryId(DEFAULT_CATEGORY[initialType])
+    }
   }, [isOpen, initialType])
+
+  useEffect(() => {
+    setCategoryId(DEFAULT_CATEGORY[type])
+  }, [type])
+
+  const availableCategories = categories.filter(
+    (c) => c.type === 'both' || c.type === type
+  )
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -39,11 +57,11 @@ export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense'
     if (!numericAmount || numericAmount <= 0) return
 
     onAdd({ amount: numericAmount, name, date, categoryId, type })
+    showToast('Transação salva com sucesso.')
     setAmount('')
     setName('')
     setDate(new Date().toISOString().split('T')[0])
-    setCategoryId('food')
-    setType('expense')
+    setCategoryId(DEFAULT_CATEGORY[type])
     onClose()
   }
 
@@ -52,6 +70,11 @@ export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense'
     if (!rawValue) { setAmount(''); return }
     const numberValue = parseInt(rawValue, 10) / 100
     setAmount(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numberValue))
+  }
+
+  const handleTypeChange = (nextType: TransactionType) => {
+    if (nextType === type) return
+    setType(nextType)
   }
 
   return (
@@ -65,14 +88,14 @@ export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense'
           <div className="flex bg-muted p-1 rounded-lg border border-border">
             <button
               type="button"
-              onClick={() => setType('expense')}
+              onClick={() => handleTypeChange('expense')}
               className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'expense' ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Despesa
             </button>
             <button
               type="button"
-              onClick={() => setType('income')}
+              onClick={() => handleTypeChange('income')}
               className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Receita
@@ -119,7 +142,7 @@ export function AddExpenseForm({ isOpen, onClose, onAdd, initialType = 'expense'
           <div className="space-y-2">
             <Label>Categoria</Label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {categories.map((info) => (
+              {availableCategories.map((info) => (
                 <button
                   key={info.id}
                   type="button"

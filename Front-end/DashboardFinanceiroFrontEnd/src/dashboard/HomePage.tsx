@@ -1,23 +1,22 @@
 import { useState, useMemo } from 'react'
-import { ArrowDownLeft, ArrowUpRight, Download, CheckCircle2, ChevronLeft, ChevronRight, Wallet, Users } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Wallet, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useFinance } from '../finance/useFinance'
+import { useTransactionForm } from '../finance/TransactionFormContext'
 import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
-import { AddExpenseForm } from '../transactions/components/AddExpenseForm'
 import { DonutChart } from './components/DonutChart'
-import type { Tab, TransactionType, MonthFilter } from '../shared/types'
+import type { Tab, MonthFilter } from '../shared/types'
 
 interface HomePageProps {
   setActiveTab?: (tab: Tab) => void;
 }
 
 export function HomePage({ setActiveTab }: HomePageProps = {}) {
-  const { expenses, categories, addExpense, contacts } = useFinance()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalType, setModalType] = useState<TransactionType>('income')
+  const { expenses, categories, contacts } = useFinance()
+  const { openTransactionForm } = useTransactionForm()
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
 
   const goToPrevMonth = () => {
@@ -70,21 +69,21 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           <h1 className="text-4xl font-bold tracking-tight">{formatBRL(balance)}</h1>
           <div className="flex items-center gap-2 mt-4">
             <Button
-              onClick={() => { setModalType('income'); setIsModalOpen(true) }}
+              onClick={() => openTransactionForm('income')}
               size="sm"
               className="rounded-full h-8"
             >
               <ArrowDownLeft className="mr-1.5 h-3.5 w-3.5" />
-              Receber
+              Nova Receita
             </Button>
             <Button
-              onClick={() => { setModalType('expense'); setIsModalOpen(true) }}
+              onClick={() => openTransactionForm('expense')}
               variant="secondary"
               size="sm"
               className="rounded-full h-8"
             >
               <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
-              Transferir
+              Nova Despesa
             </Button>
           </div>
         </div>
@@ -100,9 +99,6 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           </div>
-          <Button variant="ghost" size="icon-sm" className="rounded-lg">
-            <Download className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
@@ -246,13 +242,6 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </CardContent>
         </Card>
       </div>
-
-      <AddExpenseForm
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={addExpense}
-        initialType={modalType}
-      />
     </div>
   )
 }

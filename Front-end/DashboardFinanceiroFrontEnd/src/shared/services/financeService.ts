@@ -35,7 +35,22 @@ export const financeService = {
       this.saveCategories(initial);
       return initial;
     }
-    try { return JSON.parse(data); } catch { return []; }
+    try {
+      const stored = JSON.parse(data) as import('../types').CategoryInfo[];
+      const migrated = stored.map((c) => ({
+        ...c,
+        type: c.type ?? this.defaultCategoryType(c.id),
+      }));
+      if (migrated.some((c, i) => c.type !== stored[i]?.type)) {
+        this.saveCategories(migrated);
+      }
+      return migrated;
+    } catch { return []; }
+  },
+
+  defaultCategoryType(id: string): import('../types').CategoryKind {
+    const known = CATEGORIES[id as keyof typeof CATEGORIES];
+    return known?.type ?? 'both';
   },
 
   saveCategories(categories: import('../types').CategoryInfo[]): void {

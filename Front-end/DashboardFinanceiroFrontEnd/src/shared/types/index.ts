@@ -1,11 +1,14 @@
 export type CategoryId = string;
 
+export type CategoryKind = 'income' | 'expense' | 'both';
+
 export interface CategoryInfo {
   id: CategoryId;
   name: string;
   color: string;
   bgClass: string;
   textClass: string;
+  type: CategoryKind;
 }
 
 export type TransactionType = 'expense' | 'income';

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useFinance } from '../finance/useFinance'
-import type { CategoryId, Expense } from '../shared/types'
+import type { CategoryId, CategoryKind, Expense } from '../shared/types'
 import { Grid, Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, Utensils, Car, ShoppingCart, Zap, MoreHorizontal, Briefcase } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,7 @@ export function CategoriesPage() {
   const [isAdding, setIsAdding] = useState(false)
   const [newCatName, setNewCatName] = useState('')
   const [newCatColor, setNewCatColor] = useState('#8b5cf6')
+  const [newCatType, setNewCatType] = useState<CategoryKind>('expense')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
 
@@ -34,9 +35,12 @@ export function CategoriesPage() {
       name: newCatName.trim(),
       color: newCatColor,
       bgClass: 'bg-white/10',
-      textClass: 'text-white'
+      textClass: 'text-white',
+      type: newCatType,
     })
     setNewCatName('')
+    setNewCatColor('#8b5cf6')
+    setNewCatType('expense')
     setIsAdding(false)
   }
 
@@ -85,6 +89,21 @@ export function CategoriesPage() {
                 onChange={(e) => setNewCatColor(e.target.value)}
                 className="h-9 w-12 rounded-lg border border-border bg-transparent cursor-pointer"
               />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs text-muted-foreground font-medium">Usada para</label>
+              <div className="flex bg-muted p-1 rounded-lg border border-border">
+                {(['expense', 'income', 'both'] as CategoryKind[]).map((kind) => (
+                  <button
+                    key={kind}
+                    type="button"
+                    onClick={() => setNewCatType(kind)}
+                    className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${newCatType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {kind === 'expense' ? 'Despesa' : kind === 'income' ? 'Receita' : 'Ambas'}
+                  </button>
+                ))}
+              </div>
             </div>
             <Button onClick={handleAdd}>Criar</Button>
             <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancelar</Button>

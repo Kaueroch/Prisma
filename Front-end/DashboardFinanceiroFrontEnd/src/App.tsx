@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Sparkles } from 'lucide-react'
 import { AppSidebar } from './layout/AppSidebar'
 import { SiteHeader } from './layout/SiteHeader'
-import { AddExpenseForm } from './transactions/components/AddExpenseForm'
+import { AddTransactionForm } from './transactions/components/AddTransactionForm'
 import { HomePage } from './dashboard/HomePage'
 import { TransactionsPage } from './transactions/TransactionsPage'
 import { BudgetsPage } from './budgets/BudgetsPage'
@@ -16,6 +16,8 @@ import { GoalsPage } from './goals/GoalsPage'
 import { ContactsPage } from './contacts/ContactsPage'
 import { AuthPage } from './auth/AuthPage'
 import { FinanceProvider } from './finance/FinanceContext'
+import { TransactionFormProvider, useTransactionForm } from './finance/TransactionFormContext'
+import { ToastProvider } from './shared/components/Toast'
 import { AuthProvider, useAuth } from './auth/AuthContext'
 import { useFinance } from './finance/useFinance'
 import type { Tab } from './shared/types'
@@ -26,10 +28,22 @@ function AppShell() {
   return <AuthenticatedApp />
 }
 
-function AuthenticatedApp() {
+function TransactionFormGate() {
+  const { isOpen, initialType, closeTransactionForm } = useTransactionForm()
   const { addExpense } = useFinance()
+  return (
+    <AddTransactionForm
+      isOpen={isOpen}
+      onClose={closeTransactionForm}
+      onAdd={addExpense}
+      initialType={initialType}
+    />
+  )
+}
+
+function AuthenticatedApp() {
+  const { openTransactionForm } = useTransactionForm()
   const { user } = useAuth()
-  const [isFormOpen, setIsFormOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('home')
   const [showWelcome, setShowWelcome] = useState(() => localStorage.getItem('prisma_auth_show_welcome') === 'true')
 
@@ -45,7 +59,7 @@ function AuthenticatedApp() {
         <AppSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          onOpenTransactionForm={() => setIsFormOpen(true)}
+          onOpenTransactionForm={openTransactionForm}
         />
         <SidebarInset>
           <SiteHeader activeTab={activeTab} />
@@ -63,11 +77,7 @@ function AuthenticatedApp() {
             </div>
           </div>
         </SidebarInset>
-        <AddExpenseForm
-          isOpen={isFormOpen}
-          onClose={() => setIsFormOpen(false)}
-          onAdd={addExpense}
-        />
+        <TransactionFormGate />
       </SidebarProvider>
     </TooltipProvider>
 
@@ -97,7 +107,11 @@ export default function App() {
   return (
     <AuthProvider>
       <FinanceProvider>
-        <AppShell />
+        <TransactionFormProvider>
+          <ToastProvider>
+            <AppShell />
+          </ToastProvider>
+        </TransactionFormProvider>
       </FinanceProvider>
     </AuthProvider>
   )

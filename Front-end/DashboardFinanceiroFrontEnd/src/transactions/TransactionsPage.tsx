@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, ChevronDown, ChevronUp, Grid, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, Grid, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,11 +13,13 @@ import {
 } from '@/components/ui/select'
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
+import { useTransactionForm } from '../finance/TransactionFormContext'
 import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
 import type { CategoryId, MonthFilter } from '../shared/types'
 
 export function TransactionsPage() {
   const { expenses, categories } = useFinance()
+  const { openTransactionForm } = useTransactionForm()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
@@ -73,9 +75,15 @@ export function TransactionsPage() {
 
   return (
     <div className="p-6 lg:p-8 max-w-[1400px] mx-auto w-full space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Transações</h1>
-        <p className="text-muted-foreground text-sm mt-1">Toda a sua atividade financeira centralizada em um só lugar.</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Transações</h1>
+          <p className="text-muted-foreground text-sm mt-1">Toda a sua atividade financeira centralizada em um só lugar.</p>
+        </div>
+        <Button onClick={() => openTransactionForm()}>
+          <Plus className="mr-2 h-4 w-4" />
+          Nova Transação
+        </Button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
