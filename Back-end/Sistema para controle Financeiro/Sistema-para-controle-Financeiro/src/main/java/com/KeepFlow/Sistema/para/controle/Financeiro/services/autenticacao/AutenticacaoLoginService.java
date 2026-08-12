@@ -44,11 +44,11 @@ public class AutenticacaoLoginService {
   }
   public String gerarToken(String email){
         UserDTO userBanco = userRepository.findByEmail(email);
-        return tokenServices.generateToken(userBanco.uuid());
+        return tokenServices.generateToken(userBanco.id());
   }
   private LoginResponseDTO gerarRespostaLogin(String email){
         UserDTO userBanco = userRepository.findByEmail(email);
-        String token = tokenServices.generateToken(userBanco.uuid());
+        String token = tokenServices.generateToken(userBanco.id());
         return new LoginResponseDTO(token, userBanco.nome());
   }
 }

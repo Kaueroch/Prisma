@@ -31,7 +31,6 @@ class TokenServicesTest {
         // Assert - Verifica se não é nulo ou vazio
         assertNotNull(token, "O token não deveria ser nulo");
         assertFalse(token.isEmpty(), "O token não deveria ser vazio");
-
         // Act - Valida o token
         String subjectValido = tokenServices.validarToken(token);
 
