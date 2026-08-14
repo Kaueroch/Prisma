@@ -21,7 +21,9 @@ services:
       dockerfile: Dockerfile
     container_name: prisma-backend
     ports:
-      - "8082:8080"
+      - "8080:8080"
+    env_file:
+      - .env
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prisma_db
       SPRING_DATASOURCE_USERNAME: postgres
@@ -38,7 +40,7 @@ services:
       dockerfile: Dockerfile
     container_name: prisma-frontend
     ports:
-      - "82:80"
+      - "3000:3000"
     depends_on:
       - backend
 
