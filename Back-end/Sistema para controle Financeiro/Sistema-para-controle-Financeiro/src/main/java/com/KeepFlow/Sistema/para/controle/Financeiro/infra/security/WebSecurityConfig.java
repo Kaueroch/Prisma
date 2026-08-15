@@ -20,6 +20,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(org.springframework.security.config.Customizer.withDefaults())
                 // 1. Desabilita o CSRF (Essencial para APIs REST Stateless)
                 .csrf(AbstractHttpConfigurer::disable)
 
