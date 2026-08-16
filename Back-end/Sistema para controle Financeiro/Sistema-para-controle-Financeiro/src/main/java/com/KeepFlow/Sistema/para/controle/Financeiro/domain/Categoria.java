@@ -1,38 +1,34 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
-import jakarta.persistence.*;
-import lombok.Getter;
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoNomeVazio;
 
-import java.util.UUID;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_categorias")
-public class Categoria {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "cd_id")
-    private UUID id;
+public class Categoria{
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @Column(name = "cd_id")
+  private Long id;
+  @Column(name = "nm_nome")
+  private String nome;
+  @Column(name = "ds_tipoCategoria")
+  private String tipoCategoria;
+    
 
-    @Getter
-    @Column(name = "nm_nome")
-    private String nome;
-
-    @Getter
-    @Column(name = "ds_cor")
-    private String cor;
-
-    @Getter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cd_usuario_id")
-    private User usuario;
-
-    protected Categoria() {
+    public Categoria(String _nome){
+      camposVazios(_nome);
+      this.nome = _nome; 
     }
 
-    public Categoria(String nome, String cor, User usuario) {
-        this.nome = nome;
-        this.cor = cor;
-        this.usuario = usuario;
+
+    public String getNome(){
+     return nome;
     }
+  private void camposVazios(String nome){
+  if(nome.length() < 3 || nome.length() > 15){
+  throw new CampoNomeVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
+  }
+  }
 }
