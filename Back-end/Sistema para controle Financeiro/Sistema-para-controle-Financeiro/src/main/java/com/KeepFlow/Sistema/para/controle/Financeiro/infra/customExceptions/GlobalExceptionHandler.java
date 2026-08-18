@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
      @ExceptionHandler(CampoNomeVazio.class)
-     public ResponseEntity<String> handleCampoNomeVazio(CampoVazio ex)
+     public ResponseEntity<String> handleCampoNomeVazio(CampoNomeVazio ex)
      {
 	     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
      }

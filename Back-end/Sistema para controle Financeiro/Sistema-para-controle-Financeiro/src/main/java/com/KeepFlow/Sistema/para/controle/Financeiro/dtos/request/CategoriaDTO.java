@@ -1,5 +1,5 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request;
 
 
-public record CategoriaDTO(String name, String tipoCategoria){
+public record CategoriaDTO(String nome, String tipoCategoria){
 }
