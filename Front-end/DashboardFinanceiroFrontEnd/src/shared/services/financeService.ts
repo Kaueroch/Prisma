@@ -50,7 +50,7 @@ export const financeService = {
 
   defaultCategoryType(id: string): import('../types').CategoryKind {
     const known = CATEGORIES[id as keyof typeof CATEGORIES];
-    return known?.type ?? 'both';
+    return known?.type ?? 'expense';
   },
 
   saveCategories(categories: import('../types').CategoryInfo[]): void {

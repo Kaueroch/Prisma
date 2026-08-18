@@ -9,6 +9,7 @@ interface FinanceContextType {
   goals: Goal[];
   contacts: Contact[];
   deals: Deal[];
+  loading: boolean;
   addGoal: (goal: Omit<Goal, 'id'>) => void;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   addBudget: (budget: Omit<Budget, 'id'>) => void;
@@ -39,6 +40,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setExpenses(financeService.getExpenses());
@@ -47,6 +49,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     setGoals(financeService.getGoals());
     setContacts(financeService.getContacts());
     setDeals(financeService.getDeals());
+    setLoading(false);
   }, []);
 
   const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
@@ -180,7 +183,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const balance = useMemo(() => totalIncome - totalExpense, [totalIncome, totalExpense]);
 
   const value = useMemo(() => ({
-    expenses, budgets, categories, goals, contacts, deals,
+    expenses, budgets, categories, goals, contacts, deals, loading,
     addGoal: handleAddGoal,
     addExpense: handleAddExpense,
     addBudget: handleAddBudget,
@@ -194,7 +197,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     addDeal: handleAddDeal,
     updateDeal: handleUpdateDeal,
     totalIncome, totalExpense, balance
-  }), [expenses, budgets, categories, goals, contacts, deals, totalIncome, totalExpense, balance]);
+  }), [expenses, budgets, categories, goals, contacts, deals, loading, totalIncome, totalExpense, balance]);
 
   return (
     <FinanceContext.Provider value={value}>

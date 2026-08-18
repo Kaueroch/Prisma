@@ -1,6 +1,6 @@
 export type CategoryId = string;
 
-export type CategoryKind = 'income' | 'expense' | 'both';
+export type CategoryKind = 'income' | 'expense';
 
 export interface CategoryInfo {
   id: CategoryId;

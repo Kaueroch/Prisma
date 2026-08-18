@@ -7,7 +7,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#fb923c', 
     bgClass: 'bg-orange-400', 
     textClass: 'text-black',
-    type: 'expense' 
+    type: 'expense',
   },
   transport: { 
     id: 'transport', 
@@ -15,7 +15,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#38bdf8', 
     bgClass: 'bg-sky-400', 
     textClass: 'text-black',
-    type: 'expense' 
+    type: 'expense',
   },
   shopping: { 
     id: 'shopping', 
@@ -23,7 +23,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#c084fc', 
     bgClass: 'bg-purple-400', 
     textClass: 'text-black',
-    type: 'expense' 
+    type: 'expense',
   },
   bills: { 
     id: 'bills', 
@@ -31,7 +31,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#4ade80', 
     bgClass: 'bg-green-400', 
     textClass: 'text-black',
-    type: 'expense' 
+    type: 'expense',
   },
   other: { 
     id: 'other', 
@@ -39,7 +39,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#a1a1aa', 
     bgClass: 'bg-zinc-400', 
     textClass: 'text-black',
-    type: 'both' 
+    type: 'expense',
   },
   salary: { 
     id: 'salary', 
@@ -47,6 +47,6 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
     color: '#4ade80', 
     bgClass: 'bg-green-500', 
     textClass: 'text-black',
-    type: 'income' 
+    type: 'income',
   },
 };

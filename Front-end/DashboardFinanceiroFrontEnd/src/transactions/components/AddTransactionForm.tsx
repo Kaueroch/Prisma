@@ -47,7 +47,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
   }, [type])
 
   const availableCategories = categories.filter(
-    (c) => c.type === 'both' || c.type === type
+    (c) => c.type === type
   )
 
   const handleSubmit = (e: FormEvent) => {

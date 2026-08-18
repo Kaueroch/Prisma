@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Grid, Utensils, Car, ShoppingCart, Zap, MoreHorizontal, Briefcase, PiggyBank } from 'lucide-react'
+import { Plus, PiggyBank } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -48,21 +48,17 @@ export function BudgetsPage() {
             const percent = Math.min(100, Math.round((spent / b.amount) * 100)) || 0
             const isOver = spent > b.amount
 
-            const categoryIcon = (() => {
-              const icons: Record<string, typeof Grid> = { food: Utensils, transport: Car, shopping: ShoppingCart, bills: Zap, other: MoreHorizontal, salary: Briefcase }
-              return icons[b.categoryId] || Grid
-            })()
-            const CatIcon = categoryIcon
+            const initial = catInfo.name.charAt(0).toUpperCase()
 
             return (
               <Card key={b.id || b.categoryId}>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4 mb-4">
                     <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: `${catInfo.color}20` }}
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-base font-bold text-black"
+                      style={{ backgroundColor: catInfo.color }}
                     >
-                      <CatIcon className="w-5 h-5" style={{ color: catInfo.color }} strokeWidth={2.5} />
+                      {initial}
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="font-medium text-base truncate">{catInfo.name}</span>
