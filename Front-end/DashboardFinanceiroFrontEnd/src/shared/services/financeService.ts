@@ -30,11 +30,7 @@ export const financeService = {
 
   getCategories(): import('../types').CategoryInfo[] {
     const data = localStorage.getItem('finance_dashboard_categories');
-    if (!data) {
-      const initial = Object.values(CATEGORIES) as import('../types').CategoryInfo[];
-      this.saveCategories(initial);
-      return initial;
-    }
+    if (!data) return [];
     try {
       const stored = JSON.parse(data) as import('../types').CategoryInfo[];
       const migrated = stored.map((c) => ({

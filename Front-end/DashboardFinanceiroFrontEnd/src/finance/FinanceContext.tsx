@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Expense, Budget, CategoryInfo, Goal, Contact, Deal } from '../shared/types';
+import { Expense, Budget, CategoryInfo, Goal, Contact, Deal, CategoryKind } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
+import { categoriesApi } from '../shared/services/categoriesApi';
 
 interface FinanceContextType {
   expenses: Expense[];
@@ -43,13 +43,33 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setExpenses(financeService.getExpenses());
-    setBudgets(financeService.getBudgets());
-    setCategories(financeService.getCategories());
-    setGoals(financeService.getGoals());
-    setContacts(financeService.getContacts());
-    setDeals(financeService.getDeals());
-    setLoading(false);
+    const loadData = async () => {
+      setExpenses(financeService.getExpenses());
+      setBudgets(financeService.getBudgets());
+      setGoals(financeService.getGoals());
+      setContacts(financeService.getContacts());
+      setDeals(financeService.getDeals());
+
+      try {
+        const backendCategories = await categoriesApi.listar();
+        console.log('Categorias do backend:', backendCategories);
+        const mapped = backendCategories.map(c => ({
+          id: String(c.id),
+          name: c.nome,
+          color: '#8b5cf6',
+          bgClass: 'bg-white/10',
+          textClass: 'text-white',
+          type: c.tipoCategoria as CategoryKind,
+        }));
+        setCategories(mapped);
+      } catch (err) {
+        console.warn('Erro ao buscar categorias do backend, usando localStorage:', err);
+        setCategories(financeService.getCategories());
+      }
+
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
@@ -90,7 +110,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       ...newCategory,
       id: Math.random().toString(36).substring(7),
     };
-    setCategories((prev) => {
+	    console.log('Categoria adicionada!');
       const updated = [...prev, category];
       financeService.saveCategories(updated);
       return updated;
