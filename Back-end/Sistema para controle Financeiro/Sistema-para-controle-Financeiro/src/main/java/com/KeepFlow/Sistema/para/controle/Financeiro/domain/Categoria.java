@@ -3,7 +3,6 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoNomeVazio;
 
 import jakarta.persistence.*;
-import lombok.Getter;
 
 @Entity
 @Table(name = "tb_categorias")
@@ -17,13 +16,22 @@ public class Categoria{
   @Column(name = "ds_tipoCategoria")
   private String tipoCategoria;
 
+  public Integer getId() {
+    return id;
+  }
+
   public String getNome() {
     return nome;
   }
 
-  public Categoria(String _nome){
+  public String getTipoCategoria() {
+    return tipoCategoria;
+  }
+
+  public Categoria(String _nome, String _tipoCategoria){
       camposVazios(_nome);
       this.nome = _nome; 
+      this.tipoCategoria = _tipoCategoria;
     }
 
 

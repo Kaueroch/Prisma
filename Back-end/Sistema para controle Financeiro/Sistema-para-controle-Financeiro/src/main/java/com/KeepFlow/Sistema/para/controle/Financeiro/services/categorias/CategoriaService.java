@@ -16,11 +16,11 @@ public class CategoriaService{
  }
 
 
- public String SalvarCategoria(Categoria categoria){
-   if(categoriaRepository.findByNome(categoria.getNome())){
+ public void SalvarCategoria(String nome, String tipoCategoria){
+   if(categoriaRepository.findByNome(nome)){
      throw new CategoriaJaExistente("Essa categoria já existe."); 
    }
+   Categoria categoria = new Categoria(nome,tipoCategoria);
    categoriaRepository.save(categoria);
-   return "Sua categoria foi salva!";
  }
 }
