@@ -34,23 +34,28 @@ export function CategoriesPage() {
     [expenses]
   )
 
-  const handleAdd = () => {
+  // Envia a nova categoria para o backend e atualiza a lista
+  const handleAdd = async () => {
     if (!newCatName.trim()) return
     if (categories.some(c => c.name.toLowerCase() === newCatName.trim().toLowerCase())) {
       alert('Já existe uma categoria com este nome.')
       return
     }
-    addCategory({
-      name: newCatName.trim(),
-      color: newCatColor,
-      bgClass: 'bg-white/10',
-      textClass: 'text-white',
-      type: newCatType,
-    })
-    setNewCatName('')
-    setNewCatColor('#8b5cf6')
-    setNewCatType('expense')
-    setIsAdding(false)
+    try {
+      await addCategory({
+        name: newCatName.trim(),
+        color: newCatColor,
+        bgClass: 'bg-white/10',
+        textClass: 'text-white',
+        type: newCatType,
+      })
+      setNewCatName('')
+      setNewCatColor('#8b5cf6')
+      setNewCatType('expense')
+      setIsAdding(false)
+    } catch (err) {
+      alert('Erro ao criar categoria. Verifique se o backend está rodando.')
+    }
   }
 
   const handleSaveEdit = (id: string) => {

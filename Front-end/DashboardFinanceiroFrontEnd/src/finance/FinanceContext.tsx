@@ -1,3 +1,4 @@
+import { createContext, useState, useEffect, useMemo, type ReactNode, type Dispatch, type SetStateAction } from 'react';
 import { Expense, Budget, CategoryInfo, Goal, Contact, Deal, CategoryKind } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
 import { categoriesApi } from '../shared/services/categoriesApi';
@@ -13,7 +14,7 @@ interface FinanceContextType {
   addGoal: (goal: Omit<Goal, 'id'>) => void;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   addBudget: (budget: Omit<Budget, 'id'>) => void;
-  setBudgets: React.Dispatch<React.SetStateAction<Budget[]>>;
+  setBudgets: Dispatch<SetStateAction<Budget[]>>;
   addCategory: (category: Omit<CategoryInfo, 'id'>) => void;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => void;
   deleteCategory: (id: string) => void;
@@ -50,6 +51,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       setContacts(financeService.getContacts());
       setDeals(financeService.getDeals());
 
+      // Carrega categorias do backend; se falhar, usa dados do localStorage
       try {
         const backendCategories = await categoriesApi.listar();
         console.log('Categorias do backend:', backendCategories);
@@ -97,7 +99,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  const handleSetBudgets = (action: React.SetStateAction<Budget[]>) => {
+  const handleSetBudgets = (action: SetStateAction<Budget[]>) => {
     setBudgets((prev) => {
       const next = typeof action === 'function' ? action(prev) : action;
       financeService.saveBudgets(next);
@@ -105,18 +107,35 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  const handleAddCategory = (newCategory: Omit<CategoryInfo, 'id'>) => {
-    const category: CategoryInfo = {
-      ...newCategory,
-      id: Math.random().toString(36).substring(7),
-    };
-	    console.log('Categoria adicionada!');
-      const updated = [...prev, category];
-      financeService.saveCategories(updated);
-      return updated;
-    });
+  // Adiciona uma nova categoria, enviando para o backend via API
+  const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
+    try {
+      // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
+      const tipoBackend = newCategory.type === 'expense' ? 'Despesa' : 'Receita';
+      const criada = await categoriesApi.criar(newCategory.name, tipoBackend);
+
+      // Converte a resposta do backend para o formato do frontend
+      const category: CategoryInfo = {
+        id: String(criada.id),
+        name: criada.nome,
+        color: newCategory.color,
+        bgClass: newCategory.bgClass,
+        textClass: newCategory.textClass,
+        type: newCategory.type,
+      };
+
+      setCategories((prev) => {
+        const updated = [category, ...prev];
+        financeService.saveCategories(updated);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Erro ao criar categoria no backend:', err);
+      throw err;
+    }
   };
 
+  // Atualiza uma categoria existente (apenas localmente, sem backend)
   const handleUpdateCategory = (id: string, updates: Partial<CategoryInfo>) => {
     setCategories((prev) => {
       const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
@@ -125,6 +144,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
+  // Remove uma categoria pelo ID (apenas localmente, sem backend)
   const handleDeleteCategory = (id: string) => {
     setCategories((prev) => {
       const updated = prev.filter(c => c.id !== id);
