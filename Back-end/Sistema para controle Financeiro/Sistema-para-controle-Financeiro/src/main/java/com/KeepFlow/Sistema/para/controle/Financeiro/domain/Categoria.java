@@ -1,6 +1,7 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoNomeVazio;
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.TipoTextoNaoAutorizado;
 
 import jakarta.persistence.*;
 
@@ -16,10 +17,6 @@ public class Categoria{
   @Column(name = "ds_tipoCategoria")
   private String tipoCategoria;
 
-  public Integer getId() {
-    return id;
-  }
-
   public String getNome() {
     return nome;
   }
@@ -29,15 +26,21 @@ public class Categoria{
   }
 
   public Categoria(String _nome, String _tipoCategoria){
-      camposVazios(_nome);
-      this.nome = _nome; 
+      validaCampoNome(_nome);
+      validaCampoCategoria(_tipoCategoria);
+      this.nome = _nome;
       this.tipoCategoria = _tipoCategoria;
     }
 
 
-    private void camposVazios(String nome){
+  private void validaCampoNome(String nome){
   if(nome.length() < 3 || nome.length() > 15){
   throw new CampoNomeVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
   }
+
+  private void validaCampoCategoria(String tipoCategoria){
+    if(tipoCategoria != "Receita" || tipoCategoria != "Despesa"){
+    throw new TipoTextoNaoAutorizado("Apenas Receita ou Despesas são aceitas para serem salvas no banco de dados."); 
+    }
   }
 }

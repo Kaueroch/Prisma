@@ -7,5 +7,5 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.domain.Categoria;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria,Integer>{
- boolean findByNome(String nome);  
+ boolean existsByNome(String nome);  
 }

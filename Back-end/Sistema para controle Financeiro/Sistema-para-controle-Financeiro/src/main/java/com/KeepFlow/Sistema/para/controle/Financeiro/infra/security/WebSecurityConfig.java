@@ -29,8 +29,7 @@ public class WebSecurityConfig {
                         // Libera totalmente o acesso ao endpoint de registro e login
                         .requestMatchers("/api/v1/user/registrar").permitAll()
                         .requestMatchers("/api/v1/user/login").permitAll()
-                        // Qualquer outra requisição precisará de autenticação
-
+			// Qualquer outra requisição precisará de autenticação
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -8,10 +8,8 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.CategoriaDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.response.CategoriaResponseDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.categorias.CategoriaService;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("api/v1/categoria")
+@RequestMapping("/api/v1/categoria")
 public class CategoriaController{
      private final CategoriaService categoriaService;
 	public CategoriaController(CategoriaService _categoriaService){
@@ -21,6 +19,7 @@ public class CategoriaController{
 
 	@PostMapping("/criarCategoria")
 	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO categoriaDTO){
+         categoriaService.SalvarCategoria(categoriaDTO);
          CategoriaResponseDTO response = new CategoriaResponseDTO("A categoria foi criada.");
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
