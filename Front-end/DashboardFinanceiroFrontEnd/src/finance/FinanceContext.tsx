@@ -61,7 +61,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
           color: '#8b5cf6',
           bgClass: 'bg-white/10',
           textClass: 'text-white',
-          type: c.tipoCategoria as CategoryKind,
+          type: (c.tipoCategoria === 'Despesa' ? 'expense' : 'income') as CategoryKind,
         }));
         setCategories(mapped);
       } catch (err) {

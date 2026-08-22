@@ -10,11 +10,14 @@
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
+/** Tipos aceitos pelo domain - EXATAMENTE "Despesa" ou "Receita" */
+export type TipoCategoria = 'Despesa' | 'Receita';
+
 /** Interface que representa uma categoria retornada pelo backend */
 export interface BackendCategoria {
   id: number;        // ID numérico gerado pelo backend
   nome: string;      // Nome da categoria (ex: "Alimentação")
-  tipoCategoria: string; // Tipo: "Despesa" ou "Receita"
+  tipoCategoria: TipoCategoria; // Tipo: "Despesa" ou "Receita"
 }
 
 /** Busca o token JWT salvo no localStorage para autenticação */
@@ -31,11 +34,16 @@ function authHeaders(): Record<string, string> {
   };
 }
 
-/** Converte o tipo do frontend ("expense"/"income") para o formato do backend ("Despesa"/"Receita") */
-function traduzirTipo(tipo: string): string {
-  if (tipo === 'expense') return 'Despesa';
-  if (tipo === 'income') return 'Receita';
-  return tipo;
+/**
+ * Normaliza o tipo vindo do backend para EXATAMENTE "Despesa" ou "Receita".
+ * Aceita variações de casing e os formatos em inglês (expense/income).
+ * Lança erro se o valor não for reconhecido, garantindo a integridade do domain.
+ */
+function normalizarTipo(tipo: string): TipoCategoria {
+  const t = tipo?.trim().toLowerCase();
+  if (t === 'despesa' || t === 'expense') return 'Despesa';
+  if (t === 'receita' || t === 'income') return 'Receita';
+  throw new Error(`tipoCategoria inválido recebido do backend: "${tipo}"`);
 }
 
 export const categoriesApi = {
@@ -50,7 +58,7 @@ export const categoriesApi = {
     });
     if (!response.ok) throw new Error('Erro ao buscar categorias');
     const data: BackendCategoria[] = await response.json();
-    return data.map(c => ({ ...c, tipoCategoria: traduzirTipo(c.tipoCategoria) }));
+    return data.map(c => ({ ...c, tipoCategoria: normalizarTipo(c.tipoCategoria) }));
   },
 
   /**
@@ -60,7 +68,7 @@ export const categoriesApi = {
    * @param tipoCategoria - Tipo: "Despesa" ou "Receita"
    * Retorna: A categoria criada com o ID gerado pelo backend
    */
-  async criar(nome: string, tipoCategoria: string): Promise<BackendCategoria> {
+  async criar(nome: string, tipoCategoria: TipoCategoria): Promise<BackendCategoria> {
     const response = await fetch(`${API_URL}/api/v1/categoria/criarCategoria`, {
       method: 'POST',
       headers: authHeaders(),
@@ -71,6 +79,6 @@ export const categoriesApi = {
       throw new Error(text || 'Erro ao criar categoria');
     }
     const data: BackendCategoria = await response.json();
-    return { ...data, tipoCategoria: traduzirTipo(data.tipoCategoria) };
+    return { ...data, tipoCategoria: normalizarTipo(data.tipoCategoria) };
   },
 };
