@@ -10,14 +10,17 @@
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
-/** Tipos aceitos pelo domain - EXATAMENTE "Despesa" ou "Receita" */
-export type TipoCategoria = 'Despesa' | 'Receita';
-
 /** Interface que representa uma categoria retornada pelo backend */
 export interface BackendCategoria {
   id: number;        // ID numérico gerado pelo backend
   nome: string;      // Nome da categoria (ex: "Alimentação")
-  tipoCategoria: TipoCategoria; // Tipo: "Despesa" ou "Receita"
+  tipoCategoria: string;
+}
+
+/** Payload de criação enviado ao backend - campos batem com CategoriaDTO */
+export interface CriarCategoriaPayload {
+  nome: string;
+  tipoCategoria: string;
 }
 
 /** Busca o token JWT salvo no localStorage para autenticação */
@@ -34,51 +37,33 @@ function authHeaders(): Record<string, string> {
   };
 }
 
-/**
- * Normaliza o tipo vindo do backend para EXATAMENTE "Despesa" ou "Receita".
- * Aceita variações de casing e os formatos em inglês (expense/income).
- * Lança erro se o valor não for reconhecido, garantindo a integridade do domain.
- */
-function normalizarTipo(tipo: string): TipoCategoria {
-  const t = tipo?.trim().toLowerCase();
-  if (t === 'despesa' || t === 'expense') return 'Despesa';
-  if (t === 'receita' || t === 'income') return 'Receita';
-  throw new Error(`tipoCategoria inválido recebido do backend: "${tipo}"`);
-}
-
 export const categoriesApi = {
   /**
    * Lista todas as categorias do usuário logado.
    * Chama: GET /api/v1/categoria/listar
-   * Retorna: Array de BackendCategoria com tipoCategoria traduzido
    */
   async listar(): Promise<BackendCategoria[]> {
     const response = await fetch(`${API_URL}/api/v1/categoria/listar`, {
       headers: authHeaders(),
     });
     if (!response.ok) throw new Error('Erro ao buscar categorias');
-    const data: BackendCategoria[] = await response.json();
-    return data.map(c => ({ ...c, tipoCategoria: normalizarTipo(c.tipoCategoria) }));
+    return (await response.json()) as BackendCategoria[];
   },
 
   /**
-   * Cria uma nova categoria no backend.
+   * Cria uma nova categoria no backend enviando o payload puro do formulário.
    * Chama: POST /api/v1/categoria/criarCategoria
-   * @param nome - Nome da categoria (ex: "Transporte")
-   * @param tipoCategoria - Tipo: "Despesa" ou "Receita"
-   * Retorna: A categoria criada com o ID gerado pelo backend
+   * O backend responde apenas com uma mensagem de confirmação.
    */
-  async criar(nome: string, tipoCategoria: TipoCategoria): Promise<BackendCategoria> {
+  async criar(payload: CriarCategoriaPayload): Promise<void> {
     const response = await fetch(`${API_URL}/api/v1/categoria/criarCategoria`, {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ nome, tipoCategoria }),
+      body: JSON.stringify(payload),
     });
     if (!response.ok) {
       const text = await response.text();
       throw new Error(text || 'Erro ao criar categoria');
     }
-    const data: BackendCategoria = await response.json();
-    return { ...data, tipoCategoria: normalizarTipo(data.tipoCategoria) };
   },
 };

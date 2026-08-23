@@ -111,17 +111,12 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
     try {
       // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
-      const tipoBackend = newCategory.type === 'expense' ? 'Despesa' : 'Receita';
-      const criada = await categoriesApi.criar(newCategory.name, tipoBackend);
+      const tipoCategoria = newCategory.type === 'expense' ? 'Despesa' : 'Receita';
+      await categoriesApi.criar({ nome: newCategory.name, tipoCategoria });
 
-      // Converte a resposta do backend para o formato do frontend
       const category: CategoryInfo = {
-        id: String(criada.id),
-        name: criada.nome,
-        color: newCategory.color,
-        bgClass: newCategory.bgClass,
-        textClass: newCategory.textClass,
-        type: newCategory.type,
+        ...newCategory,
+        id: Math.random().toString(36).substring(7),
       };
 
       setCategories((prev) => {
