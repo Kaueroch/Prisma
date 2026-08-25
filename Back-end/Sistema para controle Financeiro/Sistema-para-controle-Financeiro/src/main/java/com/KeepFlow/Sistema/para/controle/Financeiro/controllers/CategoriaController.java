@@ -18,8 +18,12 @@ public class CategoriaController{
 
 
 	@PostMapping("/criarCategoria")
-	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO categoriaDTO){
-         categoriaService.SalvarCategoria(categoriaDTO);
+	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO dto){
+        //preicos pensar em como devolver esse ResponseEntity sem usar o boolean, mas se eu pensar e pensar e ver que é uma boa solucao,irei deixar. 
+	boolean salva = categoriaService.SalvarCategoria(dto.nome(), dto.tipoCategoria());
+         if(!salva){
+             return ResponseEntity.status(HttpStatus.CONFLICT).body(new CategoriaResponseDTO("Essa categoria já existe."));
+         }
          CategoriaResponseDTO response = new CategoriaResponseDTO("A categoria foi criada.");
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}

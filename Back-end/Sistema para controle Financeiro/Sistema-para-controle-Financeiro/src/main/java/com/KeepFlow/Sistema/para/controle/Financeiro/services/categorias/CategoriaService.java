@@ -1,9 +1,7 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.services.categorias;
 
 import org.springframework.stereotype.Service;
-import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.CategoriaDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.domain.Categoria;
-import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CategoriaJaExistente;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.CategoriaRepository;
 
 @Service
@@ -15,12 +13,13 @@ public class CategoriaService{
     this.categoriaRepository = categoriaRepository;
  }
 
- public void SalvarCategoria(CategoriaDTO categoriaDTO){
-     
-	     if(categoriaRepository.existsByNome(categoriaDTO.nome())){
-     throw new CategoriaJaExistente("Essa categoria já existe."); 
+ public boolean SalvarCategoria(String nome,String tipoCategoria){
+
+   if(categoriaRepository.existsByNome(nome)){
+     return false;
    }
-   Categoria categoria = new Categoria(categoriaDTO.nome(), categoriaDTO.tipoCategoria());
+   Categoria categoria = new Categoria(nome,tipoCategoria);
    categoriaRepository.save(categoria);
+   return true;
  }
 }

@@ -27,7 +27,7 @@ public class Categoria{
 
   public Categoria(String _nome, String _tipoCategoria){
       validaCampoNome(_nome);
-      validaCampoCategoria(_tipoCategoria);
+      //validaCampoCategoria(_tipoCategoria);
       this.nome = _nome;
       this.tipoCategoria = _tipoCategoria;
     }
@@ -38,9 +38,11 @@ public class Categoria{
   throw new CampoNomeVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
   }
 
-  private void validaCampoCategoria(String tipoCategoria){
-    if(tipoCategoria != "Receita" || tipoCategoria != "Despesa"){
-    throw new TipoTextoNaoAutorizado("Apenas Receita ou Despesas são aceitas para serem salvas no banco de dados."); 
-    }
-  }
+}
+//ver a logica pq o equals espera comparar um obj, entao vou ter que pensar de criar uma String que é um obj e comparar com o tipo Categoria mas vou ver.
+  //private void validaCampoCategoria(String tipoCategoria){
+    //if(tipoCategoria.equals("Receita") || tipoCategoria.equals("Despesa")){
+    //throw new TipoTextoNaoAutorizado("Apenas Receita ou Despesas são aceitas para serem salvas no banco de dados."); 
+    //}
+  //}
 }
