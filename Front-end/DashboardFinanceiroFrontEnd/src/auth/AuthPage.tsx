@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, type FormEvent } from 'react'
-import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, TrendingUp, BarChart3, Target } from 'lucide-react'
+import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, ArrowLeft, TrendingUp, BarChart3, Target } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -9,10 +9,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { motion, AnimatePresence } from 'motion/react'
 import { useAuth } from './AuthContext'
 
-export function AuthPage() {
+interface AuthPageProps {
+  initialTab?: 'login' | 'register'
+  onBack?: () => void
+}
+
+export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   const { login, register } = useAuth()
 
-  const [tab, setTab] = useState('login')
+  const [tab, setTab] = useState<'login' | 'register'>(initialTab)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,6 +28,14 @@ export function AuthPage() {
   const [popupMessage, setPopupMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [displayedText, setDisplayedText] = useState('')
+
+  useEffect(() => {
+    setTab(initialTab)
+    setError('')
+    setSuccess('')
+    setPassword('')
+    setConfirmPassword('')
+  }, [initialTab])
 
   const particles = useMemo(() =>
     Array.from({ length: 14 }, () => ({
@@ -85,7 +98,7 @@ export function AuthPage() {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte', 'Segura']
-    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500']
+    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-400', 'bg-lime-400']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
@@ -178,7 +191,7 @@ export function AuthPage() {
         <motion.div
           animate={{ scale: [1, 1.12, 1], opacity: [0.15, 0.25, 0.15] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full"
+          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-lime-400/[0.05] blur-[120px] rounded-full"
         />
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.18, 0.1] }}
@@ -201,7 +214,9 @@ export function AuthPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8"
+            onClick={onBack}
+            title={onBack ? 'Voltar para a página inicial' : undefined}
+            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 cursor-pointer"
           >
             <motion.div
               animate={{ rotate: [0, -6, 6, 0] }}
@@ -214,7 +229,9 @@ export function AuthPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-5xl font-bold text-white tracking-tight mb-4"
+            onClick={onBack}
+            title={onBack ? 'Voltar para a página inicial' : undefined}
+            className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
           >
             Prisma
           </motion.h1>
@@ -272,7 +289,7 @@ export function AuthPage() {
         <motion.div
           animate={{ scale: [1, 1.25, 1], opacity: [0.05, 0.1, 0.05] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-white/5 blur-[150px] rounded-full"
+          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[150px] rounded-full"
         />
         <motion.div
           animate={{ scale: [1, 1.35, 1], opacity: [0.03, 0.08, 0.03] }}
@@ -286,11 +303,23 @@ export function AuthPage() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="w-full max-w-sm relative z-10"
         >
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="mb-6 flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 cursor-pointer"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Página inicial
+            </button>
+          )}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            className="flex items-center justify-center gap-3 mb-8 lg:hidden"
+            onClick={onBack}
+            title={onBack ? 'Voltar para a página inicial' : undefined}
+            className="flex items-center justify-center gap-3 mb-8 lg:hidden cursor-pointer"
           >
             <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
               <Wallet className="w-6 h-6" />
@@ -345,7 +374,7 @@ export function AuthPage() {
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
                             error
                               ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                              : 'bg-lime-400/10 text-lime-400/90 border border-lime-400/20'
                           }`}
                         >
                           {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
@@ -382,7 +411,7 @@ export function AuthPage() {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-green-500/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -394,7 +423,7 @@ export function AuthPage() {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-green-500" />
+                                          <CheckCircle className="w-4 h-4 text-lime-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -468,7 +497,7 @@ export function AuthPage() {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-green-500/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -480,7 +509,7 @@ export function AuthPage() {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-green-500" />
+                                          <CheckCircle className="w-4 h-4 text-lime-400" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -524,7 +553,7 @@ export function AuthPage() {
                                     animate={{ height: 'auto', opacity: 1 }}
                                     className="overflow-hidden"
                                   >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-green-500' : 'text-red-500'}`}>
+                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-lime-400' : 'text-red-500'}`}>
                                       {passwordsMatch ? (
                                         <><CheckCircle className="w-3 h-3" /> Senhas conferem</>
                                       ) : (
