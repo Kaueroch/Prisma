@@ -1,8 +1,36 @@
-# Prisma Dashboard
+# Prisma — Painel Financeiro & CRM
 
-**Status:** 🚧 Em Desenvolvimento (Front-end concluído, Back-end em progresso)
+> Ferramenta **open source** para organizar receitas, despesas, orçamentos, metas e contatos em um painel escuro, rápido e direto ao ponto.
 
-## Stack Tecnológica
+![Dashboard do Prisma](./01-dashboard.png)
+
+---
+
+## ✨ O que o Prisma faz
+
+- **Landing page** com identidade fintech, dark mode e rota para login/registro.
+- **Autenticação** por e-mail e senha com token JWT (Bcrypt no backend).
+- **Dashboard**: saldo atual, receitas, despesas, economia líquida, donut de gastos por categoria e atividade recente.
+- **Transações**: registro de receitas e despesas em BRL, cards por categoria, busca e filtros.
+- **Orçamentos**: limites mensais por categoria com barra de progresso e alerta visual.
+- **Categorias**: CRUD completo com cores próprias.
+- **Metas**: valor alvo, economia mensal, progresso e previsão de prazo.
+- **CRM**: clientes, leads, parceiros e fornecedores com busca.
+
+## 🖼️ O sistema em ação
+
+| | |
+|---|---|
+| Transações ![Transações](./02-transactions.png) | Orçamentos ![Orçamentos](./03-budgets.png) |
+
+| Configurações ![Configurações](./04-settings.png) | |
+|---|---|
+
+> As capturas refletem o estado mais recente do painel (modo escuro, tema lime).
+
+---
+
+## 🧱 Stack Tecnológica
 
 | Camada | Tecnologia |
 |--------|-----------|
@@ -11,68 +39,108 @@
 | **Ícones** | Lucide React |
 | **Gráficos** | Recharts |
 | **Animações** | Motion (Framer Motion) |
-| **Backend** | Java / Spring Boot (em desenvolvimento) |
+| **Fonte** | Geist Variable |
+| **Backend** | Java / Spring Boot + Spring Security (JWT, Bcrypt) |
 | **Banco** | PostgreSQL 15 |
 | **Infra** | Docker + Docker Compose |
+| **Servidor web** | Nginx (SPA estática) |
 
-## Sistema de Transações
+---
 
-O gerenciamento financeiro do Prisma é composto por:
+## 🚀 Como executar
 
-### 📊 Dashboard
-- Visão geral com **saldo atual**, receitas totais, despesas totais e economia líquida
-- **Gráfico donut** de gastos por categoria (Recharts)
-- **Tabela de atividade recente** com as últimas transações
-- **Seletor de mês** para filtrar os dados por período
-
-### 💳 Transações
-- **Registro** de receitas e despesas com valor (formato BRL), descrição, data e categoria
-- **Visualização** em cards agrupados por categoria com total e maior gasto
-- **Filtros**: busca por texto, filtro por categoria e por tipo (receita/despesa)
-- **Expansão** de cada categoria para ver detalhes das transações
-
-### 📋 Orçamentos
-- Definição de **limites mensais** por categoria
-- **Barra de progresso** comparando gasto atual vs limite definido
-- Alertas visuais quando o orçamento é ultrapassado
-
-### 🏷️ Categorias
-- **CRUD completo**: criar, editar, renomear e excluir categorias
-- Personalização com **cores** para identificação visual
-- Categorias padrão: Alimentação, Transporte, Compras, Contas, Salário
-
-### 🎯 Metas
-- Definição de **objetivos financeiros** com valor alvo e economia mensal
-- **Progresso** com barra e estimativa de meses restantes
-- Status visual de meta alcançada
-
-### 👥 CRM de Contatos
-- Cadastro de **clientes, leads, parceiros e fornecedores**
-- Busca por nome, email ou empresa
-- Classificação por tipo com badges
-
-## Como Executar
-
-### Pré-requisitos
-- Docker e Docker Compose
-
-### Passos
+### Opção 1 — Docker (recomendado)
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/prisma-dashboard.git
-cd prisma-dashboard
+# 1. Clone o repositório
+git clone <seu-repo>
+cd Prisma
 
-# Configure variáveis de ambiente
+# 2. Configure as variáveis de ambiente do backend
 cp .env.example .env
 
-# Suba a infraestrutura
+# 3. Configure as variáveis do frontend
+cp Front-end/DashboardFinanceiroFrontEnd/.env.example Front-end/DashboardFinanceiroFrontEnd/.env
+
+# 4. Suba o banco, o backend e o frontend
 docker compose up --build -d
 ```
 
-### Acessos
-- **Frontend (dev):** `http://localhost:3000`
-- **Frontend (prod):** `http://localhost:80`
-- **API (Spring Boot):** `http://localhost:8080`
-- **API (desenvolvimento):** `http://localhost:3333`
-- **Banco (PostgreSQL):** `localhost:5432`
+**Acessos após o `docker compose up`:**
+
+| Serviço | URL |
+|---------|-----|
+| Frontend (produção, Nginx) | http://localhost |
+| Frontend (desenvolvimento) | http://localhost:3000 |
+| API (Spring Boot) | http://localhost:8080 |
+| Banco (PostgreSQL) | localhost:5433 |
+
+### Opção 2 — Desenvolvimento (sem Docker)
+
+```bash
+# Backend (Spring Boot) — dentro da pasta do backend
+./mvnw spring-boot:run
+
+# Frontend (Vite) — dentro de Front-end/DashboardFinanceiroFrontEnd
+npm install
+npm run dev
+```
+
+> O frontend lê a URL da API de `VITE_API_URL` (padrão: `http://localhost:8080`).
+
+---
+
+## 🔐 Variáveis de ambiente
+
+### Root (`.env`) — backend
+
+```bash
+KEY_POSTGRES_PORT=5432
+KEY_POSTGRES_DATABASE_NAME=prisma
+KEY_POSTGRES_USER=seu_usuario
+KEY_POSTGRES_PASSWORD=sua_senha
+JWT_SECRET=seu_segredo_jwt
+TIME_EXPIRATION_DTO=7200
+CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost"
+```
+
+### Frontend (`Front-end/DashboardFinanceiroFrontEnd/.env`)
+
+```bash
+VITE_API_URL="http://localhost:8080"
+```
+
+---
+
+## 🔒 Segurança
+
+- Senhas armazenadas com **Bcrypt** e autenticação por **JWT**.
+- Para habilitar HTTPS (TLS) em produção — certificado, Nginx, redirecionamento e renovação automática — siga o guia: [SEGURANCA_HTTPS.md](./SEGURANCA_HTTPS.md).
+
+---
+
+## 📁 Estrutura
+
+```
+Prisma/
+├── Back-end/                          # API Spring Boot (Java)
+├── Front-end/DashboardFinanceiroFrontEnd/
+│   ├── src/
+│   │   ├── landing/                   # Landing page (React)
+│   │   ├── auth/                      # Login, cadastro e contexto
+│   │   ├── dashboard/                 # Home do painel
+│   │   ├── transactions/              # Transações
+│   │   ├── budgets/                   # Orçamentos
+│   │   ├── categories/                # Categorias
+│   │   ├── goals/                     # Metas
+│   │   ├── contacts/                  # CRM
+│   │   └── shared/                    # Componentes, tipos e serviços
+│   └── Dockerfile                     # Build + Nginx
+├── docker-compose.yml                 # db + backend + frontend
+├── .env.example
+└── README.md
+```
+
+---
+
+*Prisma © 2026. Todos os direitos reservados. Projeto open source — rode com Docker.*

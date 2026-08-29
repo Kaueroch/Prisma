@@ -36,3 +36,9 @@ build/
 .env
 .env.local
 .env.*.local
+
+### Certificados TLS / chaves privadas ###
+certs/
+*.pem
+*.crt
+*.key
