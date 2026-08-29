@@ -201,7 +201,7 @@ export function TransactionsPage() {
                           <div key={expense.id} className="flex flex-col gap-0.5">
                             <div className="flex items-start justify-between">
                               <span className="text-sm font-medium">{expense.name}</span>
-                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-emerald-400' : ''}`}>
+                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-lime-400/90' : ''}`}>
                                 {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
                               </span>
                             </div>

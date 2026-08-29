@@ -28,8 +28,8 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   bills: { 
     id: 'bills', 
     name: 'Contas da Casa', 
-    color: '#4ade80', 
-    bgClass: 'bg-green-400', 
+    color: '#a3e635', 
+    bgClass: 'bg-lime-400', 
     textClass: 'text-black',
     type: 'expense',
   },
@@ -44,8 +44,8 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   salary: { 
     id: 'salary', 
     name: 'Salário', 
-    color: '#4ade80', 
-    bgClass: 'bg-green-500', 
+    color: '#a3e635', 
+    bgClass: 'bg-lime-400', 
     textClass: 'text-black',
     type: 'income',
   },

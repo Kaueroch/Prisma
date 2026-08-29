@@ -105,14 +105,14 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-              <ArrowDownLeft className="w-5 h-5 text-green-500" />
+            <div className="w-10 h-10 rounded-xl bg-lime-400/10 flex items-center justify-center">
+              <ArrowDownLeft className="w-5 h-5 text-lime-400" />
             </div>
             <div className="text-sm text-muted-foreground font-medium">Receitas Totais</div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatBRL(totalIncome)}</div>
-            <p className="text-green-400 text-xs mt-1 font-medium flex items-center gap-1">
+            <p className="text-lime-400/90 text-xs mt-1 font-medium flex items-center gap-1">
               <ArrowUpRight className="w-3 h-3" />
               Em dia
             </p>
@@ -198,9 +198,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
                       <TableRow key={transaction.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isIncome ? 'bg-green-500/10' : 'bg-muted'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isIncome ? 'bg-lime-400/10' : 'bg-muted'}`}>
                               {isIncome
-                                ? <ArrowDownLeft className="w-3.5 h-3.5 text-green-500" />
+                                ? <ArrowDownLeft className="w-3.5 h-3.5 text-lime-400" />
                                 : <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground" />}
                             </div>
                             <span className="font-medium text-sm">{transaction.name}</span>
@@ -217,7 +217,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Badge variant="secondary" className="bg-green-500/10 text-green-400 border-green-500/20">
+                          <Badge variant="secondary" className="bg-lime-400/10 text-lime-400/90 border-lime-400/20">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Concluído
                           </Badge>

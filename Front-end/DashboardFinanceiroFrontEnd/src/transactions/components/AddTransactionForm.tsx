@@ -96,7 +96,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
             <button
               type="button"
               onClick={() => handleTypeChange('income')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'income' ? 'bg-green-500/20 text-green-400' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'income' ? 'bg-lime-400/10 text-lime-400/90' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Receita
             </button>

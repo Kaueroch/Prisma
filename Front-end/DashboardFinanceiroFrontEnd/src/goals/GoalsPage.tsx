@@ -80,7 +80,7 @@ export function GoalsPage() {
                     </div>
                     <Progress
                       value={progress}
-                      className={`h-2.5 ${isCompleted ? '[&>div]:bg-green-500' : '[&>div]:bg-primary'}`}
+                      className={`h-2.5 ${isCompleted ? '[&>div]:bg-lime-400' : '[&>div]:bg-primary'}`}
                     />
                   </div>
 
@@ -108,7 +108,7 @@ export function GoalsPage() {
                     </div>
                   )}
                   {isCompleted && (
-                    <div className="bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl px-4 py-3 text-sm font-medium text-center flex items-center justify-center gap-2">
+                    <div className="bg-lime-400/10 text-lime-400/90 border border-lime-400/20 rounded-xl px-4 py-3 text-sm font-medium text-center flex items-center justify-center gap-2">
                       <Trophy className="w-4 h-4" />
                       Meta Alcançada!
                     </div>

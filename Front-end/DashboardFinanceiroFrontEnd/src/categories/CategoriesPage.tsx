@@ -199,7 +199,7 @@ export function CategoriesPage() {
                               ))}
                             </div>
                             <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
-                              <Check className="w-4 h-4 text-green-400" />
+                              <Check className="w-4 h-4 text-lime-400/90" />
                             </Button>
                             <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
                               <X className="w-4 h-4" />
