@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,7 @@ import { ProfilePage } from './profile/ProfilePage'
 import { GoalsPage } from './goals/GoalsPage'
 import { ContactsPage } from './contacts/ContactsPage'
 import { AuthPage } from './auth/AuthPage'
+import { LandingPage } from './landing/LandingPage'
 import { FinanceProvider } from './finance/FinanceContext'
 import { TransactionFormProvider, useTransactionForm } from './finance/TransactionFormContext'
 import { ToastProvider } from './shared/components/Toast'
@@ -22,10 +23,36 @@ import { AuthProvider, useAuth } from './auth/AuthContext'
 import { useFinance } from './finance/useFinance'
 import type { Tab } from './shared/types'
 
-function AppShell() {
+function getPublicRoute() {
+  const hash = window.location.hash
+  if (hash === '#/login') return 'login'
+  if (hash === '#/cadastro') return 'cadastro'
+  return 'landing'
+}
+
+function PublicGate() {
   const { user } = useAuth()
-  if (!user) return <AuthPage />
-  return <AuthenticatedApp />
+  const [route, setRoute] = useState(getPublicRoute)
+
+  useEffect(() => {
+    const onChange = () => setRoute(getPublicRoute())
+    window.addEventListener('hashchange', onChange)
+    return () => window.removeEventListener('hashchange', onChange)
+  }, [])
+
+  const goToLanding = () => {
+    setRoute('landing')
+    history.pushState(null, '', window.location.pathname + window.location.search)
+  }
+
+  if (user) return <AuthenticatedApp />
+  if (route === 'login') {
+    return <AuthPage initialTab="login" onBack={goToLanding} />
+  }
+  if (route === 'cadastro') {
+    return <AuthPage initialTab="register" onBack={goToLanding} />
+  }
+  return <LandingPage />
 }
 
 function TransactionFormGate() {
@@ -64,7 +91,7 @@ function AuthenticatedApp() {
         <SidebarInset>
           <SiteHeader activeTab={activeTab} />
           <div className="flex-1 flex flex-col overflow-auto relative">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
             <div className="flex-1 relative z-10">
               {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
@@ -109,7 +136,7 @@ export default function App() {
       <FinanceProvider>
         <TransactionFormProvider>
           <ToastProvider>
-            <AppShell />
+            <PublicGate />
           </ToastProvider>
         </TransactionFormProvider>
       </FinanceProvider>
