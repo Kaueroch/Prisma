@@ -16,6 +16,9 @@ public class Categoria{
   private String nome;
   @Column(name = "ds_tipoCategoria")
   private String tipoCategoria;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
   public String getNome() {
     return nome;
@@ -40,7 +43,9 @@ public class Categoria{
 
 }
   private void validaCampoCategoria(String tipoCategoria){
-    if(!tipoCategoria.equals("Receita") || !tipoCategoria.equals("Despesa")){
+    String receita = new String("Receita");
+    String despesa = new String("Despesas");
+    if(!tipoCategoria.equals(receita) && !tipoCategoria.equals(despesa)){
     throw new TipoTextoNaoAutorizado("Apenas Receita ou Despesas são aceitas para serem salvas no banco de dados.");
     }
   }

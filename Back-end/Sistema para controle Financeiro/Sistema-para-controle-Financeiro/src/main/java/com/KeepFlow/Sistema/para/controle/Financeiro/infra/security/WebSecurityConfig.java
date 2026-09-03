@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/user/registrar").permitAll()
                         .requestMatchers("/api/v1/user/login").permitAll()
 			//linha que serve para testes de desenvolvimento
-			//.requestMatchers("/api/v1/categoria/criarCategoria").permitAll()
+			.requestMatchers("/api/v1/categoria/criarCategoria").permitAll()
 			// Qualquer outra requisição precisará de autenticação
                         .anyRequest().authenticated()
                 )

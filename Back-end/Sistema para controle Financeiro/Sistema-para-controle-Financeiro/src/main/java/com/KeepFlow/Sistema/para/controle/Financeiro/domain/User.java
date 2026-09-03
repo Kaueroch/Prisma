@@ -4,6 +4,7 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.Senh
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,8 @@ public class User {
     private String email;
     @Column(name = "ds_senha")
     private String senha;
+    @OneToMany(mappedBy = "user")
+    private List<Categoria> categoriasLista;
 
     //regex para validar email se são válidos ou nao
        private static final String EMAIL_PATTERN =
