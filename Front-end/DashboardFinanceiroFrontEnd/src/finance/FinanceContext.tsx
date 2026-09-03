@@ -61,7 +61,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
           color: '#8b5cf6',
           bgClass: 'bg-white/10',
           textClass: 'text-white',
-          type: (c.tipoCategoria === 'Despesa' ? 'expense' : 'income') as CategoryKind,
+          type: (c.tipoCategoria === 'Despesas' ? 'expense' : 'income') as CategoryKind,
         }));
         setCategories(mapped);
       } catch (err) {
@@ -111,7 +111,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
     try {
       // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
-      const tipoCategoria = newCategory.type === 'expense' ? 'Despesa' : 'Receita';
+      const tipoCategoria = newCategory.type === 'expense' ? 'Despesas' : 'Receita';
       await categoriesApi.criar({ nome: newCategory.name, tipoCategoria });
 
       const category: CategoryInfo = {
