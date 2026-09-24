@@ -1,6 +1,6 @@
-# Prisma — Painel Financeiro & CRM
+# Prisma — Painel Financeiro
 
-> Ferramenta **open source** para organizar receitas, despesas, orçamentos, metas e contatos em um painel escuro, rápido e direto ao ponto.
+> Ferramenta **open source** para organizar receitas, despesas e categorias em um painel escuro, rápido e direto ao ponto.
 
 ![Dashboard do Prisma](./01-dashboard.png)
 
@@ -12,19 +12,13 @@
 - **Autenticação** por e-mail e senha com token JWT (Bcrypt no backend).
 - **Dashboard**: saldo atual, receitas, despesas, economia líquida, donut de gastos por categoria e atividade recente.
 - **Transações**: registro de receitas e despesas em BRL, cards por categoria, busca e filtros.
-- **Orçamentos**: limites mensais por categoria com barra de progresso e alerta visual.
 - **Categorias**: CRUD completo com cores próprias.
-- **Metas**: valor alvo, economia mensal, progresso e previsão de prazo.
-- **CRM**: clientes, leads, parceiros e fornecedores com busca.
 
 ## 🖼️ O sistema em ação
 
 | | |
 |---|---|
-| Transações ![Transações](./02-transactions.png) | Orçamentos ![Orçamentos](./03-budgets.png) |
-
-| Configurações ![Configurações](./04-settings.png) | |
-|---|---|
+| Transações ![Transações](./02-transactions.png) | Configurações ![Configurações](./04-settings.png) |
 
 > As capturas refletem o estado mais recente do painel (modo escuro, tema lime).
 
@@ -130,10 +124,7 @@ Prisma/
 │   │   ├── auth/                      # Login, cadastro e contexto
 │   │   ├── dashboard/                 # Home do painel
 │   │   ├── transactions/              # Transações
-│   │   ├── budgets/                   # Orçamentos
 │   │   ├── categories/                # Categorias
-│   │   ├── goals/                     # Metas
-│   │   ├── contacts/                  # CRM
 │   │   └── shared/                    # Componentes, tipos e serviços
 │   └── Dockerfile                     # Build + Nginx
 ├── docker-compose.yml                 # db + backend + frontend
