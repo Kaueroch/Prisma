@@ -105,9 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Zera todos os dados financeiros locais para começar o dashboard zerado
       localStorage.removeItem('finance_dashboard_expenses');
-      localStorage.removeItem('finance_dashboard_budgets');
       localStorage.removeItem('finance_dashboard_categories');
-      localStorage.removeItem('finance_dashboard_goals');
 
       // Marca que o popup de boas-vindas deve aparecer após o reload
       localStorage.setItem(WELCOME_FLAG_KEY, 'true');

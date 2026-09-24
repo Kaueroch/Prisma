@@ -1,11 +1,10 @@
-import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Minus, Plus, Target, Users, Wallet } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Minus, Plus, Wallet } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 const stats = [
   { label: 'Receitas Totais', value: 'R$ 8.400,00', accent: 'text-lime-400/90', icon: ArrowDownLeft, chip: 'bg-lime-400/10 text-lime-400/90', note: 'Em dia' },
   { label: 'Despesas Totais', value: 'R$ 4.200,00', accent: 'text-orange-400', icon: ArrowUpRight, chip: 'bg-orange-500/10 text-orange-400', note: 'agosto 2026' },
-  { label: 'Economia (Líquido)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-muted text-foreground', note: 'Disponível para Metas' },
-  { label: 'Contatos', value: '14', accent: '', icon: Users, chip: 'bg-muted text-foreground', note: '9 clientes' },
+  { label: 'Economia (Líquido)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-muted text-foreground', note: 'Diferença do mês' },
 ]
 
 const donut = [
@@ -79,14 +78,17 @@ export function DashboardMockup() {
             </div>
           </div>
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-background">
-            <Target className="h-6 w-6 text-zinc-300" />
+            <Wallet className="h-6 w-6 text-zinc-300" />
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-2xl border border-border bg-card p-4">
+        {stats.map((s, i) => (
+          <div
+            key={s.label}
+            className={`rounded-2xl border border-border bg-card p-4 ${i === 2 ? 'col-span-2' : ''}`}
+          >
             <div className="flex items-center gap-2.5">
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-muted">
                 <s.icon className={s.accent || 'text-foreground'} />
@@ -145,7 +147,7 @@ export function DashboardMockup() {
                 ))}
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Target className="h-5 w-5 text-zinc-300" />
+                <Wallet className="h-5 w-5 text-zinc-300" />
               </div>
             </div>
           </div>

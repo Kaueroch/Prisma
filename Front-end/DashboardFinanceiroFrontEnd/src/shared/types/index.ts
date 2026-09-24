@@ -20,47 +20,9 @@ export interface Expense {
   categoryId: CategoryId;
   name: string;
   type: TransactionType;
-  contactId?: string;
 }
 
-export interface Budget {
-  id: string;
-  categoryId: CategoryId;
-  amount: number;
-}
-
-export interface Goal {
-  id: string;
-  name: string;
-  targetAmount: number;
-  savedAmount: number;
-  monthlySavings: number;
-}
-
-export interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  type: 'client' | 'lead' | 'partner' | 'supplier';
-  notes: string;
-  createdAt: string;
-}
-
-export interface Deal {
-  id: string;
-  name: string;
-  contactId: string;
-  value: number;
-  stage: 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost';
-  probability: number;
-  expectedCloseDate: string;
-  notes: string;
-  createdAt: string;
-}
-
-export type Tab = 'home' | 'transactions' | 'budgets' | 'categories' | 'goals' | 'contacts' | 'profile';
+export type Tab = 'home' | 'transactions' | 'categories' | 'profile';
 
 export interface MonthFilter {
   month: number;

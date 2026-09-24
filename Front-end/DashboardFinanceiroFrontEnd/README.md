@@ -1,6 +1,6 @@
-# Prisma — Painel Financeiro & CRM
+# Prisma — Painel Financeiro
 
-Frontend **open source** do Prisma: landing page, autenticação e painel financeiro completo em modo escuro, para organizar receitas, despesas, orçamentos, metas e contatos.
+Frontend **open source** do Prisma: landing page, autenticação e painel financeiro completo em modo escuro, para organizar receitas, despesas e categorias.
 
 ## Interface
 
@@ -15,12 +15,8 @@ Saldo atual, receitas, despesas, economia líquida e donut de gastos por categor
 Lista completa com categorias coloridas, busca e filtros.
 ![Transações](../../02-transactions.png)
 
-### Orçamentos
-Limites mensais por categoria com barra de progresso e alerta visual.
-![Orçamentos](../../03-budgets.png)
-
-### Configurações / Categorias / Metas / CRM
-Gerencie categorias com cores próprias, acompanhe metas com previsão de prazo e mantenha clientes e leads no CRM integrado.
+### Categorias e Configurações
+Gerencie categorias com cores próprias (despesas e receitas) e ajuste seu perfil.
 ![Configurações](../../04-settings.png)
 
 ## Stack Tecnológica
@@ -91,10 +87,7 @@ src/
 ├── auth/             # Login, cadastro e AuthContext
 ├── dashboard/        # Home do painel
 ├── transactions/     # Transações
-├── budgets/          # Orçamentos
 ├── categories/       # Categorias
-├── goals/            # Metas
-├── contacts/         # CRM
 ├── finance/          # FinanceContext + TransactionFormContext
 └── shared/           # Componentes, tipos, serviços e constantes
 ```

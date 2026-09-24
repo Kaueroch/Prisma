@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, type FormEvent } from 'react'
-import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, ArrowLeft, TrendingUp, BarChart3, Target } from 'lucide-react'
+import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, ArrowLeft, TrendingUp, BarChart3 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -155,8 +155,8 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
 
   const heroFeatures = [
     { icon: TrendingUp, label: 'Controle financeiro' },
-    { icon: BarChart3, label: 'Gestão de contatos' },
-    { icon: Target, label: 'Acompanhamento' },
+    { icon: BarChart3, label: 'Gastos por categoria' },
+    { icon: Sparkles, label: 'Registro rápido' },
   ]
 
   return (

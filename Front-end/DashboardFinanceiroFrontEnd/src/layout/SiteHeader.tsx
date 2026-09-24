@@ -28,10 +28,7 @@ interface SiteHeaderProps {
 const tabLabels: Record<Tab, string> = {
   home: 'Dashboard',
   transactions: 'Transações',
-  budgets: 'Orçamentos',
   categories: 'Categorias',
-  goals: 'Metas',
-  contacts: 'Contatos',
   profile: 'Configurações',
 }
 

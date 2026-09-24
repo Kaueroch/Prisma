@@ -12,11 +12,11 @@ export const nav = {
 }
 
 export const hero = {
-  badge: 'Painel financeiro + CRM em um só lugar',
+  badge: 'Painel financeiro simples e direto',
   titleTop: 'Seu dinheiro, organizado.',
   titleAccent: 'Suas contas, em dia.',
   subtitle:
-    'O Prisma junta receitas, despesas, orçamentos e metas em um painel escuro, rápido e direto ao ponto — sem planilhas soltas e sem burocracia.',
+    'O Prisma junta receitas, despesas e categorias em um painel escuro, rápido e direto ao ponto — sem planilhas soltas e sem burocracia.',
   primaryCta: 'Criar conta grátis',
   secondaryCta: 'Ver como funciona',
   trustLine: 'Grátis durante o MVP · Open source · Rode no Docker · Proteção de ponta a ponta',
@@ -25,7 +25,7 @@ export const hero = {
 }
 
 export const statStrip = [
-  { label: 'Módulos integrados', value: '6' },
+  { label: 'Módulos integrados', value: '3' },
   { label: 'Registrar um lançamento', value: '5 s' },
   { label: 'Modo claro', value: 'Nunca' },
   { label: 'Custos escondidos', value: 'Zero' },
@@ -36,7 +36,7 @@ export const features = {
   kicker: 'Feito para quem quer entender o próprio dinheiro',
   headline: 'Tudo o que uma planilha não te dá, sem a dor de cabeça dela.',
   subtitle:
-    'Em vez de uma grade de atalhos genérica, o Prisma entrega quatro módulos que respondem a pergunta que importa: para onde o meu dinheiro vai?',
+    'Em vez de uma grade de atalhos genérica, o Prisma entrega três módulos que respondem à pergunta que importa: para onde o meu dinheiro vai?',
   items: [
     {
       id: 'gastos',
@@ -47,28 +47,20 @@ export const features = {
       highlight: 'Gastos por categoria',
     },
     {
-      id: 'orcamentos',
-      icon: 'piggy',
-      title: 'Defina limites e não estoure o orçamento',
+      id: 'categorias',
+      icon: 'tags',
+      title: 'Categorias com a sua cara',
       description:
-        'Crie limites mensais por categoria e acompanhe barras de progresso em tempo real. Quando estiver próximo do teto, o alerta visual aparece antes do estrago no fim do mês.',
-      highlight: 'Limites mensais por categoria',
+        'Crie, pinte e renomeie categorias do seu jeito. Receitas e despesas ficam separadas automaticamente, cada uma com sua cor.',
+      highlight: 'Categorias coloridas e editáveis',
     },
     {
-      id: 'metas',
-      icon: 'target',
-      title: 'Transforme planos em metas com prazo',
+      id: 'registro',
+      icon: 'plus',
+      title: 'Registre em segundos',
       description:
-        'Informe o valor alvo e quanto consegue guardar por mês. O Prisma calcula o progresso e a previsão de meses restantes — e celebra quando você alcança.',
-      highlight: 'Progresso e previsão de prazo',
-    },
-    {
-      id: 'contatos',
-      icon: 'users',
-      title: 'Clientes e contatos no mesmo lugar',
-      description:
-        'Leads, clientes, parceiros e fornecedores num CRM simples, com busca por nome, e-mail ou empresa — sem abrir outro sistema para lembrar quem está devendo.',
-      highlight: 'CRM simples integrado ao financeiro',
+        'Valor, descrição, data e categoria. O painel atualiza o saldo, o donut de gastos e a atividade recente na hora.',
+      highlight: 'Lançamento rápido de receitas e despesas',
     },
   ],
 }
@@ -106,9 +98,7 @@ export const pricing = {
     features: [
       'Dashboard com saldo, receitas e economia',
       'Transações ilimitadas com categorias coloridas',
-      'Orçamentos mensais por categoria',
-      'Metas com progresso e previsão de prazo',
-      'CRM com clientes, leads e parceiros',
+      'Categorias personalizadas com cores próprias',
     ],
     cta: 'Criar conta grátis',
     href: '#/cadastro',
@@ -159,7 +149,7 @@ export const finalCta = {
 
 export const footer = {
   description:
-    'Painel financeiro pessoal em modo escuro. Organize receitas, despesas, orçamentos, metas e contatos em um só lugar.',
+    'Painel financeiro pessoal em modo escuro. Organize receitas, despesas e categorias em um só lugar.',
   columns: [
     {
       title: 'Produto',

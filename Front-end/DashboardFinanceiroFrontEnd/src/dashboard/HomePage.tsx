@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ArrowDownLeft, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Wallet, Users } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Wallet } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,7 +15,7 @@ interface HomePageProps {
 }
 
 export function HomePage({ setActiveTab }: HomePageProps = {}) {
-  const { expenses, categories, contacts } = useFinance()
+  const { expenses, categories } = useFinance()
   const { openTransactionForm } = useTransactionForm()
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
 
@@ -102,7 +102,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center gap-3 pb-3">
             <div className="w-10 h-10 rounded-xl bg-lime-400/10 flex items-center justify-center">
@@ -141,22 +141,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatBRL(totalIncome - totalExpense)}</div>
-            <p className="text-muted-foreground text-xs mt-1 font-medium">Disponível para Metas</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-              <Users className="w-5 h-5 text-foreground" />
-            </div>
-            <div className="text-sm text-muted-foreground font-medium">Contatos</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{contacts.length}</div>
-            <p className="text-muted-foreground text-xs mt-1 font-medium">
-              {contacts.filter(c => c.type === 'client').length} clientes
-            </p>
+            <p className="text-muted-foreground text-xs mt-1 font-medium">Diferença do mês</p>
           </CardContent>
         </Card>
       </div>

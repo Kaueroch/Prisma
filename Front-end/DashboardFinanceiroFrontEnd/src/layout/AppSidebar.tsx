@@ -1,4 +1,4 @@
-import { Home, ArrowLeftRight, PiggyBank, Tags, Target, Users, Settings, Plus } from 'lucide-react'
+import { Home, ArrowLeftRight, Tags, Settings, Plus } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -22,13 +22,7 @@ interface AppSidebarProps {
 const mainItems = [
   { tab: 'home' as Tab, label: 'Painel', icon: Home },
   { tab: 'transactions' as Tab, label: 'Transações', icon: ArrowLeftRight },
-  { tab: 'budgets' as Tab, label: 'Orçamentos', icon: PiggyBank },
   { tab: 'categories' as Tab, label: 'Categorias', icon: Tags },
-]
-
-const crmItems = [
-  { tab: 'contacts' as Tab, label: 'Contatos', icon: Users },
-  { tab: 'goals' as Tab, label: 'Metas', icon: Target },
 ]
 
 export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: AppSidebarProps) {
@@ -40,7 +34,7 @@ export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: A
             P
           </div>
           <span className="text-base font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden">
-            Prisma CRM
+            Prisma
           </span>
         </div>
       </SidebarHeader>
@@ -51,26 +45,6 @@ export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: A
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
-                <SidebarMenuItem key={item.tab}>
-                  <SidebarMenuButton
-                    isActive={activeTab === item.tab}
-                    onClick={() => setActiveTab(item.tab)}
-                    tooltip={item.label}
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>CRM</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {crmItems.map((item) => (
                 <SidebarMenuItem key={item.tab}>
                   <SidebarMenuButton
                     isActive={activeTab === item.tab}

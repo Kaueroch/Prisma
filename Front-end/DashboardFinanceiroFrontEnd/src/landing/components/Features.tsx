@@ -1,4 +1,4 @@
-import { PieChart, PiggyBank, Target, Users, type LucideIcon } from 'lucide-react'
+import { PieChart, Tags, Plus, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Reveal } from './Reveal'
 import { features } from '../content'
@@ -6,15 +6,15 @@ import { cn } from '../utils'
 
 const iconMap: Record<string, LucideIcon> = {
   chart: PieChart,
-  piggy: PiggyBank,
-  target: Target,
-  users: Users,
+  tags: Tags,
+  plus: Plus,
 }
 
-const contacts = [
-  { name: 'Marina Duarte', type: 'Cliente', variant: 'bg-muted text-foreground' },
-  { name: 'Studio Vid', type: 'Lead', variant: 'bg-lime-400/10 text-lime-400/90 border border-lime-400/20' },
-  { name: 'Andrade & Cia', type: 'Parceiro', variant: 'bg-muted text-foreground border border-border' },
+const categorias = [
+  { name: 'Alimentação', amount: 'R$ 1.428,00', color: '#a3e635' },
+  { name: 'Contas', amount: 'R$ 1.092,00', color: '#3b82f6' },
+  { name: 'Transporte', amount: 'R$ 924,00', color: '#f97316' },
+  { name: 'Lazer', amount: 'R$ 756,00', color: '#8b5cf6' },
 ]
 
 function GastosVisual() {
@@ -47,72 +47,44 @@ function GastosVisual() {
   )
 }
 
-const budgets = [
-  { name: 'Alimentação', spent: 'R$ 1.020,00', limit: 'R$ 1.500,00', pct: 68, tone: 'bg-primary' },
-  { name: 'Transporte', spent: 'R$ 875,00', limit: 'R$ 950,00', pct: 92, tone: 'bg-orange-500' },
+function CategoriasVisual() {
+  return (
+    <div className="mt-6 space-y-3 rounded-xl border border-border bg-background p-4">
+      {categorias.map((c) => (
+        <div key={c.name} className="flex items-center gap-3">
+          <span className="h-8 w-8 rounded-lg" style={{ backgroundColor: c.color }} />
+          <span className="text-xs font-medium">{c.name}</span>
+          <span className="ml-auto text-[11px] text-muted-foreground">{c.amount}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const registro = [
+  { name: 'Padaria', amount: 'R$ 18,90', category: 'Alimentação', color: '#a3e635' },
+  { name: 'Combustível', amount: 'R$ 210,00', category: 'Transporte', color: '#f97316' },
 ]
 
-function OrcamentosVisual() {
-  return (
-    <div className="mt-6 space-y-4 rounded-xl border border-border bg-background p-4">
-      {budgets.map((b) => (
-        <div key={b.name}>
-          <div className="mb-2 flex items-center justify-between text-[11px]">
-            <span className="font-medium">{b.name}</span>
-            <span className="text-muted-foreground">
-              Gasto {b.spent} de {b.limit}
-            </span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
-            <div className={cn('h-full rounded-full', b.tone)} style={{ width: `${b.pct}%` }} />
-          </div>
-          <div className="mt-1 text-right text-[11px] font-semibold">{b.pct}%</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function MetasVisual() {
+function RegistroVisual() {
   return (
     <div className="mt-6 rounded-xl border border-border bg-background p-4">
-      <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-          <Target className="h-4 w-4" />
+      <div className="mb-3 flex items-center gap-2">
+        <span className="flex flex-1 items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-[11px] text-muted-foreground">
+          <Plus className="h-3 w-3" /> Nova despesa
         </span>
-        <div>
-          <p className="text-sm font-semibold">Reserva de emergência</p>
-          <p className="text-[11px] text-muted-foreground">Economizando R$ 800/mês</p>
-        </div>
+        <span className="rounded-lg bg-orange-500/10 px-2.5 py-2 text-[11px] font-medium text-orange-400">-R$ 0,00</span>
       </div>
-      <div className="mt-4">
-        <div className="mb-2 flex justify-between text-[11px]">
-          <span className="text-muted-foreground">Progresso</span>
-          <span className="font-semibold">34%</span>
-        </div>
-        <div className="h-2.5 overflow-hidden rounded-full bg-muted">
-          <div className="h-full w-[34%] rounded-full bg-lime-400" />
-        </div>
+      <div className="space-y-2">
+        {registro.map((r) => (
+          <div key={r.name} className="flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-2 border border-border/60">
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: r.color }} />
+            <span className="text-[11px] font-medium">{r.name}</span>
+            <span className="ml-auto text-[11px] text-muted-foreground">{r.category}</span>
+            <span className="text-[11px] font-semibold">{r.amount}</span>
+          </div>
+        ))}
       </div>
-      <div className="mt-3 rounded-lg bg-muted/50 px-3 py-2 text-center text-[11px] text-muted-foreground border border-border">
-        Faltam <span className="font-semibold text-foreground">8 meses</span> para alcançar
-      </div>
-    </div>
-  )
-}
-
-function ContatosVisual() {
-  return (
-    <div className="mt-6 space-y-2 rounded-xl border border-border bg-background p-4">
-      {contacts.map((c) => (
-        <div key={c.name} className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-muted-foreground">
-            {c.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-          </span>
-          <span className="text-xs font-medium">{c.name}</span>
-          <span className={cn('ml-auto rounded-full px-2 py-0.5 text-[10px] font-medium', c.variant)}>{c.type}</span>
-        </div>
-      ))}
     </div>
   )
 }
@@ -132,13 +104,10 @@ export function Features() {
             <FeatureCard item={features.items[0]} excerpt={<GastosVisual />} />
           </Reveal>
           <Reveal delay={0.1}>
-            <FeatureCard item={features.items[1]} excerpt={<OrcamentosVisual />} />
+            <FeatureCard item={features.items[1]} excerpt={<CategoriasVisual />} />
           </Reveal>
-          <Reveal delay={0.1}>
-            <FeatureCard item={features.items[2]} excerpt={<MetasVisual />} />
-          </Reveal>
-          <Reveal delay={0.15} className="lg:col-span-2">
-            <FeatureCard item={features.items[3]} excerpt={<ContatosVisual />} />
+          <Reveal delay={0.05}>
+            <FeatureCard item={features.items[2]} excerpt={<RegistroVisual />} />
           </Reveal>
         </div>
       </div>
@@ -147,7 +116,7 @@ export function Features() {
 }
 
 function FeatureCard({ item, excerpt }: { item: typeof features.items[number]; excerpt: ReactNode }) {
-  const Icon = iconMap[item.icon] ?? Target
+  const Icon = iconMap[item.icon] ?? Tags
   return (
     <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-colors duration-200 hover:bg-card/80">
       <div className="flex items-center gap-2.5">

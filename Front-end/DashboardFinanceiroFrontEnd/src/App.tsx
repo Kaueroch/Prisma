@@ -9,11 +9,8 @@ import { SiteHeader } from './layout/SiteHeader'
 import { AddTransactionForm } from './transactions/components/AddTransactionForm'
 import { HomePage } from './dashboard/HomePage'
 import { TransactionsPage } from './transactions/TransactionsPage'
-import { BudgetsPage } from './budgets/BudgetsPage'
 import { CategoriesPage } from './categories/CategoriesPage'
 import { ProfilePage } from './profile/ProfilePage'
-import { GoalsPage } from './goals/GoalsPage'
-import { ContactsPage } from './contacts/ContactsPage'
 import { AuthPage } from './auth/AuthPage'
 import { LandingPage } from './landing/LandingPage'
 import { FinanceProvider } from './finance/FinanceContext'
@@ -96,10 +93,7 @@ function AuthenticatedApp() {
             <div className="flex-1 relative z-10">
               {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
               {activeTab === 'transactions' && <TransactionsPage />}
-              {activeTab === 'budgets' && <BudgetsPage />}
               {activeTab === 'categories' && <CategoriesPage />}
-              {activeTab === 'goals' && <GoalsPage />}
-              {activeTab === 'contacts' && <ContactsPage />}
               {activeTab === 'profile' && <ProfilePage />}
             </div>
           </div>
