@@ -54,7 +54,8 @@ export function CategoriesPage() {
       setNewCatType('expense')
       setIsAdding(false)
     } catch (err) {
-      alert('Erro ao criar categoria. Verifique se o backend está rodando.')
+      const message = err instanceof Error ? err.message : ''
+      alert(message || 'Erro ao criar categoria. Verifique se o backend está rodando.')
     }
   }
 

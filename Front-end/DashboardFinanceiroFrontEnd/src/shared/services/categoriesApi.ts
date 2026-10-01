@@ -8,7 +8,12 @@
  * Autenticação: Usa Bearer token JWT salvo no localStorage (chave: prisma_auth_token)
  */
 
+import { getUserIdFromToken } from '../utils/token';
+
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
+
+/** Chave do localStorage onde o token JWT do usuário logado é salvo */
+const TOKEN_STORAGE_KEY = 'prisma_auth_token';
 
 /** Interface que representa uma categoria retornada pelo backend */
 export interface BackendCategoria {
@@ -21,11 +26,17 @@ export interface BackendCategoria {
 export interface CriarCategoriaPayload {
   nome: string;
   tipoCategoria: string;
+  userId: string;    // UUID do usuário logado (claim "sub" do JWT)
 }
 
 /** Busca o token JWT salvo no localStorage para autenticação */
 function getToken(): string | null {
-  return localStorage.getItem('prisma_auth_token');
+  return localStorage.getItem(TOKEN_STORAGE_KEY);
+}
+
+/** Recupera o ID (UUID) do usuário logado a partir do token JWT salvo */
+export function getLoggedUserId(): string | null {
+  return getUserIdFromToken(getToken());
 }
 
 /** Monta os headers de autenticação para as requisições HTTP */

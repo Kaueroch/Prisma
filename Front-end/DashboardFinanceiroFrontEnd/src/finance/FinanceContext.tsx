@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 import { Expense, CategoryInfo, CategoryKind } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
-import { categoriesApi } from '../shared/services/categoriesApi';
+import { categoriesApi, getLoggedUserId } from '../shared/services/categoriesApi';
 
 interface FinanceContextType {
   expenses: Expense[];
@@ -69,9 +69,15 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   // Adiciona uma nova categoria, enviando para o backend via API
   const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
     try {
+      // Recupera o UUID do usuário logado (claim "sub" do JWT) para vincular a categoria
+      const userId = getLoggedUserId();
+      if (!userId) {
+        throw new Error('Sessão expirada. Faça login novamente para criar uma categoria.');
+      }
+
       // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
       const tipoCategoria = newCategory.type === 'expense' ? 'Despesas' : 'Receita';
-      await categoriesApi.criar({ nome: newCategory.name, tipoCategoria });
+      await categoriesApi.criar({ nome: newCategory.name, tipoCategoria, userId });
 
       const category: CategoryInfo = {
         ...newCategory,

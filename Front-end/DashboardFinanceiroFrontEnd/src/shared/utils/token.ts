@@ -19,6 +19,15 @@ export function decodeJwt(token: string): Record<string, unknown> | null {
   }
 }
 
+/** Extrai o ID (UUID) do usuário a partir do claim "sub" do token JWT */
+export function getUserIdFromToken(token: string | null | undefined): string | null {
+  if (!token) return null;
+  const payload = decodeJwt(token);
+  const sub = payload?.sub;
+  if (typeof sub !== 'string' || !sub) return null;
+  return sub;
+}
+
 export function isTokenValid(token: string | null | undefined): boolean {
   if (!token) return false;
   const payload = decodeJwt(token);
