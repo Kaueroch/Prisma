@@ -1,5 +1,8 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.controllers;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +22,14 @@ public class CategoriaController{
 
 	@PostMapping("/criarCategoria")
 	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO dto){
-         categoriaService.serviceCategoria(dto.nome(), dto.tipoCategoria());
+         categoriaService.serviceCategoria(dto.nome(), dto.tipoCategoria(),dto.userId());
          CategoriaResponseDTO response = new CategoriaResponseDTO("A categoria foi criada.");
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
-	//@GetMapping("/listar")
-	//public ResponseEntity<List<CategoriaResponseDTO>> listarCategorias(){
-         
-	//}
+	@GetMapping("/listar")
+	public List<CategoriaDTO> listarCategorias(UUID userId){
+     
+     return categoriaService.retornaTodasCategorias(userId);
+	}
 }

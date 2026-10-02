@@ -12,12 +12,12 @@ public class Categoria{
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "cd_id")
   private Integer id;
-  @Column(name = "nm_nome")
+  @Column(name = "nm_nome", nullable = false)
   private String nome;
-  @Column(name = "ds_tipoCategoria")
+  @Column(name = "ds_tipoCategoria",nullable = false)
   private String tipoCategoria;
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   public String getNome() {
@@ -28,11 +28,12 @@ public class Categoria{
     return tipoCategoria;
   }
 
-  public Categoria(String _nome, String _tipoCategoria){
+  public Categoria(String _nome, String _tipoCategoria,User userID){
       validaCampoNome(_nome);
       validaCampoCategoria(_tipoCategoria);
       this.nome = _nome;
       this.tipoCategoria = _tipoCategoria;
+      this.user = userID;
     }
 
 

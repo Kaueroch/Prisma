@@ -2,40 +2,42 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.services.categorias;
 
 import org.springframework.stereotype.Service;
 import com.KeepFlow.Sistema.para.controle.Financeiro.domain.Categoria;
+import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
+import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.CategoriaDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CategoriaJaExistente;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.CategoriaRepository;
+import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
+
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CategoriaService{
  private final CategoriaRepository categoriaRepository;
+ private final UserRepository userRepository;
 
-
- public CategoriaService(CategoriaRepository categoriaRepository){
-    this.categoriaRepository = categoriaRepository;
+ public CategoriaService(CategoriaRepository _categoriaRepository,UserRepository _userRepository){
+    this.categoriaRepository = _categoriaRepository;
+    this.userRepository = _userRepository;
  }
 
- public void serviceCategoria(String nome,String tipoCategoria){
-  validaNomeCategoria(nome);
-  SalvarCategoria(nome, tipoCategoria);
+ public void serviceCategoria(String nome,String tipoCategoria,UUID userId){
+  validaNomeCategoria(nome,userId);
+  SalvarCategoria(nome, tipoCategoria,userId);
  }
- private void SalvarCategoria(String nome,String tipoCategoria){
-   Categoria categoria = new Categoria(nome,tipoCategoria);
-   categoriaRepository.save(categoria);
+ private void SalvarCategoria(String nome,String tipoCategoria,UUID userId){
+   User usuario = userRepository.getReferenceById(userId); 
+	 categoriaRepository.save(new Categoria(nome,tipoCategoria,usuario));
  }
 
- private boolean validaNomeCategoria(String nome){
-
- if(categoriaRepository.existsByNome(nome)){
+ //procura o ID e a qual categoria o nome está atrelada e valida.
+ private boolean validaNomeCategoria(String nome,UUID userID){
+ if(categoriaRepository.existsByNomeAndUser_Id(nome,userID)){
   throw new CategoriaJaExistente("Categoria já existente."); 
  }
  return false;
   }
-
- //vou ter que estudar isso pq nao entendo como vai retornar as categorias sendo que elas tem que estar relacionadas ao ID de cada usuario,sabe? 
- //dito isso, terei que criar mais um campo para FK_ID do user pra se relacionarem. 
- //fazer condicao pra dizer se o id tem ou nao categorias
- public List<Categoria> retornaTodasCategorias(){
-    return categoriaRepository.findAll();
- }
+ public List<CategoriaDTO> retornaTodasCategorias(UUID userId){
+    return categoriaRepository.findAllByUser_Id(userId);
+}
  }

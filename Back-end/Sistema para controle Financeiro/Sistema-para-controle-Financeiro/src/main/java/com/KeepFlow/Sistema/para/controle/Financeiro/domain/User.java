@@ -1,5 +1,6 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.EmailInvalido;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.SenhaInsuficiente;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,11 +18,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "cd_id")
     private UUID id;
-    @Column(name = "nm_nome")
+    @Column(name = "nm_nome", nullable = false)
     private String nome;
-    @Column(name = "ds_email",unique = true)
+    @Column(name = "ds_email",unique = false, nullable = false)
     private String email;
-    @Column(name = "ds_senha")
+    @Column(name = "ds_senha", nullable = true)
     private String senha;
     @OneToMany(mappedBy = "user")
     private List<Categoria> categoriasLista;
@@ -46,9 +47,9 @@ public class User {
             throw new SenhaInsuficiente("A senha precisa ter no minimo 8 e no máximo 16 caracteres.");
         }
     }
-    public void validarEmail(String email){
-        Matcher matcher;
-        matcher = pattern.matcher(email);
-        matcher.matches();
+    public void validarEmail(String email){    
+        if(!pattern.matcher(email).matches()){
+        	throw new EmailInvalido("Por favor insira um email inválido.");
+        }
     }
 }
