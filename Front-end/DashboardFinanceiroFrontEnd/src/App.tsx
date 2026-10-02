@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
@@ -66,7 +66,6 @@ function TransactionFormGate() {
 }
 
 function AuthenticatedApp() {
-  const { openTransactionForm } = useTransactionForm()
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<Tab>('home')
   const [showWelcome, setShowWelcome] = useState(() => localStorage.getItem('prisma_auth_show_welcome') === 'true')
@@ -79,14 +78,13 @@ function AuthenticatedApp() {
   return (
     <>
       <TooltipProvider>
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen={true} style={{ '--sidebar-width': '13.5rem' } as CSSProperties}>
         <AppSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          onOpenTransactionForm={openTransactionForm}
         />
         <SidebarInset>
-          <SiteHeader activeTab={activeTab} />
+          <SiteHeader activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="flex-1 flex flex-col overflow-auto relative">
             <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />

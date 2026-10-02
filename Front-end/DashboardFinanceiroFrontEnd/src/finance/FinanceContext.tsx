@@ -22,6 +22,22 @@ interface FinanceProviderProps {
   children: ReactNode;
 }
 
+/** Gera um id estável para categorias cujo id não vem do backend */
+function buildCategoryId(
+  userId: string | null | undefined,
+  nome: string,
+  tipoCategoria: string,
+  index: number
+): string {
+  const slug = `${nome}-${tipoCategoria}`
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `${userId ?? 'local'}-${slug || `categoria-${index}`}`;
+}
+
 export function FinanceProvider({ children }: FinanceProviderProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
@@ -33,10 +49,14 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
       // Carrega categorias do backend; se falhar, usa dados do localStorage
       try {
-        const backendCategories = await categoriesApi.listar();
-        console.log('Categorias do backend:', backendCategories);
-        const mapped = backendCategories.map(c => ({
-          id: String(c.id),
+        const userId = getLoggedUserId();
+        const backendCategories = await categoriesApi.listar(userId);
+        const mapped = backendCategories.map((c, index) => ({
+          // O DTO de listagem do backend não traz "id", então geramos um id estável
+          // a partir de userId + nome + tipo para evitar chaves duplicadas no React.
+          id: c.id != null
+            ? String(c.id)
+            : buildCategoryId(c.userId ?? userId, c.nome, c.tipoCategoria, index),
           name: c.nome,
           color: '#8b5cf6',
           bgClass: 'bg-white/10',
@@ -81,7 +101,8 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
       const category: CategoryInfo = {
         ...newCategory,
-        id: Math.random().toString(36).substring(7),
+        // Usa o mesmo id gerado na leitura da lista para o card não "pular" ao recarregar
+        id: buildCategoryId(userId, newCategory.name, tipoCategoria, 0),
       };
 
       setCategories((prev) => {

@@ -1,4 +1,4 @@
-import { Home, ArrowLeftRight, Tags, Settings, Plus } from 'lucide-react'
+import { Home, ArrowLeftRight, Tags, Settings, LogOut } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -12,11 +12,11 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar'
 import type { Tab } from '../shared/types'
+import { useAuth } from '../auth/AuthContext'
 
 interface AppSidebarProps {
   activeTab: Tab
   setActiveTab: (tab: Tab) => void
-  onOpenTransactionForm: () => void
 }
 
 const mainItems = [
@@ -25,7 +25,9 @@ const mainItems = [
   { tab: 'categories' as Tab, label: 'Categorias', icon: Tags },
 ]
 
-export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: AppSidebarProps) {
+export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
+  const { logout } = useAuth()
+
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border pb-4">
@@ -83,12 +85,12 @@ export function AppSidebar({ activeTab, setActiveTab, onOpenTransactionForm }: A
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={onOpenTransactionForm}
-              tooltip="Nova Transação"
-              className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 font-medium"
+              onClick={logout}
+              tooltip="Sair"
+              className="font-medium text-destructive/80 transition-colors hover:bg-destructive/10 hover:text-destructive"
             >
-              <Plus />
-              <span>Nova Transação</span>
+              <LogOut />
+              <span>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

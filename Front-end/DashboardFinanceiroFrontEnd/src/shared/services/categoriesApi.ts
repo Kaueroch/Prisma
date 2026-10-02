@@ -17,9 +17,10 @@ const TOKEN_STORAGE_KEY = 'prisma_auth_token';
 
 /** Interface que representa uma categoria retornada pelo backend */
 export interface BackendCategoria {
-  id: number;        // ID numérico gerado pelo backend
-  nome: string;      // Nome da categoria (ex: "Alimentação")
+  id?: number | null;   // ID numérico (o DTO de listagem do backend não o expõe)
+  nome: string;         // Nome da categoria (ex: "Alimentação")
   tipoCategoria: string;
+  userId?: string | null;
 }
 
 /** Payload de criação enviado ao backend - campos batem com CategoriaDTO */
@@ -51,14 +52,23 @@ function authHeaders(): Record<string, string> {
 export const categoriesApi = {
   /**
    * Lista todas as categorias do usuário logado.
-   * Chama: GET /api/v1/categoria/listar
+   * Chama: GET /api/v1/categoria/listar?userId={uuid}
+   * O endpoint exige o userId como query param, então enviamos o UUID extraído do JWT.
    */
-  async listar(): Promise<BackendCategoria[]> {
-    const response = await fetch(`${API_URL}/api/v1/categoria/listar`, {
+  async listar(userId?: string | null): Promise<BackendCategoria[]> {
+    const query = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+    const response = await fetch(`${API_URL}/api/v1/categoria/listar${query}`, {
       headers: authHeaders(),
     });
-    if (!response.ok) throw new Error('Erro ao buscar categorias');
-    return (await response.json()) as BackendCategoria[];
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || 'Erro ao buscar categorias');
+    }
+    const data = await response.json();
+    if (!Array.isArray(data)) {
+      throw new Error('Resposta inesperada do backend ao buscar categorias.');
+    }
+    return data as BackendCategoria[];
   },
 
   /**

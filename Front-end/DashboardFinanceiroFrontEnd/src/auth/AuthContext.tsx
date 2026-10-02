@@ -36,6 +36,14 @@ function clearStoredSession() {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
 }
 
+// Limpa os dados financeiros locais e a flag de boas-vindas para que o proximo
+// usuario do mesmo navegador nao veja os dados do usuario anterior.
+function clearLocalFinanceData() {
+  localStorage.removeItem('finance_dashboard_expenses');
+  localStorage.removeItem('finance_dashboard_categories');
+  localStorage.removeItem(WELCOME_FLAG_KEY);
+}
+
 function readStoredUser(): User | null {
   const stored = localStorage.getItem(AUTH_STORAGE_KEY);
   if (!stored) return null;
@@ -142,9 +150,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // Encerra a sessao: limpa o token e os dados financeiros locais e manda direto
+  // para a tela de login. O reload garante que o FinanceProvider remonte vazio.
   const logout = () => {
-    setUser(null);
     clearStoredSession();
+    clearLocalFinanceData();
+    window.location.hash = '#/login';
+    window.location.reload();
   };
 
   const value = useMemo(() => ({ user, login, register, logout }), [user]);
