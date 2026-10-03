@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useFinance } from '../finance/useFinance'
-import type { CategoryId, CategoryKind, Expense } from '../shared/types'
+import type { CategoryId, CategoryKind, CategoryInfo, Expense } from '../shared/types'
 import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -56,6 +56,20 @@ export function CategoriesPage() {
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
       alert(message || 'Erro ao criar categoria. Verifique se o backend está rodando.')
+    }
+  }
+
+  const handleDelete = async (cat: CategoryInfo) => {
+    if ((grouped[cat.id]?.items.length ?? 0) > 0) {
+      alert('Não é possível excluir esta categoria pois existem transações associadas.')
+      return
+    }
+    if (!window.confirm(`Tem certeza que deseja excluir a categoria "${cat.name}"?`)) return
+
+    try {
+      await deleteCategory(cat.id, cat.name)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Erro ao excluir categoria.')
     }
   }
 
@@ -216,13 +230,7 @@ export function CategoriesPage() {
                                 </button>
                                 <button onClick={(e) => {
                                   e.stopPropagation()
-                                  if (data.items.length > 0) {
-                                    alert('Não é possível excluir esta categoria pois existem transações associadas.')
-                                    return
-                                  }
-                                  if (window.confirm(`Tem certeza que deseja excluir a categoria "${cat.name}"?`)) {
-                                    deleteCategory(cat.id)
-                                  }
+                                  handleDelete(cat)
                                 }} className="p-1 text-red-400/60 hover:text-red-400">
                                   <Trash2 className="w-3 h-3" />
                                 </button>

@@ -2,6 +2,7 @@ import { Expense } from '../types';
 import { CATEGORIES } from '../constants';
 
 const EXPENSES_STORAGE_KEY = 'finance_dashboard_expenses';
+const EXPENSE_SEQUENCE_KEY = 'finance_dashboard_expense_seq';
 
 export const financeService = {
   getExpenses(): Expense[] {
@@ -12,6 +13,18 @@ export const financeService = {
 
   saveExpenses(expenses: Expense[]): void {
     localStorage.setItem(EXPENSES_STORAGE_KEY, JSON.stringify(expenses));
+  },
+
+  /**
+   * Devolve o id da próxima despesa, sequencial e persistente.
+   * O contador vive no localStorage e só cresce, então dois registros nunca
+   * recebem o mesmo id - e nenhum id é gerado por sorteio.
+   */
+  nextExpenseId(): string {
+    const atual = Number(localStorage.getItem(EXPENSE_SEQUENCE_KEY)) || 0;
+    const proximo = atual + 1;
+    localStorage.setItem(EXPENSE_SEQUENCE_KEY, String(proximo));
+    return String(proximo);
   },
 
   getCategories(): import('../types').CategoryInfo[] {

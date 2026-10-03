@@ -8,9 +8,9 @@ interface FinanceContextType {
   categories: CategoryInfo[];
   loading: boolean;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
-  addCategory: (category: Omit<CategoryInfo, 'id'>) => void;
+  addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<void>;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => void;
-  deleteCategory: (id: string) => void;
+  deleteCategory: (id: string, nome?: string) => Promise<void>;
   totalIncome: number;
   totalExpense: number;
   balance: number;
@@ -20,22 +20,6 @@ export const FinanceContext = createContext<FinanceContextType | undefined>(unde
 
 interface FinanceProviderProps {
   children: ReactNode;
-}
-
-/** Gera um id estável para categorias cujo id não vem do backend */
-function buildCategoryId(
-  userId: string | null | undefined,
-  nome: string,
-  tipoCategoria: string,
-  index: number
-): string {
-  const slug = `${nome}-${tipoCategoria}`
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return `${userId ?? 'local'}-${slug || `categoria-${index}`}`;
 }
 
 export function FinanceProvider({ children }: FinanceProviderProps) {
@@ -51,12 +35,9 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       try {
         const userId = getLoggedUserId();
         const backendCategories = await categoriesApi.listar(userId);
-        const mapped = backendCategories.map((c, index) => ({
-          // O DTO de listagem do backend não traz "id", então geramos um id estável
-          // a partir de userId + nome + tipo para evitar chaves duplicadas no React.
-          id: c.id != null
-            ? String(c.id)
-            : buildCategoryId(c.userId ?? userId, c.nome, c.tipoCategoria, index),
+        const mapped = backendCategories.map((c) => ({
+          // Usa o cd_id que veio do banco, nunca um id fabricado aqui
+          id: String(c.id),
           name: c.nome,
           color: '#8b5cf6',
           bgClass: 'bg-white/10',
@@ -77,7 +58,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
     const expense: Expense = {
       ...newExpense,
-      id: Math.random().toString(36).substring(7),
+      id: financeService.nextExpenseId(),
     };
     setExpenses((prev) => {
       const updated = [expense, ...prev];
@@ -97,12 +78,13 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
       // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
       const tipoCategoria = newCategory.type === 'expense' ? 'Despesas' : 'Receita';
-      await categoriesApi.criar({ nome: newCategory.name, tipoCategoria, userId });
+
+      // O banco devolve o cd_id gerado por ele, que é o id usado nas próximas requisições
+      const categoriaId = await categoriesApi.criar({ nome: newCategory.name, tipoCategoria, userId });
 
       const category: CategoryInfo = {
         ...newCategory,
-        // Usa o mesmo id gerado na leitura da lista para o card não "pular" ao recarregar
-        id: buildCategoryId(userId, newCategory.name, tipoCategoria, 0),
+        id: String(categoriaId),
       };
 
       setCategories((prev) => {
@@ -125,8 +107,16 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  // Remove uma categoria pelo ID (apenas localmente, sem backend)
-  const handleDeleteCategory = (id: string) => {
+  // Remove uma categoria: envia o cd_id ao backend e só tira da lista local
+  // depois que o banco confirmar a exclusão, para a tela não mentir sobre o estado
+  const handleDeleteCategory = async (id: string, nome?: string): Promise<void> => {
+    try {
+      await categoriesApi.deletar(Number(id));
+    } catch (err) {
+      console.error(`Erro ao excluir "${nome ?? id}" no backend (cd_id: ${id}).`, err);
+      throw err instanceof Error ? err : new Error('Erro ao excluir categoria.');
+    }
+
     setCategories((prev) => {
       const updated = prev.filter(c => c.id !== id);
       financeService.saveCategories(updated);

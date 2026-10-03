@@ -2,8 +2,9 @@
  * categoriesApi - Serviço de chamadas HTTP para o backend (Spring Boot)
  *
  * Endpoints disponíveis:
- *   - GET  /api/v1/categoria/listar         → Lista todas as categorias do usuário
- *   - POST /api/v1/categoria/criarCategoria  → Cria uma nova categoria
+ *   - GET    /api/v1/categoria/listar         → Lista todas as categorias do usuário
+ *   - POST   /api/v1/categoria/criarCategoria  → Cria uma nova categoria
+ *   - DELETE /api/v1/categoria/deletar?id={id} → Exclui uma categoria pelo cd_id
  *
  * Autenticação: Usa Bearer token JWT salvo no localStorage (chave: prisma_auth_token)
  */
@@ -17,7 +18,7 @@ const TOKEN_STORAGE_KEY = 'prisma_auth_token';
 
 /** Interface que representa uma categoria retornada pelo backend */
 export interface BackendCategoria {
-  id?: number | null;   // ID numérico (o DTO de listagem do backend não o expõe)
+  id: number;           // cd_id real gerado pelo banco
   nome: string;         // Nome da categoria (ex: "Alimentação")
   tipoCategoria: string;
   userId?: string | null;
@@ -72,11 +73,10 @@ export const categoriesApi = {
   },
 
   /**
-   * Cria uma nova categoria no backend enviando o payload puro do formulário.
+   * Cria uma nova categoria no backend e devolve o cd_id gerado pelo banco.
    * Chama: POST /api/v1/categoria/criarCategoria
-   * O backend responde apenas com uma mensagem de confirmação.
    */
-  async criar(payload: CriarCategoriaPayload): Promise<void> {
+  async criar(payload: CriarCategoriaPayload): Promise<number> {
     const response = await fetch(`${API_URL}/api/v1/categoria/criarCategoria`, {
       method: 'POST',
       headers: authHeaders(),
@@ -86,5 +86,29 @@ export const categoriesApi = {
       const text = await response.text();
       throw new Error(text || 'Erro ao criar categoria');
     }
+    const data = await response.json();
+    return Number(data.id);
+  },
+
+  /**
+   * Exclui uma categoria pelo cd_id real e devolve o registro removido.
+   * Chama: DELETE /api/v1/categoria/deletar?id={categoriaId}
+   *
+   * O dono da categoria é validado no backend pelo token JWT, então aqui
+   * enviamos apenas o id - nunca o objeto inteiro nem um id fabricado.
+   */
+  async deletar(categoriaId: number): Promise<BackendCategoria> {
+    const response = await fetch(
+      `${API_URL}/api/v1/categoria/deletar?id=${encodeURIComponent(String(categoriaId))}`,
+      {
+        method: 'DELETE',
+        headers: authHeaders(),
+      },
+    );
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || 'Erro ao excluir categoria');
+    }
+    return (await response.json()) as BackendCategoria;
   },
 };
