@@ -15,11 +15,10 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.services.categorias.Categor
 @RequestMapping("/api/v1/categoria")
 public class CategoriaController{
      private final CategoriaService categoriaService;
+     
 	public CategoriaController(CategoriaService _categoriaService){
 	  this.categoriaService = _categoriaService;
 	}
-
-
 	@PostMapping("/criarCategoria")
 	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO dto){
          categoriaService.serviceCategoria(dto.nome(), dto.tipoCategoria(),dto.userId());
@@ -31,5 +30,10 @@ public class CategoriaController{
 	public List<CategoriaDTO> listarCategorias(UUID userId){
      
      return categoriaService.retornaTodasCategorias(userId);
+	}
+	@DeleteMapping("/deletar")
+	public ResponseEntity<CategoriaResponseDTO> deletarCategoria(@RequestParam Integer id){
+		categoriaService.deletarCategoria(id);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaResponseDTO("Categoria Deletada!"));
 	}
 }

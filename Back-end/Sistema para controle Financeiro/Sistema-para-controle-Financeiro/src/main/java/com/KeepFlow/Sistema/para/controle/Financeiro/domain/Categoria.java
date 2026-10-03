@@ -27,7 +27,9 @@ public class Categoria{
   public String getTipoCategoria() {
     return tipoCategoria;
   }
-
+  protected Categoria(){}
+  
+  
   public Categoria(String _nome, String _tipoCategoria,User userID){
       validaCampoNome(_nome);
       validaCampoCategoria(_tipoCategoria);

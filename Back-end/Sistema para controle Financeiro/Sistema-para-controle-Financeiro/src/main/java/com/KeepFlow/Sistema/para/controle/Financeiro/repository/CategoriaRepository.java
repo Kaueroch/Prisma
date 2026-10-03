@@ -11,4 +11,6 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.CategoriaDTO;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria,Integer>{
  boolean existsByNomeAndUser_Id(String nome,UUID userID);  
- List<CategoriaDTO> findAllByUser_Id(UUID userId);}
+ List<CategoriaDTO> findAllByUser_Id(UUID userId);
+ Categoria findAllById(Integer Id);
+}

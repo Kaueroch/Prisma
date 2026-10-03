@@ -36,8 +36,14 @@ public class CategoriaService{
   throw new CategoriaJaExistente("Categoria já existente."); 
  }
  return false;
-  }
+ }
  public List<CategoriaDTO> retornaTodasCategorias(UUID userId){
     return categoriaRepository.findAllByUser_Id(userId);
 }
- }
+ 
+ //fazer o método de deletar, achando o usuario via tantd no bd com findby e depois apagando mas vou escrever amanhaaaaaa 
+ public void deletarCategoria(Integer Id) {
+	 Categoria categoriaDeletar = categoriaRepository.findAllById(Id);
+	 categoriaRepository.delete(categoriaDeletar);
+ } 
+}
