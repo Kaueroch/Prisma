@@ -2,9 +2,10 @@
  * categoriesApi - Serviço de chamadas HTTP para o backend (Spring Boot)
  *
  * Endpoints disponíveis:
- *   - GET    /api/v1/categoria/listar         → Lista todas as categorias do usuário
- *   - POST   /api/v1/categoria/criarCategoria  → Cria uma nova categoria
- *   - DELETE /api/v1/categoria/deletar?id={id} → Exclui uma categoria pelo cd_id
+ *   - GET    /api/v1/categoria/listar              → Lista todas as categorias do usuário
+ *   - POST   /api/v1/categoria/criarCategoria       → Cria uma nova categoria
+ *   - PUT    /api/v1/categoria/atualizarLista?id={id} → Atualiza nome/tipo pelo cd_id
+ *   - DELETE /api/v1/categoria/deletar?id={id}      → Exclui uma categoria pelo cd_id
  *
  * Autenticação: Usa Bearer token JWT salvo no localStorage (chave: prisma_auth_token)
  */
@@ -29,6 +30,13 @@ export interface CriarCategoriaPayload {
   nome: string;
   tipoCategoria: string;
   userId: string;    // UUID do usuário logado (claim "sub" do JWT)
+}
+
+/** Payload de atualização - apenas os campos alteráveis + o id da categoria (CategoriaDTO) */
+export interface AtualizarCategoriaPayload {
+  id: number;
+  nome: string;
+  tipoCategoria: string;
 }
 
 /** Busca o token JWT salvo no localStorage para autenticação */
@@ -88,6 +96,28 @@ export const categoriesApi = {
     }
     const data = await response.json();
     return Number(data.id);
+  },
+
+  /**
+   * Atualiza uma categoria existente enviando um objeto (nome/tipo) e o id.
+   * Chama: PUT /api/v1/categoria/atualizarLista?id={categoriaId}
+   *
+   * O id vai na query (igual ao deletar) e o objeto com os campos
+   * alteráveis vai no corpo da requisição.
+   */
+  async atualizar(categoriaId: number, payload: AtualizarCategoriaPayload): Promise<void> {
+    const response = await fetch(
+      `${API_URL}/api/v1/categoria/atualizarLista?id=${encodeURIComponent(String(categoriaId))}`,
+      {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify(payload),
+      },
+    );
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || 'Erro ao atualizar categoria');
+    }
   },
 
   /**

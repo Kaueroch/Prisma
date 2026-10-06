@@ -73,14 +73,18 @@ export function CategoriesPage() {
     }
   }
 
-  const handleSaveEdit = (id: string) => {
+  const handleSaveEdit = async (id: string) => {
     if (!editName.trim()) return
     if (categories.some(c => c.id !== id && c.name.toLowerCase() === editName.trim().toLowerCase())) {
       alert('Já existe outra categoria com este nome.')
       return
     }
-    updateCategory(id, { name: editName.trim(), color: editColor, type: editType })
-    setEditingId(null)
+    try {
+      await updateCategory(id, { name: editName.trim(), color: editColor, type: editType })
+      setEditingId(null)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Erro ao atualizar categoria. Verifique se o backend está rodando.')
+    }
   }
 
   return (

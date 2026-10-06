@@ -27,6 +27,14 @@ public class Categoria{
   public String getTipoCategoria() {
     return tipoCategoria;
   }
+  public void setNome(String nome) {
+	this.nome = nome;
+}
+
+  public void setTipoCategoria(String tipoCategoria) {
+	this.tipoCategoria = tipoCategoria;
+  }
+
   protected Categoria(){}
   
   

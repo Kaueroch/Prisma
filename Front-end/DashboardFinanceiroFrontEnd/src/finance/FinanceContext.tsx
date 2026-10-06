@@ -9,7 +9,7 @@ interface FinanceContextType {
   loading: boolean;
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<void>;
-  updateCategory: (id: string, category: Partial<CategoryInfo>) => void;
+  updateCategory: (id: string, category: Partial<CategoryInfo>) => Promise<void>;
   deleteCategory: (id: string, nome?: string) => Promise<void>;
   totalIncome: number;
   totalExpense: number;
@@ -98,8 +98,29 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     }
   };
 
-  // Atualiza uma categoria existente (apenas localmente, sem backend)
-  const handleUpdateCategory = (id: string, updates: Partial<CategoryInfo>) => {
+  // Atualiza uma categoria: envia objeto + id ao backend e só atualiza a
+  // lista local depois que o banco confirmar a alteração
+  const handleUpdateCategory = async (id: string, updates: Partial<CategoryInfo>): Promise<void> => {
+    try {
+      const existing = categories.find(c => c.id === id);
+      const nome = updates.name ?? existing?.name ?? '';
+      const kind = updates.type ?? existing?.type;
+
+      // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesas/Receita)
+      const tipoCategoria = kind === 'expense' ? 'Despesas' : 'Receita';
+
+      // Envia apenas o id (query, igual ao deletar) e os campos que podem ser alterados.
+      // O userId não vai aqui: a validação de dono é feita pelo token JWT no backend.
+      await categoriesApi.atualizar(Number(id), {
+        id: Number(id),
+        nome,
+        tipoCategoria,
+      });
+    } catch (err) {
+      console.error(`Erro ao atualizar categoria (cd_id: ${id}) no backend:`, err);
+      throw err instanceof Error ? err : new Error('Erro ao atualizar categoria.');
+    }
+
     setCategories((prev) => {
       const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
       financeService.saveCategories(updated);

@@ -36,4 +36,9 @@ public class CategoriaController{
 		categoriaService.deletarCategoria(id);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaResponseDTO("Categoria Deletada!"));
 	}
+	@PutMapping("/atualizarLista")
+	public ResponseEntity<CategoriaResponseDTO> atualizarCategoria(@RequestParam Integer id, @RequestBody CategoriaDTO dto){
+		categoriaService.editarCategoria(id, dto.nome(), dto.tipoCategoria());
+		return ResponseEntity.status(HttpStatus.OK).body(new CategoriaResponseDTO("Categoria Atualizada!"));
+	}
 }
