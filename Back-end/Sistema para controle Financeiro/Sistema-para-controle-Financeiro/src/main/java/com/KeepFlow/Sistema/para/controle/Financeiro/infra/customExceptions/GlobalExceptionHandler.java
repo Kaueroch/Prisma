@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSenhaIncorreta(SenhaIncorreta ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
-     @ExceptionHandler(CampoNomeVazio.class)
-     public ResponseEntity<String> handleCampoNomeVazio(CampoNomeVazio ex)
+     @ExceptionHandler(CampoVazio.class)
+     public ResponseEntity<String> handleCampoNomeVazio(CampoVazio ex)
      {
 	     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
      }

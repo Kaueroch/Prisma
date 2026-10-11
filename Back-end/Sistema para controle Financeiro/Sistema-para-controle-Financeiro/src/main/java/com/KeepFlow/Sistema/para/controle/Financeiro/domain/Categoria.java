@@ -1,6 +1,8 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 
-import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoNomeVazio;
+import java.util.List;
+
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoVazio;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.TipoTextoNaoAutorizado;
 
 import jakarta.persistence.*;
@@ -19,6 +21,9 @@ public class Categoria{
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
+  @OneToMany(mappedBy = "categoria")   // nome do campo em Transacao
+  private List<Transacao> transacoes;
+  
 
   public String getNome() {
     return nome;
@@ -49,7 +54,7 @@ public class Categoria{
 
   private void validaCampoNome(String nome){
   if(nome.length() < 3 || nome.length() > 15){
-  throw new CampoNomeVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
+  throw new CampoVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
   }
 
 }
