@@ -17,7 +17,7 @@ export function Navbar() {
           <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">prisma</span>
         </a>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Navegação principal">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary navigation">
           {nav.links.map((link) => (
             <a
               key={link.href}
@@ -43,7 +43,7 @@ export function Navbar() {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-label={open ? 'Close menu' : 'Open menu'}
           className="flex h-9 w-9 items-center justify-center text-fg-muted outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50 md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -57,7 +57,7 @@ export function Navbar() {
         )}
       >
         <div className="min-h-0">
-          <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Navegação móvel">
+          <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile navigation">
             {nav.links.map((link) => (
               <a
                 key={link.href}

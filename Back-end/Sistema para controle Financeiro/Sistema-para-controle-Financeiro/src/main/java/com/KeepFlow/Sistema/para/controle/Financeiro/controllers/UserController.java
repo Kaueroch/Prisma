@@ -27,7 +27,7 @@ public class UserController {
     @PostMapping("/registrar")
     public ResponseEntity criarUsuario(@RequestBody UserDTO userDTO){
       autenticacaoRegisterService.RegistrarUsuario(userDTO.nome(), userDTO.email(), userDTO.senha());
-      UserResponseDTO responseDTO = new UserResponseDTO(userDTO.nome() + ", o seu registro foi completo! Aproveite o sistema!");
+      UserResponseDTO responseDTO = new UserResponseDTO(userDTO.nome() + ", your registration is complete! Enjoy the system!");
       return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     @PostMapping("/login")

@@ -16,9 +16,9 @@ export const financeService = {
   },
 
   /**
-   * Devolve o id da próxima despesa, sequencial e persistente.
-   * O contador vive no localStorage e só cresce, então dois registros nunca
-   * recebem o mesmo id - e nenhum id é gerado por sorteio.
+   * Return the next expense id, sequential and persistent.
+   * The counter lives in localStorage and only grows, so two records never
+   * get the same id - and no id is randomly generated.
    */
   nextExpenseId(): string {
     const atual = Number(localStorage.getItem(EXPENSE_SEQUENCE_KEY)) || 0;

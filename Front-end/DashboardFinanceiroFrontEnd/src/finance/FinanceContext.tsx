@@ -41,12 +41,12 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     const loadData = async () => {
       setExpenses(financeService.getExpenses());
 
-      // Carrega categorias do backend; se falhar, usa dados do localStorage
+      // Load categories from the backend; fall back to localStorage on failure
       try {
         const userId = getLoggedUserId();
         const backendCategories = await categoriesApi.listar(userId);
         const mapped = backendCategories.map((c) => ({
-          // Usa o cd_id que veio do banco, nunca um id fabricado aqui
+          // Use the cd_id from the database, never a fabricated id here
           id: String(c.id),
           name: c.nome,
           color: '#8b5cf6',
@@ -56,7 +56,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         }));
         setCategories(mapped);
       } catch (err) {
-        console.warn('Erro ao buscar categorias do backend, usando localStorage:', err);
+        console.warn('Could not load categories from the backend, using localStorage:', err);
         setCategories(financeService.getCategories());
       }
 
@@ -77,19 +77,19 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  // Adiciona uma nova categoria, enviando para o backend via API
+  // Add a new category by sending it to the backend via API
   const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
     try {
-      // Recupera o UUID do usuário logado (claim "sub" do JWT) para vincular a categoria
+      // Get the logged-in user UUID (JWT "sub" claim) to link the category
       const userId = getLoggedUserId();
       if (!userId) {
-        throw new Error('Sessão expirada. Faça login novamente para criar uma categoria.');
+        throw new Error('Session expired. Please sign in again to create a category.');
       }
 
-      // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesa/Receita)
+      // Map the frontend type (expense/income) to the backend format (Despesas/Receita)
       const tipoCategoria = newCategory.type === 'expense' ? 'Despesas' : 'Receita';
 
-      // O banco devolve o cd_id gerado por ele, que é o id usado nas próximas requisições
+      // The database returns its generated cd_id, which is the id used in later requests
       const categoriaId = await categoriesApi.criar({ nome: newCategory.name, tipoCategoria, userId });
 
       const category: CategoryInfo = {
@@ -103,32 +103,32 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         return updated;
       });
     } catch (err) {
-      console.error('Erro ao criar categoria no backend:', err);
+      console.error('Could not create category in the backend:', err);
       throw err;
     }
   };
 
-  // Atualiza uma categoria: envia objeto + id ao backend e só atualiza a
-  // lista local depois que o banco confirmar a alteração
+  // Update a category: send object + id to the backend and only update the
+  // local list after the database confirms the change
   const handleUpdateCategory = async (id: string, updates: Partial<CategoryInfo>): Promise<void> => {
     try {
       const existing = categories.find(c => c.id === id);
       const nome = updates.name ?? existing?.name ?? '';
       const kind = updates.type ?? existing?.type;
 
-      // Mapeia o tipo do frontend (expense/income) para o formato do backend (Despesas/Receita)
+      // Map the frontend type (expense/income) to the backend format (Despesas/Receita)
       const tipoCategoria = kind === 'expense' ? 'Despesas' : 'Receita';
 
-      // Envia apenas o id (query, igual ao deletar) e os campos que podem ser alterados.
-      // O userId não vai aqui: a validação de dono é feita pelo token JWT no backend.
+      // Only send the id (query, same as delete) plus the editable fields.
+      // No userId here: owner validation happens via the JWT token in the backend.
       await categoriesApi.atualizar(Number(id), {
         id: Number(id),
         nome,
         tipoCategoria,
       });
     } catch (err) {
-      console.error(`Erro ao atualizar categoria (cd_id: ${id}) no backend:`, err);
-      throw err instanceof Error ? err : new Error('Erro ao atualizar categoria.');
+      console.error(`Could not update category (cd_id: ${id}) in the backend:`, err);
+      throw err instanceof Error ? err : new Error('Could not update category.');
     }
 
     setCategories((prev) => {
@@ -138,14 +138,14 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
-  // Remove uma categoria: envia o cd_id ao backend e só tira da lista local
-  // depois que o banco confirmar a exclusão, para a tela não mentir sobre o estado
+  // Delete a category: send the cd_id to the backend and only remove it locally
+  // after the database confirms the deletion, so the UI never lies about state
   const handleDeleteCategory = async (id: string, nome?: string): Promise<void> => {
     try {
       await categoriesApi.deletar(Number(id));
     } catch (err) {
-      console.error(`Erro ao excluir "${nome ?? id}" no backend (cd_id: ${id}).`, err);
-      throw err instanceof Error ? err : new Error('Erro ao excluir categoria.');
+      console.error(`Could not delete "${nome ?? id}" in the backend (cd_id: ${id}).`, err);
+      throw err instanceof Error ? err : new Error('Could not delete category.');
     }
 
     setCategories((prev) => {

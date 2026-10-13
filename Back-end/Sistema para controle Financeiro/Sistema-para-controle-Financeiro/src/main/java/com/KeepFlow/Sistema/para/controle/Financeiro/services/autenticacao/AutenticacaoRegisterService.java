@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 public class AutenticacaoRegisterService {
     private final Security security;
     private final UserRepository userRepository;
-  //- Vou instanciar a classe user no Services e la sim,
-    // fazer o hash,validacao de email existente, e criar usuario,entendeu?
+  //- Instantiate the User class in Services and there,
+    // hash the password, validate an existing email, and create the user.
 
     public AutenticacaoRegisterService(Security _security, UserRepository _userRepository){
         this.security = _security;
@@ -33,7 +33,7 @@ public class AutenticacaoRegisterService {
 
     public void emailExiste(String email){
         if(userRepository.existsByEmail(email)){
-          throw new EmailExistente("Email já Cadastrado");
+          throw new EmailExistente("Email already registered");
         }
     }
 }

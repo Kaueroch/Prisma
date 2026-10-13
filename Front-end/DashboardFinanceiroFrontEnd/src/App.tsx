@@ -95,15 +95,15 @@ function AuthenticatedApp() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-yellow-400" />
-              Bem-vindo(a), {user?.name || 'usuário'}!
+              Welcome, {user?.name || 'user'}!
             </DialogTitle>
             <DialogDescription className="pt-1">
-              Que bom ter você aqui. Aproveite o seu painel financeiro!
+              Good to have you here. Enjoy your finance dashboard!
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button className="w-full sm:w-auto" onClick={closeWelcome}>
-              Começar
+              Get started
             </Button>
           </DialogFooter>
         </DialogContent>

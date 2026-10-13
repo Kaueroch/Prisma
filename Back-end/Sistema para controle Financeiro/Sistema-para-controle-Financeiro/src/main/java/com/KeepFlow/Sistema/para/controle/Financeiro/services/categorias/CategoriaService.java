@@ -32,7 +32,7 @@ public class CategoriaService{
  }
  private boolean validaNomeCategoria(String nome,UUID userID){
  if(categoriaRepository.existsByNomeAndUser_Id(nome,userID)){
-  throw new CategoriaJaExistente("Categoria já existente."); 
+   throw new CategoriaJaExistente("Category already exists."); 
  }
  return false;
  }
@@ -47,7 +47,7 @@ public class CategoriaService{
  }
  public void editarCategoria(Integer Id,String nome,String tipoCategoria){
 	 if(!categoriaRepository.existsById(Id)) {
-		 throw new IdNaoExistente("ID não existente");
+		 throw new IdNaoExistente("ID does not exist");
 	 }
 	 Categoria categoriaExistente = categoriaRepository.findAllById(Id);
 	 
@@ -55,6 +55,6 @@ public class CategoriaService{
 	 categoriaExistente.setTipoCategoria(tipoCategoria);
 	 
 	 categoriaRepository.save(categoriaExistente);
-	 //testar o codigo e pedir pra IA mudar o botao de atualizar e falar pra enviar um objeto de categoria que a gente so ira pegar os dados que podem ser alterados e o id da categoria
+ 	 // Test the code and ask to update the button to send a category object; only the editable fields and the category id are used.
  }
 }

@@ -14,8 +14,8 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
   const initials = user?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
 
   function handleGenerate() {
-    // Frontend-only: gera deep-link simulado. O backend real emitiria
-    // POST /owner/telegram-invite como no money-flow.
+    // Frontend-only: generate a simulated deep link. The real backend would issue
+    // POST /owner/telegram-invite as in money-flow.
     const fake = `https://t.me/PrismaBot?start=${Math.random().toString(36).slice(2, 10)}`
     setLink(fake)
   }
@@ -23,21 +23,21 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
   function handleSimulate() {
     const cat = categories[0]
     const res = telegramInbox.simulate({
-      text: 'Café 12',
+      text: 'Coffee 12',
       amount: 12,
       categoryId: cat?.id,
       categoryName: cat?.name,
     })
-    setSimMsg(`Gasto “${res.name}” de ${res.amount} entrou na caixa do Telegram e já está no painel.`)
+    setSimMsg(`Expense "${res.name}” of ${res.amount} landed in the Telegram inbox and is already in the dashboard.`)
     setActiveTab?.('home')
   }
 
   return (
     <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
       <header className="mb-7 flex flex-col gap-2.5">
-        <span className="eyebrow">Preferências</span>
-        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Configurações</h1>
-        <p className="text-[15px] text-fg-muted">Conecte seus serviços à sua conta Prisma.</p>
+        <span className="eyebrow">Preferences</span>
+        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Settings</h1>
+        <p className="text-[15px] text-fg-muted">Connect your services to your Prisma account.</p>
       </header>
 
       <div className="flex max-w-xl flex-col gap-6">
@@ -47,7 +47,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               {initials}
             </span>
             <div className="flex flex-col">
-              <span className="font-display text-xl text-fg">{user?.name || 'Usuário'}</span>
+              <span className="font-display text-xl text-fg">{user?.name || 'User'}</span>
               <span className="font-mono text-xs text-fg-subtle">{user?.email || ''}</span>
             </div>
           </div>
@@ -57,7 +57,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
           >
             <Tags className="size-4" strokeWidth={1.8} />
-            Gerenciar categorias
+            Manage categories
           </button>
         </section>
 
@@ -69,7 +69,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <div className="flex flex-col gap-1">
               <h2 className="font-display text-2xl font-normal text-fg">Telegram</h2>
               <p className="text-sm text-fg-muted">
-                Vincule o bot para registrar gastos por mensagem. Cada gasto cai na caixa de entrada e entra no painel.
+                Link the bot to log expenses by message. Each expense lands in the inbox and shows up in the dashboard.
               </p>
             </div>
           </div>
@@ -80,7 +80,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               onClick={handleGenerate}
               className="flex w-fit items-center gap-2.5 bg-brand px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.04em] text-black transition-opacity duration-150 hover:opacity-90"
             >
-              Vincular Telegram
+              Link Telegram
               <ArrowRight className="size-4" strokeWidth={2.2} />
             </button>
             <button
@@ -89,7 +89,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
             >
               <FlaskConical className="size-4" strokeWidth={1.8} />
-              Simular gasto via bot
+              Simulate a bot expense
             </button>
           </div>
 
@@ -101,7 +101,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               </a>
               <p className="flex items-center gap-2 font-mono text-xs text-fg-subtle">
                 <Clock className="size-3.5 shrink-0" strokeWidth={1.8} />
-                Link simulado (frontend-only). O backend real geraria com expiração de 1 minuto.
+                Simulated link (frontend-only). The real backend would generate one expiring in 1 minute.
               </p>
             </div>
           )}
@@ -109,7 +109,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <div className="border border-brand/40 bg-brand-soft px-4 py-3 text-sm text-fg">{simMsg}</div>
           )}
           <p className="font-mono text-[11px] leading-relaxed text-fg-subtle">
-            Sem backend novo: a simulação escreve direto no localStorage via telegramInbox. Quando o bot real existir, troque simulate() por polling de /telegram/inbox.
+            No new backend: the simulation writes directly to localStorage via telegramInbox. When the real bot exists, swap simulate() for polling /telegram/inbox.
           </p>
         </section>
 
@@ -122,7 +122,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <span className="flex size-10 items-center justify-center border border-negative/40">
               <LogOut className="size-5 text-negative" strokeWidth={1.8} />
             </span>
-            <span className="flex-1 text-left font-medium text-negative">Sair</span>
+            <span className="flex-1 text-left font-medium text-negative">Sign out</span>
           </button>
         </section>
       </div>

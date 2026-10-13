@@ -34,11 +34,11 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
   if (data.every((d) => d.income === 0 && d.expense === 0)) {
     return (
       <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
-        <span className="eyebrow">Comparativo</span>
-        <h2 className="font-display text-2xl font-normal text-fg">Renda e gastos</h2>
+        <span className="eyebrow">Comparison</span>
+        <h2 className="font-display text-2xl font-normal text-fg">Income and spending</h2>
         <div className="flex min-h-56 flex-1 flex-col items-center justify-center gap-2 border border-dashed border-edge px-6 text-center">
-          <p className="text-sm text-fg-muted">Sem movimentações nos últimos 6 meses.</p>
-          <p className="font-mono text-xs text-fg-subtle">Registre ou simule via bot do Telegram.</p>
+          <p className="text-sm text-fg-muted">No activity in the last 6 months.</p>
+          <p className="font-mono text-xs text-fg-subtle">Log an entry or simulate one via the Telegram bot.</p>
         </div>
       </section>
     )
@@ -48,15 +48,15 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
     <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">Comparativo</span>
-          <h2 className="font-display text-2xl font-normal text-fg">Renda e gastos</h2>
+          <span className="eyebrow">Comparison</span>
+          <h2 className="font-display text-2xl font-normal text-fg">Income and spending</h2>
         </div>
         <div className="flex gap-4 font-mono text-[11px] text-fg-muted">
           <span className="flex items-center gap-1.5">
-            <span className="size-2 bg-data" /> Entrada
+            <span className="size-2 bg-data" /> Income
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="size-2 bg-negative" /> Gasto
+            <span className="size-2 bg-negative" /> Expense
           </span>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
               labelFormatter={(label) => monthLabel(String(label))}
-              formatter={(value, name) => [formatBRL(Number(value)), name === 'income' ? 'Entrada' : 'Gasto']}
+              formatter={(value, name) => [formatBRL(Number(value)), name === 'income' ? 'Income' : 'Expense']}
             />
             <Bar dataKey="income" fill={CHART.income} radius={0} />
             <Bar dataKey="expense" fill={CHART.expense} radius={0} />

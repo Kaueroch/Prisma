@@ -39,7 +39,7 @@ function Cross({ className, style }: { className?: string; style?: CSSProperties
   )
 }
 
-/** Faixa única de KPIs — detalhe-assinatura do sistema Tinta. */
+/** Single KPI strip — signature detail of the Tinta system. */
 export function KpiStrip({ items, loading = false, mask = false }: { items: KpiItem[]; loading?: boolean; mask?: boolean }) {
   const n = items.length
   return (

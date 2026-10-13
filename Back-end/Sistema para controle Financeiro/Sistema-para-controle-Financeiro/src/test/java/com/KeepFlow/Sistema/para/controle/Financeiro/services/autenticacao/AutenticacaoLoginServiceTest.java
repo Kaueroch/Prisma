@@ -64,7 +64,7 @@ class AutenticacaoLoginServiceTest {
 
         // Assert
         verify(userRepository).existsByEmail(email);
-        verify(userRepository, times(2)).findByEmail(email); // Chamado em validarSenhaCriptografada e generateToken
+        verify(userRepository, times(2)).findByEmail(email); // Called in validarSenhaCriptografada and generateToken
         verify(security).passwordEncoder();
         verify(passwordEncoder).matches(senhaPlana, senhaCriptografada);
         verify(tokenServices).generateToken(userUuid);

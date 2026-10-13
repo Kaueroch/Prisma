@@ -21,7 +21,7 @@ public class Categoria{
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
-  @OneToMany(mappedBy = "categoria")   // nome do campo em Transacao
+  @OneToMany(mappedBy = "categoria")   // Field name in Transacao
   private List<Transacao> transacoes;
   
 
@@ -54,7 +54,7 @@ public class Categoria{
 
   private void validaCampoNome(String nome){
   if(nome.length() < 3 || nome.length() > 15){
-  throw new CampoVazio("Por favor preencha a categoria com pelo menos 3 caracteres e no maximo 15"); 
+   throw new CampoVazio("Please enter a category name with at least 3 and at most 15 characters"); 
   }
 
 }
@@ -62,7 +62,7 @@ public class Categoria{
     String receita = new String("Receita");
     String despesa = new String("Despesas");
     if(!tipoCategoria.equals(receita) && !tipoCategoria.equals(despesa)){
-    throw new TipoTextoNaoAutorizado("Apenas Receita ou Despesas são aceitas para serem salvas no banco de dados.");
+    throw new TipoTextoNaoAutorizado("Only Receita or Despesas values are accepted to be saved in the database.");
     }
   }
 }

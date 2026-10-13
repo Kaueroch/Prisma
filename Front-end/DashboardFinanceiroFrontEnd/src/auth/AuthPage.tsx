@@ -50,7 +50,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   )
 
   const typewriterDone = useRef(false)
-  const fullSubtitle = "Seu painel financeiro completo. Organize receitas, despesas, orçamentos e metas em um só lugar."
+  const fullSubtitle = "Your complete finance dashboard. Organize income, expenses, budgets, and goals in one place."
 
   useEffect(() => {
     if (typewriterDone.current) return
@@ -76,7 +76,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     e.preventDefault()
     setError('')
     if (!email || !password) {
-      setError('Preencha todos os campos.')
+      setError('Fill in all fields.')
       return
     }
     setIsSubmitting(true)
@@ -84,7 +84,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       const errorMessage = await login(email.trim(), password)
       if (errorMessage) setPopupMessage(errorMessage)
     } catch {
-      setError('Erro de conexão.')
+      setError('Connection error.')
     } finally {
       setIsSubmitting(false)
     }
@@ -97,7 +97,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     if (/[A-Z]/.test(password)) score++
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
-    const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte', 'Segura']
+    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Secure']
     const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-400', 'bg-lime-400']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
@@ -107,25 +107,25 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   const emailValid = email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
   const fields = [
-    { id: 'reg-name', icon: User, placeholder: 'Seu nome completo', value: name, setter: setName, type: 'text', valid: nameFilled, label: 'Nome' },
-    { id: 'reg-email', icon: Mail, placeholder: 'seu@email.com', value: email, setter: setEmail, type: 'email', valid: emailValid, label: 'E-mail' },
-    { id: 'reg-password', icon: Lock, placeholder: 'Mínimo 6 caracteres', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 6, label: 'Senha' },
-    { id: 'reg-confirm', icon: Lock, placeholder: 'Repita a senha', value: confirmPassword, setter: setConfirmPassword, type: showPassword ? 'text' : 'password', valid: passwordsMatch === true, label: 'Confirmar Senha' },
+    { id: 'reg-name', icon: User, placeholder: 'Your full name', value: name, setter: setName, type: 'text', valid: nameFilled, label: 'Name' },
+    { id: 'reg-email', icon: Mail, placeholder: 'you@email.com', value: email, setter: setEmail, type: 'email', valid: emailValid, label: 'Email' },
+    { id: 'reg-password', icon: Lock, placeholder: 'Minimum 6 characters', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 6, label: 'Password' },
+    { id: 'reg-confirm', icon: Lock, placeholder: 'Repeat password', value: confirmPassword, setter: setConfirmPassword, type: showPassword ? 'text' : 'password', valid: passwordsMatch === true, label: 'Confirm password' },
   ]
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
     if (!name || !email || !password || !confirmPassword) {
-      setError('Preencha todos os campos.')
+      setError('Fill in all fields.')
       return
     }
     if (password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres.')
+      setError('Password must be at least 6 characters.')
       return
     }
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem.')
+      setError('Passwords do not match.')
       return
     }
     setIsSubmitting(true)
@@ -134,7 +134,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       if (errorMessage) {
         setPopupMessage(errorMessage)
       } else {
-        setSuccess('Conta criada com sucesso! Faça login.')
+        setSuccess('Account created successfully! Please sign in.')
         setName('')
         setEmail('')
         setPassword('')
@@ -142,21 +142,21 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
         setTimeout(() => switchToLogin(), 1500)
       }
     } catch {
-      setError('Erro de conexão.')
+      setError('Connection error.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const loginFields = [
-    { id: 'login-email', icon: Mail, placeholder: 'seu@email.com', value: email, setter: setEmail, type: 'email', valid: email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) },
-    { id: 'login-password', icon: Lock, placeholder: 'Sua senha', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 6 },
+    { id: 'login-email', icon: Mail, placeholder: 'you@email.com', value: email, setter: setEmail, type: 'email', valid: email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) },
+    { id: 'login-password', icon: Lock, placeholder: 'Your password', value: password, setter: setPassword, type: showPassword ? 'text' : 'password', valid: password.length >= 6 },
   ]
 
   const heroFeatures = [
-    { icon: TrendingUp, label: 'Controle financeiro' },
-    { icon: BarChart3, label: 'Gastos por categoria' },
-    { icon: Sparkles, label: 'Registro rápido' },
+    { icon: TrendingUp, label: 'Financial control' },
+    { icon: BarChart3, label: 'Spending by category' },
+    { icon: Sparkles, label: 'Quick logging' },
   ]
 
   return (
@@ -215,7 +215,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
+            title={onBack ? 'Back to the home page' : undefined}
             className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 cursor-pointer"
           >
             <motion.div
@@ -230,7 +230,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
             onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
+            title={onBack ? 'Back to the home page' : undefined}
             className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
           >
             Prisma
@@ -310,7 +310,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
               className="mb-6 flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
-              Página inicial
+              Home page
             </button>
           )}
           <motion.div
@@ -318,7 +318,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
             onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
+            title={onBack ? 'Back to the home page' : undefined}
             className="flex items-center justify-center gap-3 mb-8 lg:hidden cursor-pointer"
           >
             <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
@@ -346,13 +346,13 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                         value="login"
                         className="flex-1 data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
                       >
-                        Entrar
+                        Sign in
                       </TabsTrigger>
                       <TabsTrigger
                         value="register"
                         className="flex-1 data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
                       >
-                        Cadastrar
+                        Sign up
                       </TabsTrigger>
                     </TabsList>
                     <motion.div
@@ -401,7 +401,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                 transition={{ delay: i * 0.06 }}
                                 className="space-y-2"
                               >
-                                <Label htmlFor={field.id}>{field.id === 'login-email' ? 'E-mail' : 'Senha'}</Label>
+                                <Label htmlFor={field.id}>{field.id === 'login-email' ? 'Email' : 'Password'}</Label>
                                 <div className="relative">
                                   <field.icon className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                                   <Input
@@ -462,7 +462,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                   {isSubmitting ? (
                                     <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                                   ) : (
-                                    <>Entrar <ArrowRight className="w-4 h-4" /></>
+                                    <>Sign in <ArrowRight className="w-4 h-4" /></>
                                   )}
                                 </Button>
                               </motion.div>
@@ -555,9 +555,9 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                   >
                                     <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-lime-400' : 'text-red-500'}`}>
                                       {passwordsMatch ? (
-                                        <><CheckCircle className="w-3 h-3" /> Senhas conferem</>
+                                        <><CheckCircle className="w-3 h-3" /> Passwords match</>
                                       ) : (
-                                        <><XCircle className="w-3 h-3" /> Senhas não conferem</>
+                                        <><XCircle className="w-3 h-3" /> Passwords do not match</>
                                       )}
                                     </p>
                                   </motion.div>
@@ -587,7 +587,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                   ) : (
                                     <>
                                       <Sparkles className="w-4 h-4" />
-                                      Criar Conta
+                                      Create account
                                       <ArrowRight className="w-4 h-4" />
                                     </>
                                   )}
@@ -607,7 +607,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                   transition={{ delay: 0.6 }}
                   className="text-center text-xs text-muted-foreground mt-6"
                 >
-                  Ao continuar, você concorda com nossos Termos de Uso e Política de Privacidade.
+                  By continuing, you agree to our Terms of Use and Privacy Policy.
                 </motion.p>
               </CardContent>
             </Card>
@@ -620,7 +620,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-500">
               <AlertCircle className="w-5 h-5" />
-              Não foi possível continuar
+              Could not continue
             </DialogTitle>
             <DialogDescription className="pt-1">
               {popupMessage}
@@ -628,7 +628,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" className="w-full sm:w-auto" onClick={() => setPopupMessage('')}>
-              Entendi
+              Got it
             </Button>
           </DialogFooter>
         </DialogContent>

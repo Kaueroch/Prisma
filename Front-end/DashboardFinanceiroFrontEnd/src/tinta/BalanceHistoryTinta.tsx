@@ -8,7 +8,7 @@ function dayKey(iso: string) {
   return iso.slice(0, 10)
 }
 
-/** Constrói série diária do mês a partir das despesas locais (sem backend). */
+/** Build the daily series for the month from local expenses (no backend). */
 export function buildDailySeries(expenses: Expense[], month: number, year: number) {
   const map = new Map<string, number>()
   for (const e of expenses) {
@@ -41,12 +41,12 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
     <section className="flex h-full min-h-[300px] flex-col gap-4 border border-edge bg-surface p-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">Fluxo no tempo</span>
-          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Histórico de saldo</h2>
+          <span className="eyebrow">Flow over time</span>
+          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Balance history</h2>
         </div>
         <span className={`font-mono text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-data'}`}>
           {periodNet < 0 ? '−' : '+'}
-          {formatBRL(Math.abs(periodNet))} no mês
+          {formatBRL(Math.abs(periodNet))} this month
         </span>
       </div>
       <div className="min-h-44 flex-1">
@@ -76,12 +76,12 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
               labelStyle={{ fontFamily: 'Space Mono', color: CHART.axis, marginBottom: 4 }}
               itemStyle={{ color: '#fff' }}
-              formatter={(value) => [formatBRL(Number(value)), 'Saldo']}
+              formatter={(value) => [formatBRL(Number(value)), 'Balance']}
             />
             <Area
               type="monotone"
               dataKey="net"
-              name="Saldo"
+              name="Balance"
               stroke={CHART.brand}
               fill={CHART.brand}
               fillOpacity={0.12}

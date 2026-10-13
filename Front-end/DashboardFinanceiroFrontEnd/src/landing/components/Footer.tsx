@@ -38,7 +38,7 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-edge pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-fg-muted">{footer.rights}</p>
           <p className="text-xs text-fg-muted">
-            Feito para quem acredita que entender o próprio dinheiro é liberdade.
+            Built for people who believe understanding their money is freedom.
           </p>
         </div>
       </div>

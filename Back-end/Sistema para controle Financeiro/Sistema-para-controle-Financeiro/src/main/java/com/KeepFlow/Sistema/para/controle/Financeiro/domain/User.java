@@ -27,7 +27,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Categoria> categoriasLista;
 
-    //regex para validar email se são válidos ou nao
+    // Regex to validate whether emails are valid or not
        private static final String EMAIL_PATTERN =
             "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -44,12 +44,12 @@ public class User {
 
     public void validacaoSenha(String senha){
         if(senha.length() < 8 || senha.length() >=16) {
-            throw new SenhaInsuficiente("A senha precisa ter no minimo 8 e no máximo 16 caracteres.");
+            throw new SenhaInsuficiente("The password must be at least 8 and at most 16 characters.");
         }
     }
     public void validarEmail(String email){    
         if(!pattern.matcher(email).matches()){
-        	throw new EmailInvalido("Por favor insira um email inválido.");
+         	throw new EmailInvalido("Please enter a valid email.");
         }
     }
 }

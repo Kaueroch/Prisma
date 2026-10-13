@@ -1,5 +1,5 @@
-// Port do money-flow (Opus 5) — paleta derivada dos tokens Tinta.
-// Mantém contraste no fundo escuro e reaproveita a identidade.
+// Ported from money-flow (Opus 5) — palette derived from the Tinta tokens.
+// Keeps contrast on the dark background and reuses the identity.
 export const CHART = {
   income: '#3DDC84',
   expense: '#FF7A6B',

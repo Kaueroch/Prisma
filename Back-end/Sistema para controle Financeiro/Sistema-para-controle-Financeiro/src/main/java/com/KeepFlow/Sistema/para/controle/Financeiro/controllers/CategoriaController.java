@@ -22,7 +22,7 @@ public class CategoriaController{
 	@PostMapping("/criarCategoria")
 	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO dto){
          categoriaService.SalvarCategoria(dto.nome(), dto.tipoCategoria(),dto.userId());
-         CategoriaResponseDTO response = new CategoriaResponseDTO("A categoria foi criada.");
+         CategoriaResponseDTO response = new CategoriaResponseDTO("The category was created.");
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
@@ -34,11 +34,11 @@ public class CategoriaController{
 	@DeleteMapping("/deletar")
 	public ResponseEntity<CategoriaResponseDTO> deletarCategoria(@RequestParam Integer id){
 		categoriaService.deletarCategoria(id);
-		return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaResponseDTO("Categoria Deletada!"));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaResponseDTO("Category deleted!"));
 	}
 	@PutMapping("/atualizarLista")
 	public ResponseEntity<CategoriaResponseDTO> atualizarCategoria(@RequestParam Integer id, @RequestBody CategoriaDTO dto){
 		categoriaService.editarCategoria(id, dto.nome(), dto.tipoCategoria());
-		return ResponseEntity.status(HttpStatus.OK).body(new CategoriaResponseDTO("Categoria Atualizada!"));
+		return ResponseEntity.status(HttpStatus.OK).body(new CategoriaResponseDTO("Category updated!"));
 	}
 }

@@ -18,15 +18,15 @@ public class TokenServices {
 
     public String generateToken(UUID uuid){
        try{
-        // algoritmo que ira construir o conteudo do meu token
-            Algorithm algorithm = Algorithm.HMAC256(Secretkey); //define o algoritmo que vamos usar para gerar o token
+        // Algorithm that builds the content of the token
+            Algorithm algorithm = Algorithm.HMAC256(Secretkey); // Defines the algorithm used to generate the token
             return JWT.create()
                     .withIssuer("Prisma")
                     .withSubject(uuid.toString())
                     .withExpiresAt(Instant.now().plusSeconds(Jwtexpiration))
                     .sign(algorithm);
         }catch(JWTCreationException exception){
-            throw new RuntimeException("Erro ao gerar token JWT");
+            throw new RuntimeException("Error generating JWT token");
         }
     }
     public String validarToken(String token) {

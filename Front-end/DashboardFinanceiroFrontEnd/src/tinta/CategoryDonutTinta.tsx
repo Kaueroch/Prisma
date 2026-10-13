@@ -20,7 +20,7 @@ function toSlices(data: { name: string; value: number }[]): DonutSlice[] {
   return [
     ...head.map((d, i) => ({ ...d, color: categoryColor(i) })),
     {
-      name: `Outros · ${tail.length}`,
+      name: `Other · ${tail.length}`,
       value: tail.reduce((acc, d) => acc + d.value, 0),
       color: OTHERS_COLOR,
       muted: true,
@@ -35,9 +35,9 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
   return (
     <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
       <div className="flex flex-col gap-1.5">
-        <span className="eyebrow">Gastos por categoria</span>
+        <span className="eyebrow">Spending by category</span>
         <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">
-          Para onde foi o dinheiro
+          Where the money went
         </h2>
       </div>
       {loading ? (
@@ -51,8 +51,8 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
         </div>
       ) : slices.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-10 text-center">
-          <p className="text-sm text-fg-muted">Nenhum gasto registrado neste mês.</p>
-          <p className="font-mono text-xs text-fg-subtle">Registre uma despesa ou simule via bot do Telegram.</p>
+          <p className="text-sm text-fg-muted">No spending recorded this month.</p>
+          <p className="font-mono text-xs text-fg-subtle">Log an expense or simulate one via the Telegram bot.</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-12 sm:flex-row">

@@ -11,10 +11,10 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const categorias = [
-  { name: 'Alimentação', amount: 'R$ 1.428,00', color: '#a3e635' },
-  { name: 'Contas', amount: 'R$ 1.092,00', color: '#3b82f6' },
-  { name: 'Transporte', amount: 'R$ 924,00', color: '#f97316' },
-  { name: 'Lazer', amount: 'R$ 756,00', color: '#8b5cf6' },
+  { name: 'Food', amount: 'R$ 1.428,00', color: '#a3e635' },
+  { name: 'Bills', amount: 'R$ 1.092,00', color: '#3b82f6' },
+  { name: 'Transport', amount: 'R$ 924,00', color: '#f97316' },
+  { name: 'Leisure', amount: 'R$ 756,00', color: '#8b5cf6' },
 ]
 
 function GastosVisual() {
@@ -31,10 +31,10 @@ function GastosVisual() {
       </div>
       <div className="flex-1 space-y-2">
         {[
-          ['Alimentação', '#a3e635', '34%'],
-          ['Contas', '#3b82f6', '26%'],
-          ['Transporte', '#f97316', '22%'],
-          ['Lazer', '#8b5cf6', '18%'],
+          ['Food', '#a3e635', '34%'],
+          ['Bills', '#3b82f6', '26%'],
+          ['Transport', '#f97316', '22%'],
+          ['Leisure', '#8b5cf6', '18%'],
         ].map(([label, color, pct]) => (
           <div key={label as string} className="flex items-center gap-2 text-[11px]">
             <span className="h-2 w-2 " style={{ backgroundColor: color as string }} />
@@ -62,8 +62,8 @@ function CategoriasVisual() {
 }
 
 const registro = [
-  { name: 'Padaria', amount: 'R$ 18,90', category: 'Alimentação', color: '#a3e635' },
-  { name: 'Combustível', amount: 'R$ 210,00', category: 'Transporte', color: '#f97316' },
+  { name: 'Bakery', amount: 'R$ 18,90', category: 'Food', color: '#a3e635' },
+  { name: 'Fuel', amount: 'R$ 210,00', category: 'Transport', color: '#f97316' },
 ]
 
 function RegistroVisual() {
@@ -71,7 +71,7 @@ function RegistroVisual() {
     <div className="mt-6  border border-edge bg-surface p-4">
       <div className="mb-3 flex items-center gap-2">
         <span className="flex flex-1 items-center gap-1.5  border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted">
-          <Plus className="h-3 w-3" /> Nova despesa
+          <Plus className="h-3 w-3" /> New expense
         </span>
         <span className=" bg-orange-500/10 px-2.5 py-2 text-[11px] font-medium text-orange-400">-R$ 0,00</span>
       </div>

@@ -4,9 +4,9 @@ import type { Tab } from '../shared/types'
 import { useAuth } from '../auth/AuthContext'
 
 const NAV: { icon: LucideIcon; label: string; tab: Tab }[] = [
-  { icon: LayoutGrid, label: 'Painel', tab: 'home' },
-  { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },
-  { icon: Tags, label: 'Categorias', tab: 'categories' },
+  { icon: LayoutGrid, label: 'Dashboard', tab: 'home' },
+  { icon: ArrowLeftRight, label: 'Transactions', tab: 'transactions' },
+  { icon: Tags, label: 'Categories', tab: 'categories' },
 ]
 
 function NavButton({
@@ -38,7 +38,7 @@ function NavButton({
   )
 }
 
-/** Sidebar Tinta 72px só-ícones — port do money-flow. */
+/** Tinta 72px sidebar icon-only — ported from money-flow. */
 export function TintaSidebar({
   active,
   onNavigate,
@@ -62,14 +62,14 @@ export function TintaSidebar({
       <div className="flex w-full flex-col">
         <NavButton
           icon={Settings}
-          label="Configurações"
+          label="Settings"
           active={active === 'profile'}
           onClick={() => onNavigate('profile')}
         />
         <button
           type="button"
-          title="Sair"
-          aria-label="Sair"
+          title="Sign out"
+          aria-label="Sign out"
           onClick={logout}
           className="flex h-12 w-full items-center justify-center text-fg-subtle transition-colors duration-150 hover:text-negative"
         >

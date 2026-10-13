@@ -30,7 +30,7 @@ public class Transacao {
     @Column(name = "dt_dataGasto",nullable = false)
     private String data;
     @ManyToOne
-    @JoinColumn(name = "categoria_id")   // cria a coluna FK no banco
+    @JoinColumn(name = "categoria_id")   // Creates the FK column in the database
     private Categoria categoria;
     
     protected Transacao() {}
@@ -40,9 +40,9 @@ public class Transacao {
     }
     private void validaCampoData(String data) {
     	if(data.isBlank()) {
-    		throw new CampoVazio("Por favor insira a data corretamente");
+    		throw new CampoVazio("Please enter the date correctly");
     	}
-    	//caso contrario chama o metodo pra fazer o parser
+    	// Otherwise call the method to parse it
     }
     private LocalDate converteStringToDate(String data) {
      DateTimeFormatter parser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -51,7 +51,7 @@ public class Transacao {
     }
     private void validaCampoDescricao(String descricao) {
     if(descricao.isBlank()) {
-		throw new CampoVazio("Por favor insira a data corretamente");
+ 		throw new CampoVazio("Please enter the date correctly");
      }
   }
     

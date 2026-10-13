@@ -19,7 +19,7 @@ export function decodeJwt(token: string): Record<string, unknown> | null {
   }
 }
 
-/** Extrai o ID (UUID) do usuário a partir do claim "sub" do token JWT */
+/** Extract the user ID (UUID) from the JWT "sub" claim */
 export function getUserIdFromToken(token: string | null | undefined): string | null {
   if (!token) return null;
   const payload = decodeJwt(token);

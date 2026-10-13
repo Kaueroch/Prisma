@@ -19,7 +19,7 @@ Never deviate from the following visual and technical rules:
 - Framework: Modern Angular (Standalone Components only, no NgModules).
 - Styling: Tailwind CSS utility classes exclusively. Do not write custom CSS/SCSS unless absolutely necessary for complex animations.
 - Iconography: Use Lucide Icons (`lucide-angular`).
-- Language: All user-facing text, placeholders, and labels MUST be in Brazilian Portuguese (PT-BR).
+- Language: All user-facing text, placeholders, and labels MUST be in US English.
 - Responsiveness: Always design mobile-first, but scale up gracefully for desktop using CSS Grid and Flexbox.
 
 4. [Execution Rule]

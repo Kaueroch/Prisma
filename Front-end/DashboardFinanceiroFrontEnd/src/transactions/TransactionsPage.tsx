@@ -77,9 +77,9 @@ export function TransactionsPage() {
     <div className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="eyebrow">Movimentações</span>
-          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
-          <p className="text-[15px] text-fg-muted">Toda a sua atividade financeira centralizada em um só lugar.</p>
+          <span className="eyebrow">Activity</span>
+          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transactions</h1>
+          <p className="text-[15px] text-fg-muted">All your financial activity in one place.</p>
         </div>
         <button
           type="button"
@@ -87,7 +87,7 @@ export function TransactionsPage() {
           className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
         >
           <Plus className="h-4 w-4" strokeWidth={2.2} />
-          Nova Transação
+          New transaction
         </button>
       </div>
 
@@ -95,7 +95,7 @@ export function TransactionsPage() {
         <div className="flex-1 relative border border-edge bg-surface">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
           <Input
-            placeholder="Buscar transação..."
+            placeholder="Search transactions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 rounded-none border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
@@ -104,10 +104,10 @@ export function TransactionsPage() {
         <div className="flex gap-4">
           <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v as CategoryId | 'all')}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Categoria" />
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
               ))}
@@ -115,12 +115,12 @@ export function TransactionsPage() {
           </Select>
           <Select value={filterType} onValueChange={(v) => setFilterType(v as 'all' | 'income' | 'expense')}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Tipo" />
+              <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="income">Receitas</SelectItem>
-              <SelectItem value="expense">Despesas</SelectItem>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="income">Income</SelectItem>
+              <SelectItem value="expense">Expenses</SelectItem>
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
@@ -139,13 +139,13 @@ export function TransactionsPage() {
 
       {categoryGroups.length === 0 ? (
         <div className="flex flex-col items-center gap-2 border border-dashed border-edge px-6 py-12 text-center">
-          <p className="text-sm text-fg-muted">Nenhuma transação encontrada.</p>
-          <p className="font-mono text-xs text-fg-subtle">Ajuste os filtros ou registre uma nova.</p>
+          <p className="text-sm text-fg-muted">No transactions found.</p>
+          <p className="font-mono text-xs text-fg-subtle">Adjust the filters or log a new one.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
           {categoryGroups.map(({ id, total, maxExpense, items }) => {
-            const catInfo = categories.find(c => c.id === id) || { name: 'Desconhecido', color: '#666' }
+            const catInfo = categories.find(c => c.id === id) || { name: 'Unknown', color: '#666' }
             const isExpanded = expandedId === id
 
             return (
@@ -179,14 +179,14 @@ export function TransactionsPage() {
                   <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                     {maxExpense && (
                       <p className="truncate">
-                        Maior gasto:{' '}
+                        Largest expense:{' '}
                         <span className="font-medium text-foreground/60">
                           {formatBRL(maxExpense.amount)}
                         </span>{' '}
                         ({maxExpense.name})
                       </p>
                     )}
-                    <p>{items.length} transaç{items.length === 1 ? 'ão' : 'ões'}</p>
+                    <p>{items.length} {items.length === 1 ? 'transaction' : 'transactions'}</p>
                   </div>
                 </CardContent>
 

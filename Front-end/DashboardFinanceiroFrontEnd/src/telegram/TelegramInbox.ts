@@ -25,9 +25,9 @@ function writeInbox(items: Record<string, unknown>[]) {
 }
 
 /**
- * Frontend-only: simula “cada gasto no Telegram aparece no Prisma”.
- * Escreve no mesmo localStorage do FinanceContext e avisa via evento,
- * então o painel atualiza sem reload e sem backend novo.
+ * Frontend-only: simulate "each Telegram expense shows up in Prisma".
+ * Write to the same FinanceContext localStorage and notify via event,
+ * so the dashboard updates with no reload and no new backend.
  */
 export const telegramInbox = {
   simulate(payload: TelegramPayload): Expense {
@@ -36,7 +36,7 @@ export const telegramInbox = {
       amount: payload.amount,
       date: new Date().toISOString().slice(0, 10),
       categoryId: payload.categoryId ?? 'telegram',
-      name: payload.text || `Gasto via Telegram ${payload.amount}`,
+      name: payload.text || `Expense via Telegram ${payload.amount}`,
       type: 'expense',
     }
     const current = financeService.getExpenses()

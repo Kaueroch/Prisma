@@ -1,29 +1,29 @@
-# Estágio 1: Build da aplicação Node
+# Stage 1: Node application build
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copia os arquivos de dependência
+# Copy dependency files
 COPY package*.json ./
 
-# Instala as dependências do projeto
+# Install project dependencies
 RUN npm install
 
-# Copia o restante do código da aplicação
+# Copy the rest of the application code
 COPY . .
 
-# Realiza o build do projeto com Vite (gera os arquivos na pasta /app/dist)
+# Build the project with Vite (outputs files to /app/dist)
 RUN npm run build
 
-# Estágio 2: Servidor Web (Nginx) para disponibilizar o site
+# Stage 2: Web server (Nginx) to serve the site
 FROM nginx:alpine
 
-# Limpa o diretório padrão do Nginx
+# Clear the default Nginx directory
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copia os arquivos estáticos gerados no estágio de build para o Nginx
+# Copy the static files generated in the build stage to Nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Configura o Nginx para lidar com rotas de Single Page Application (SPA)
+# Configure Nginx to handle Single Page Application (SPA) routes
 RUN echo 'server { \
     listen 80; \
     server_name localhost; \
@@ -34,8 +34,8 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-# Expõe a porta 80 do container
+# Expose the container port 80
 EXPOSE 80
 
-# Inicia o servidor Nginx
+# Start the Nginx server
 CMD ["nginx", "-g", "daemon off;"]

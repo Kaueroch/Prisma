@@ -21,21 +21,21 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(org.springframework.security.config.Customizer.withDefaults())
-                // 1. Desabilita o CSRF (Essencial para APIs REST Stateless)
+                // 1. Disable CSRF (required for stateless REST APIs)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 2. Configura as rotas
+                // 2. Configure the routes
                 .authorizeHttpRequests(auth -> auth
-                        // Libera totalmente o acesso ao endpoint de registro e login
+                        // Fully allow access to the register and login endpoints
                         .requestMatchers("/api/v1/user/registrar").permitAll()
                         .requestMatchers("/api/v1/user/login").permitAll()
 			
 
-			//linha que serve para testes de desenvolvimento
+			// Line used for development testing
 			//.requestMatchers("/api/v1/categoria/criarCategoria").permitAll()
 			
 
-			// Qualquer outra requisição precisará de autenticação
+			// Any other request requires authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

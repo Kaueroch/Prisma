@@ -42,7 +42,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     for (const e of filtered) {
       if (e.type !== 'expense') continue
       const cat = categories.find((c) => c.id === e.categoryId)
-      const name = cat?.name || 'Sem categoria'
+      const name = cat?.name || 'Uncategorized'
       byCat[name] = (byCat[name] ?? 0) + e.amount
     }
     return Object.entries(byCat).map(([name, value]) => ({ name, value }))
@@ -52,20 +52,20 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
       <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="eyebrow">Visão geral</span>
+          <span className="eyebrow">Overview</span>
           <div className="flex items-center gap-4">
             <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Dashboard</h1>
             <button
               type="button"
               onClick={toggleMask}
               className="flex size-8 items-center justify-center border border-edge text-fg-muted transition-colors duration-150 hover:border-white/30 hover:text-fg"
-              title={mask ? 'Mostrar valores' : 'Ocultar valores'}
-              aria-label={mask ? 'Mostrar valores' : 'Ocultar valores'}
+              title={mask ? 'Show values' : 'Hide values'}
+              aria-label={mask ? 'Show values' : 'Hide values'}
             >
               {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
             </button>
           </div>
-          <p className="text-[15px] text-fg-muted">Suas finanças organizadas em 5 segundos.</p>
+          <p className="text-[15px] text-fg-muted">Your finances organized in 5 seconds.</p>
         </div>
         <div className="flex flex-wrap items-stretch gap-3">
           <MonthPickerTinta value={selectedMonth} onChange={setSelectedMonth} />
@@ -74,14 +74,14 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
             onClick={() => openTransactionForm('income')}
             className="flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
           >
-            <Plus className="size-4" strokeWidth={2.2} /> Receita
+            <Plus className="size-4" strokeWidth={2.2} /> Income
           </button>
           <button
             type="button"
             onClick={() => openTransactionForm('expense')}
             className="flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-white/30"
           >
-            <Plus className="size-4" strokeWidth={2.2} /> Despesa
+            <Plus className="size-4" strokeWidth={2.2} /> Expense
           </button>
         </div>
       </header>
@@ -96,9 +96,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           loading={loading}
           mask={mask}
           items={[
-            { label: 'Entrada', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
-            { label: 'Gasto', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
-            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
+            { label: 'Income', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
+            { label: 'Expense', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
+            { label: 'Period balance', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
           ]}
         />
       </div>
@@ -113,7 +113,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
 
       {setActiveTab && (
         <button type="button" onClick={() => setActiveTab('transactions')} className="mt-6 font-mono text-xs text-fg-subtle hover:text-brand">
-          Ver todas as transações →
+          View all transactions →
         </button>
       )}
     </main>

@@ -36,8 +36,8 @@ function clearStoredSession() {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
 }
 
-// Limpa os dados financeiros locais e a flag de boas-vindas para que o proximo
-// usuario do mesmo navegador nao veja os dados do usuario anterior.
+// Clear local finance data and the welcome flag so the next
+// user on the same browser does not see the previous user data.
 function clearLocalFinanceData() {
   localStorage.removeItem('finance_dashboard_expenses');
   localStorage.removeItem('finance_dashboard_categories');
@@ -73,8 +73,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [user]);
 
-  // Route guard: revalida o token periodicamente para expulsar tokens
-  // expirados/falsos mesmo com a aba aberta.
+  // Route guard: revalidate the token periodically to drop tokens
+  // that are expired/invalid even with the tab open.
   useEffect(() => {
     const check = () => {
       setUser((prev) => {
@@ -101,32 +101,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         const message = await response.text();
-        return message || 'Não foi possível entrar.';
+        return message || 'Could not sign in.';
       }
 
       const data = await response.json();
 
-      if (!data.token) return 'Não foi possível entrar.';
+      if (!data.token) return 'Could not sign in.';
 
-      // Salva o token do back-end
+      // Save the backend token
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
 
-      // Zera todos os dados financeiros locais para começar o dashboard zerado
+      // Clear all local finance data to start with an empty dashboard
       localStorage.removeItem('finance_dashboard_expenses');
       localStorage.removeItem('finance_dashboard_categories');
 
-      // Marca que o popup de boas-vindas deve aparecer após o reload
+      // Flag the welcome popup to show after reload
       localStorage.setItem(WELCOME_FLAG_KEY, 'true');
 
-      // Define o usuário (isso já atualiza o nome lá em cima no header)
+      // Set the user (this already updates the name up in the header)
       setUser({ email, name: data.nome ?? email, token: data.token });
 
-      // Recarrega a página para o FinanceContext montar com o LocalStorage zerado
+      // Reload the page so FinanceContext mounts with cleared localStorage
       window.location.href = '/';
       return null;
     } catch (error) {
-      console.error("Erro no login:", error);
-      return 'Erro de conexão com o servidor.';
+      console.error("Sign-in error:", error);
+      return 'Could not reach the server.';
     }
   };
 
@@ -140,18 +140,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         const message = await response.text();
-        return message || 'Não foi possível criar a conta.';
+        return message || 'Could not create the account.';
       }
 
       return null;
     } catch (error) {
-      console.error("Erro no registro:", error);
-      return 'Erro de conexão com o servidor.';
+      console.error("Sign-up error:", error);
+      return 'Could not reach the server.';
     }
   };
 
-  // Encerra a sessao: limpa o token e os dados financeiros locais e manda direto
-  // para a tela de login. O reload garante que o FinanceProvider remonte vazio.
+  // Sign out: clear the token and local finance data and go straight
+  // to the sign-in screen. The reload ensures FinanceProvider remounts empty.
   const logout = () => {
     clearStoredSession();
     clearLocalFinanceData();

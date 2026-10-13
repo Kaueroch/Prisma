@@ -17,7 +17,7 @@ export function Pricing() {
             <div className="flex items-center justify-between">
               <h3 className="font-display text-lg font-medium text-fg">{pricing.free.name}</h3>
               <span className=" bg-brand-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand border border-brand/40">
-                Disponível agora
+                Available now
               </span>
             </div>
             <p className="mt-2 text-sm text-fg-muted">{pricing.free.tagline}</p>

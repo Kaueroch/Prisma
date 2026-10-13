@@ -1,60 +1,60 @@
-# Proteção de Ponta a Ponta — HTTPS (TLS) em Produção
+# End-to-End Protection — HTTPS (TLS) in Production
 
-Guia de como ligar o HTTPS no pipeline do Prisma (Nginx/React + Spring Boot) para que a promessa da landing — *"dados protegidos de ponta a ponta, desde a saída do front até a chegada ao backend, com a comunicação criptografada a cada envio"* — seja 100% verdadeira.
-
----
-
-## Por que fazer isso?
-
-1. **Dados sensíveis em trânsito.** Sem HTTPS, tudo que sai do navegador viaja em texto claro: quem estiver no meio do caminho (mesma rede Wi-Fi, provedor, gateway do servidor) consegue ler e, pior, **alterar** os dados — saldo, despesas, receitas, e-mail, senha em formato criptografado.
-
-2. **A mensagem da landing precisa ser verdadeira.** A copy do FAQ e do hero promete criptografia "a cada envio, do front até o backend". Hoje:
-   - Senhas → já são hasheadas com **BCrypt** no backend ✅
-   - Sessão → autenticação por **JWT** ✅
-   - Transporte → **FALTA HTTPS** ❌ (`docker-compose.yml` expõe `80:80` e `8080:8080`)
-   Criptografia no texto claro não existe — sem TLS, o "ponta a ponta" fica só marketing.
-
-3. **Confiança e conformidade.** Navegadores marcam sites sem HTTPS como "Não seguro", afetando conversão (quem vai digitar dados financeiros num site assim?) e credibilidade. A LGPD também cobra medidas de segurança adequadas para dados pessoais/financeiros.
-
-4. **Esconder o backend.** Com os containers expostos hoje, a API Spring fica acessível em `http://servidor:8080` diretamente. Depois do passo a passo, o backend só responde por dentro da rede do Docker e o navegador nunca fala com ele fora do nginx.
+Guide to enabling HTTPS in the Prisma pipeline (Nginx/React + Spring Boot) so the landing page promise — *"data protected end to end, from the frontend to the backend, with encrypted communication on every request"* — is 100% true.
 
 ---
 
-## Estrutura atual (para referência)
+## Why do this?
 
-- `Front-end/DashboardFinanceiroFrontEnd/Dockerfile` → estágio 2 usa **Nginx alpine**, serve o SPA em `listen 80`.
-- `docker-compose.yml` → publica `db` (5433), `backend` (8080) e `frontend` (80).
-- `.env` → alimenta o backend (Postgres + JWT). Já está no `.gitignore`.
+1. **Sensitive data in transit.** Without HTTPS, everything leaving the browser travels in plain text: anyone in the middle (same Wi-Fi network, ISP, server gateway) can read and, worse, **alter** the data — balance, expenses, income, email, encrypted password.
+
+2. **The landing page message must be true.** The FAQ and hero copy promise encryption "on every request, from frontend to backend". Today:
+   - Passwords → already hashed with **BCrypt** on the backend ✅
+   - Sessions → **JWT** authentication ✅
+   - Transport → **HTTPS MISSING** ❌ (`docker-compose.yml` exposes `80:80` and `8080:8080`)
+   Plain-text encryption does not exist — without TLS, "end to end" is just marketing.
+
+3. **Trust and compliance.** Browsers mark sites without HTTPS as "Not secure", hurting conversion (who types financial data into a site like that?) and credibility. Brazil's LGPD also requires adequate security measures for personal/financial data.
+
+4. **Hide the backend.** With the containers exposed today, the Spring API is reachable directly at `http://server:8080`. After the steps below, the backend only answers inside the Docker network and the browser never talks to it outside nginx.
 
 ---
 
-## Passo a passo
+## Current structure (for reference)
 
-### 0. Pré-requisitos
-
-- Um **domínio** apontando para o servidor (ex.: `prisma.seudominio.com`) — necessário para o certificado real (Let's Encrypt). Para testes locais sem domínio, pule para a Opção B.
-- Portas **80** e **443** liberadas no firewall.
+- `Front-end/DashboardFinanceiroFrontEnd/Dockerfile` → stage 2 uses **Nginx alpine**, serves the SPA on `listen 80`.
+- `docker-compose.yml` → publishes `db` (5433), `backend` (8080), and `frontend` (80).
+- `.env` → feeds the backend (Postgres + JWT). Already in `.gitignore`.
 
 ---
 
-### Opção A — Certificado real (Let's Encrypt) — recomendado para produção
+## Step by step
 
-Instale o `certbot` com plugin nginx e gere o certificado:
+### 0. Prerequisites
+
+- A **domain** pointing to the server (e.g. `prisma.yourdomain.com`) — required for a real certificate (Let's Encrypt). For local tests without a domain, skip to Option B.
+- Ports **80** and **443** open in the firewall.
+
+---
+
+### Option A — Real certificate (Let's Encrypt) — recommended for production
+
+Install `certbot` with the nginx plugin and issue the certificate:
 
 ```bash
 # Debian/Ubuntu
 sudo apt update
 sudo apt install certbot python3-certbot-nginx
 
-# Emite e instala automaticamente no nginx (vai pedir o domínio)
+# Issues and installs automatically into nginx (it will ask for the domain)
 sudo certbot --nginx -d prisma.seudominio.com
 ```
 
-Isso cria:
+This creates:
 - `/etc/letsencrypt/live/prisma.seudominio.com/fullchain.pem`
 - `/etc/letsencrypt/live/prisma.seudominio.com/privkey.pem`
 
-### Opção B — Certificado self-signed (só para dev/tests, sem domínio)
+### Option B — Self-signed certificate (dev/tests only, no domain)
 
 ```bash
 mkdir -p certs
@@ -64,16 +64,16 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -subj "/CN=localhost"
 ```
 
-> Aviso: navegadores avisam que é autoassinado. Servir só para testar o fluxo HTTPS.
+> Warning: browsers warn that it is self-signed. Only use it to test the HTTPS flow.
 
 ---
 
-### 1. Configurar o Nginx do frontend (Dockerfile)
+### 1. Configure the frontend Nginx (Dockerfile)
 
-Substitua o `echo 'server { listen 80; ... }'` do Dockerfile por uma configuração com TLS + redirecionamento. Crie um arquivo `Front-end/DashboardFinanceiroFrontEnd/nginx.conf`:
+Replace the `echo 'server { listen 80; ... }'` block in the Dockerfile with a TLS + redirect configuration. Create a `Front-end/DashboardFinanceiroFrontEnd/nginx.conf` file:
 
 ```nginx
-# Redireciona HTTP -> HTTPS
+# Redirect HTTP -> HTTPS
 server {
     listen 80;
     server_name prisma.seudominio.com localhost;
@@ -90,7 +90,7 @@ server {
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
     ssl_protocols       TLSv1.2 TLSv1.3;
 
-    # Segurança extra
+    # Extra security
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -98,7 +98,7 @@ server {
     root /usr/share/nginx/html;
     index index.html index.htm;
 
-    # API Spring fica atrás do nginx (esconde do mundo e evita CORS)
+    # Spring API sits behind nginx (hidden from the world, avoids CORS)
     location /api/ {
         proxy_pass http://backend:8080/api/;
         proxy_set_header Host $host;
@@ -106,24 +106,24 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # SPA (fallback para o React)
+    # SPA (fallback for React)
     location / {
         try_files $uri $uri/ /index.html;
     }
 }
 ```
 
-No `Dockerfile`, troque o bloco `RUN echo ...` por:
+In the `Dockerfile`, replace the `RUN echo ...` block with:
 
 ```dockerfile
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 ```
 
-> Se usou a **Opção B** (self-signed), copie os certs para `/etc/nginx/certs` — no Docker é feito via volume no `docker-compose.yml` abaixo.
+> If you used **Option B** (self-signed), copy the certs to `/etc/nginx/certs` — in Docker this is done via the volume in `docker-compose.yml` below.
 
 ---
 
-### 2. Atualizar o `docker-compose.yml`
+### 2. Update `docker-compose.yml`
 
 ```yaml
   frontend:
@@ -133,63 +133,63 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
     container_name: prisma-frontend
     ports:
       - "443:443"
-      - "80:80"          # mantém só para o redirecionamento 301
+      - "80:80"          # kept only for the 301 redirect
     volumes:
-      - ./certs:/etc/nginx/certs:ro   # Opção A: passe os certs do Let's Encrypt para cá
+      - ./certs:/etc/nginx/certs:ro   # Option A: mount the Let's Encrypt certs here
     depends_on:
       - backend
 ```
 
-**Importante:**
-- Remova o mapeamento `- "8080:8080"` do backend. Ele passa a ser usado apenas internamente (`backend:8080`) pelo proxy do nginx.
-- Para a Opção A, em vez de copiar para `./certs`, você pode copiar os arquivos gerados pelo certbot para essa pasta: `sudo cp /etc/letsencrypt/live/prisma.seudominio.com/fullchain.pem certs/` e idem `privkey.pem`.
+**Important:**
+- Remove the `- "8080:8080"` mapping from the backend. It is then used only internally (`backend:8080`) via the nginx proxy.
+- For Option A, instead of copying to `./certs`, you can copy the certbot-generated files into that folder: `sudo cp /etc/letsencrypt/live/prisma.seudominio.com/fullchain.pem certs/` and likewise `privkey.pem`.
 
 ---
 
-### 3. Ajustar a URL da API no front
+### 3. Point the frontend API URL at the proxy
 
-No front, a base da API deve apontar para o próprio domínio (HTTPS) e usar o prefixo `/api` do proxy:
+On the frontend, the API base must point to the domain itself (HTTPS) using the `/api` proxy prefix:
 
-- Crie/ajuste o `.env` do frontend (`Front-end/DashboardFinanceiroFrontEnd/.env`):
+- Create/edit the frontend `.env` (`Front-end/DashboardFinanceiroFrontEnd/.env`):
   ```bash
   VITE_API_URL=https://prisma.seudominio.com/api
   ```
-  > Exemplo: a chamada atual para `http://servidor:8080/...` vira `https://prisma.seudominio.com/api/...`, que o nginx encaminha para o backend interno.
-- Recrie os containers: `docker compose up -d --build`.
+  > Example: the current call to `http://server:8080/...` becomes `https://prisma.seudominio.com/api/...`, which nginx forwards to the internal backend.
+- Recreate the containers: `docker compose up -d --build`.
 
 ---
 
-### 4. Verificar
+### 4. Verify
 
 ```bash
-docker compose ps                       # frontend publicado em 443, backend SEM porta exposta
-curl -sI https://prisma.seudominio.com  # 200 + handshake TLS
+docker compose ps                       # frontend published on 443, backend with NO exposed port
+curl -sI https://prisma.seudominio.com  # 200 + TLS handshake
 curl -sI http://prisma.seudominio.com   # 301 -> https://...
 ```
 
-Testar no navegador: abrir `https://prisma.seudominio.com` → deve exibir o cadeado e redirecionar o HTTP. Abrir `https://servidor:8080` → deve **falhar** (porta do backend fechada).
+Test in the browser: open `https://prisma.seudominio.com` → it must show the lock and redirect HTTP. Open `https://server:8080` → it must **fail** (backend port closed).
 
 ---
 
-### 5. Renovação automática (Let's Encrypt)
+### 5. Auto-renewal (Let's Encrypt)
 
-Os certificados expiram a cada 90 dias. Agende a renovação:
+Certificates expire every 90 days. Schedule renewal:
 
 ```bash
 sudo crontab -e
-# adicione:
-15 3 * * * certbot renew --quiet --deploy-hook "docker compose -f /caminho/do/projeto/docker-compose.yml restart frontend"
+# add:
+15 3 * * * certbot renew --quiet --deploy-hook "docker compose -f /path/to/project/docker-compose.yml restart frontend"
 ```
 
-> O `--deploy-hook` reinicia o container do nginx só quando o certificado for renovado de fato (para ele recarregar os novos arquivos).
+> The `--deploy-hook` restarts the nginx container only when the certificate was actually renewed (so it reloads the new files).
 
 ---
 
-## Checklist final
+## Final checklist
 
-- [ ] `https://` respondendo em 443 com certificado válido
-- [ ] HTTP 80 redireciona (301) para HTTPS
-- [ ] Porta `8080` do backend não está mais publicada no host
-- [ ] Chamadas do front usam `VITE_API_URL` com `https://.../api`
-- [ ] Certificados e `.env` fora do repositório (ver `.gitignore`)
-- [ ] Renovação automática configurada e testada com `certbot renew --dry-run`
+- [ ] `https://` answering on 443 with a valid certificate
+- [ ] HTTP on 80 redirects (301) to HTTPS
+- [ ] Backend port `8080` no longer published on the host
+- [ ] Frontend calls use `VITE_API_URL` with `https://.../api`
+- [ ] Certificates and `.env` outside the repo (see `.gitignore`)
+- [ ] Auto-renewal configured and tested with `certbot renew --dry-run`

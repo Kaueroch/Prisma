@@ -7,15 +7,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class Cors implements WebMvcConfigurer {
-//colocando essa variavel para ser injetada via .env por motivos de teste de aplicacao
-// cada porta que eu colocar na lista irá ser assumida, caso haja a ausencia da porta principal. 
+// Inject this variable via .env for application testing
+// Each port added to the list is accepted if the main port is absent.
     @Value("${CORS_ALLOWED_ORIGINS:http://localhost}")
     private String[] allowedOrigins;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-		//mudar pra somente localhost quando for testar no docker.
+ 		// Change to localhost only when testing with Docker.
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

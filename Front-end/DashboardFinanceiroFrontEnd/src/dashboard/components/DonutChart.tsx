@@ -36,7 +36,7 @@ export function DonutChart({ data }: DonutChartProps) {
   if (validData.length === 0) {
     return (
       <div className="w-full h-full rounded-full border-2 border-dashed border-white/10 flex items-center justify-center">
-        <span className="text-white/30 text-sm">Sem dados</span>
+        <span className="text-white/30 text-sm">No data</span>
       </div>
     );
   }

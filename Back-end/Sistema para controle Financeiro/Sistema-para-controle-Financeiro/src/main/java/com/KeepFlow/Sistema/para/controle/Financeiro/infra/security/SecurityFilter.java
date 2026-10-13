@@ -24,25 +24,25 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 1. Tenta extrair o token do cabeçalho da requisição
+        // 1. Try to extract the token from the request header
         var token = this.recuperarToken(request);
 
         if (token != null) {
-            // 2. A "Casa da Moeda" valida a criptografia e devolve o dono do token (o UUID que salvamos no Subject)
+            // 2. The token validator checks the signature and returns the token owner (the UUID saved in the subject)
             var subjectUuid = tokenServices.validarToken(token);
 
-            // 3. Busca a entidade rica no banco de dados usando o UUID extraído
+            // 3. Look up the rich entity in the database using the extracted UUID
             var usuario = userRepository.findById(java.util.UUID.fromString(subjectUuid))
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+                    .orElseThrow(() -> new RuntimeException("User not found."));
 
 
             var authentication = new UsernamePasswordAuthenticationToken(usuario, null, null);
 
-            // 5. Injeta a autenticação no contexto atual (cura a amnésia do Spring para esta requisição)
+            // 5. Inject the authentication into the current context for this request
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        // 6. Continua o fluxo normal da requisição (passa para o próximo filtro ou vai para o Controller)
+        // 6. Continue the normal request flow (pass to the next filter or go to the controller)
         filterChain.doFilter(request, response);
     }
 

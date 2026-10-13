@@ -34,11 +34,11 @@ export function CategoriesPage() {
     [expenses]
   )
 
-  // Envia a nova categoria para o backend e atualiza a lista
+  // Send the new category to the backend and refresh the list
   const handleAdd = async () => {
     if (!newCatName.trim()) return
     if (categories.some(c => c.name.toLowerCase() === newCatName.trim().toLowerCase())) {
-      alert('Já existe uma categoria com este nome.')
+      alert('A category with this name already exists.')
       return
     }
     try {
@@ -55,35 +55,35 @@ export function CategoriesPage() {
       setIsAdding(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
-      alert(message || 'Erro ao criar categoria. Verifique se o backend está rodando.')
+      alert(message || 'Could not create category. Check that the backend is running.')
     }
   }
 
   const handleDelete = async (cat: CategoryInfo) => {
     if ((grouped[cat.id]?.items.length ?? 0) > 0) {
-      alert('Não é possível excluir esta categoria pois existem transações associadas.')
+      alert('Cannot delete this category because it has associated transactions.')
       return
     }
-    if (!window.confirm(`Tem certeza que deseja excluir a categoria "${cat.name}"?`)) return
+    if (!window.confirm(`Are you sure you want to delete the category "${cat.name}"?`)) return
 
     try {
       await deleteCategory(cat.id, cat.name)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Erro ao excluir categoria.')
+      alert(err instanceof Error ? err.message : 'Could not delete category.')
     }
   }
 
   const handleSaveEdit = async (id: string) => {
     if (!editName.trim()) return
     if (categories.some(c => c.id !== id && c.name.toLowerCase() === editName.trim().toLowerCase())) {
-      alert('Já existe outra categoria com este nome.')
+      alert('Another category with this name already exists.')
       return
     }
     try {
       await updateCategory(id, { name: editName.trim(), color: editColor, type: editType })
       setEditingId(null)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Erro ao atualizar categoria. Verifique se o backend está rodando.')
+      alert(err instanceof Error ? err.message : 'Could not update category. Check that the backend is running.')
     }
   }
 
@@ -109,9 +109,9 @@ export function CategoriesPage() {
         <>
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-col gap-2.5">
-              <span className="eyebrow">Organização</span>
-              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
-              <p className="text-[15px] text-fg-muted">Gerencie suas categorias e veja seus gastos.</p>
+              <span className="eyebrow">Organization</span>
+              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categories</h1>
+              <p className="text-[15px] text-fg-muted">Manage your categories and review your spending.</p>
             </div>
             <button
               type="button"
@@ -119,7 +119,7 @@ export function CategoriesPage() {
               className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
             >
               <Plus className="h-4 w-4" strokeWidth={2.2} />
-              Nova Categoria
+              New category
             </button>
           </header>
 
@@ -132,15 +132,15 @@ export function CategoriesPage() {
                 className="border border-border rounded-2xl p-4 sm:p-5 bg-card flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4"
               >
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-xs text-muted-foreground font-medium">Nome da Categoria</label>
+                  <label className="text-xs text-muted-foreground font-medium">Category name</label>
                   <Input
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
-                    placeholder="Ex: Viagens"
+                    placeholder="E.g. Travel"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-muted-foreground font-medium">Cor</label>
+                  <label className="text-xs text-muted-foreground font-medium">Color</label>
                   <input
                     type="color"
                     value={newCatColor}
@@ -149,7 +149,7 @@ export function CategoriesPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-muted-foreground font-medium">Usada para</label>
+                  <label className="text-xs text-muted-foreground font-medium">Used for</label>
                   <div className="flex bg-muted p-1 rounded-lg border border-border">
                     {(['expense', 'income'] as CategoryKind[]).map((kind) => (
                       <button
@@ -158,13 +158,13 @@ export function CategoriesPage() {
                         onClick={() => setNewCatType(kind)}
                         className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${newCatType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
                       >
-                        {kind === 'expense' ? 'Despesa' : 'Receita'}
+                        {kind === 'expense' ? 'Expense' : 'Income'}
                       </button>
                     ))}
                   </div>
                 </div>
-                <Button onClick={handleAdd}>Criar</Button>
-                <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancelar</Button>
+                <Button onClick={handleAdd}>Create</Button>
+                <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancel</Button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -210,7 +210,7 @@ export function CategoriesPage() {
                                   onClick={() => setEditType(kind)}
                                   className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all ${editType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
-                                  {kind === 'expense' ? 'Despesa' : 'Receita'}
+                                  {kind === 'expense' ? 'Expense' : 'Income'}
                                 </button>
                               ))}
                             </div>
@@ -237,14 +237,14 @@ export function CategoriesPage() {
                                 </button>
                               </span>
                             </span>
-                            <span className="text-muted-foreground text-xs">{data.items.length} transações</span>
+                            <span className="text-muted-foreground text-xs">{data.items.length} transactions</span>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-3 sm:gap-4 cursor-pointer justify-between sm:justify-end" onClick={() => setExpandedId(isExpanded ? null : cat.id)}>
                         <div className="flex flex-col items-end">
                           <p className="text-lg font-semibold">{formatBRL(data.total)}</p>
-                          <span className="text-muted-foreground text-xs">{percent}% do total</span>
+                          <span className="text-muted-foreground text-xs">{percent}% of total</span>
                         </div>
                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -263,7 +263,7 @@ export function CategoriesPage() {
                         >
                           <div className="flex flex-col p-4 gap-3 max-h-64 overflow-y-auto bg-muted/20">
                             {data.items.length === 0 ? (
-                              <div className="text-center text-muted-foreground text-sm py-4">Nenhuma transação registrada.</div>
+                              <div className="text-center text-muted-foreground text-sm py-4">No transactions recorded.</div>
                             ) : (
                               data.items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(item => (
                                 <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">

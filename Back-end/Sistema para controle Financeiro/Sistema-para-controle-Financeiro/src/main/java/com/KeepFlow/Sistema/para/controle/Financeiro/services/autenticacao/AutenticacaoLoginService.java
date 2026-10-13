@@ -21,15 +21,15 @@ public class AutenticacaoLoginService {
         this.tokenServices = _tokenServices;
     }
     public LoginResponseDTO logarUsuario(UserDTO userDTO){
-    //vai chamar os metodos de validar se o email existe e se senha hasheada esta correta,
-    // e se tudo isso retornar true, aqui ira chamar o metodo para gerar o Token
+    // Calls the methods that validate whether the email exists and whether the hashed password is correct,
+    // and if all of that returns true, here it calls the method to generate the token
         validarEmail(userDTO.email());
         validarSenhaCriptografada(userDTO);
         return gerarRespostaLogin(userDTO.email());
     }
   private boolean validarEmail(String email){
    if(!userRepository.existsByEmail(email)){
-    throw new EmailNaoEncontrado("Email não encontrado, tente novamente.");
+     throw new EmailNaoEncontrado("Email not found, please try again.");
    }
    return true;
   }
@@ -38,7 +38,7 @@ public class AutenticacaoLoginService {
         String senhaPlana = userDTO.senha();
         String senhaBanco = userBanco.senha();
         if(!security.passwordEncoder().matches(senhaPlana,senhaBanco)){
-            throw new SenhaIncorreta("Senha incorreta.");
+            throw new SenhaIncorreta("Incorrect password.");
         }
         return true;
   }

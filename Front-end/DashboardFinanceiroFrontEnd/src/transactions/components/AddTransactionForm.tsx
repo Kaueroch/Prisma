@@ -57,7 +57,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     if (!numericAmount || numericAmount <= 0) return
 
     onAdd({ amount: numericAmount, name, date, categoryId, type })
-    showToast('Transação salva com sucesso.')
+    showToast('Transaction saved successfully.')
     setAmount('')
     setName('')
     setDate(new Date().toISOString().split('T')[0])
@@ -81,8 +81,8 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nova Transação</DialogTitle>
-          <DialogDescription>Registre uma receita ou despesa.</DialogDescription>
+          <DialogTitle>New transaction</DialogTitle>
+          <DialogDescription>Log income or an expense.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex bg-muted p-1 rounded-lg border border-border">
@@ -91,19 +91,19 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
               onClick={() => handleTypeChange('expense')}
               className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'expense' ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Despesa
+              Expense
             </button>
             <button
               type="button"
               onClick={() => handleTypeChange('income')}
               className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'income' ? 'bg-lime-400/10 text-lime-400/90' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Receita
+              Income
             </button>
           </div>
 
           <div className="space-y-2">
-            <Label>Valor</Label>
+            <Label>Amount</Label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-medium text-muted-foreground">R$</span>
               <Input
@@ -120,16 +120,16 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Descrição</Label>
+              <Label>Description</Label>
               <Input
-                placeholder="Ex: Padaria"
+                placeholder="E.g. Bakery"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label>Data</Label>
+              <Label>Date</Label>
               <Input
                 type="date"
                 value={date}
@@ -140,7 +140,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
           </div>
 
           <div className="space-y-2">
-            <Label>Categoria</Label>
+            <Label>Category</Label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {availableCategories.map((info) => (
                 <button
@@ -162,7 +162,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
 
           <DialogFooter>
             <Button type="submit" className="w-full">
-              Salvar Transação
+              Save transaction
             </Button>
           </DialogFooter>
         </form>
