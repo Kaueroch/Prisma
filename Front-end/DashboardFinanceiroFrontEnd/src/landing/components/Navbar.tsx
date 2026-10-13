@@ -8,13 +8,13 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/75 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-edge bg-[#0b0d12]/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-lg">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Wallet className="h-4 w-4" />
+        <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+          <span className="flex h-7 w-7 items-center justify-center bg-brand text-black">
+            <Wallet className="h-4 w-4" strokeWidth={2.6} />
           </span>
-          <span className="text-base font-bold tracking-tight">Prisma</span>
+          <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">prisma</span>
         </a>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Navegação principal">
@@ -22,7 +22,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors duration-200 outline-none hover:bg-muted/60 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="px-3 py-2 font-mono text-xs uppercase tracking-[0.04em] text-fg-muted transition-colors duration-150 outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50"
             >
               {link.label}
             </a>
@@ -44,7 +44,7 @@ export function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? 'Fechar menu' : 'Abrir menu'}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground outline-none hover:bg-muted/60 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 md:hidden"
+          className="flex h-9 w-9 items-center justify-center text-fg-muted outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50 md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -63,7 +63,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                className="px-3 py-2 font-mono text-xs uppercase tracking-[0.04em] text-fg-muted hover:text-fg"
               >
                 {link.label}
               </a>

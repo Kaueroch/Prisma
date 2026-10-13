@@ -1,11 +1,9 @@
-import { useState, useEffect, type CSSProperties } from 'react'
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { useState, useEffect } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Sparkles } from 'lucide-react'
-import { AppSidebar } from './layout/AppSidebar'
-import { SiteHeader } from './layout/SiteHeader'
+import { TintaSidebar } from './tinta/TintaSidebar'
 import { AddTransactionForm } from './transactions/components/AddTransactionForm'
 import { HomePage } from './dashboard/HomePage'
 import { TransactionsPage } from './transactions/TransactionsPage'
@@ -78,26 +76,18 @@ function AuthenticatedApp() {
   return (
     <>
       <TooltipProvider>
-      <SidebarProvider defaultOpen={true} style={{ '--sidebar-width': '13.5rem' } as CSSProperties}>
-        <AppSidebar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-        <SidebarInset>
-          <SiteHeader activeTab={activeTab} setActiveTab={setActiveTab} />
-          <div className="flex-1 flex flex-col overflow-auto relative">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
-            <div className="flex-1 relative z-10">
-              {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
-              {activeTab === 'transactions' && <TransactionsPage />}
-              {activeTab === 'categories' && <CategoriesPage />}
-              {activeTab === 'profile' && <ProfilePage />}
-            </div>
+      <div className="flex h-screen bg-[#0b0d12] text-fg overflow-hidden">
+        <TintaSidebar active={activeTab} onNavigate={setActiveTab} />
+        <div className="flex-1 flex flex-col overflow-hidden relative">
+          <div className="flex-1 relative z-10 overflow-hidden flex flex-col">
+            {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
+            {activeTab === 'transactions' && <TransactionsPage />}
+            {activeTab === 'categories' && <CategoriesPage />}
+            {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
           </div>
-        </SidebarInset>
+        </div>
         <TransactionFormGate />
-      </SidebarProvider>
+      </div>
     </TooltipProvider>
 
       <Dialog open={showWelcome} onOpenChange={(open) => !open && closeWelcome()}>

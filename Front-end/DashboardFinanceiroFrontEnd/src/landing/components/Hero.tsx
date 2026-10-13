@@ -21,18 +21,15 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-lime-400" />
-              {hero.badge}
-            </span>
+            <span className="eyebrow">{hero.badge}</span>
 
-            <h1 className="mt-6 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+            <h1 className="mt-6 font-display text-5xl font-normal leading-[52px] tracking-[-0.02em] text-fg sm:text-6xl">
               {hero.titleTop}
               <br />
-              <span className="text-muted-foreground">{hero.titleAccent}</span>
+              <span className="text-fg-muted">{hero.titleAccent}</span>
             </h1>
 
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-fg-muted">
               {hero.subtitle}
             </p>
 
@@ -47,8 +44,8 @@ export function Hero() {
               </Button>
             </div>
 
-            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <Check className="h-3.5 w-3.5 text-lime-400/90" />
+            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.04em] text-fg-subtle">
+              <Check className="h-3.5 w-3.5 text-brand" />
               {hero.trustLine.split('·').map((item) => (
                 <span key={item} className="flex items-center gap-1.5">
                   {item.trim()}
@@ -67,11 +64,11 @@ export function Hero() {
         </div>
 
         <Reveal delay={0.2} className="mt-16">
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-px overflow-hidden border border-edge bg-edge md:grid-cols-4">
             {statStrip.map((s) => (
-              <div key={s.label} className="flex flex-col gap-1 bg-card px-6 py-5">
-                <dt className="order-2 text-xs text-muted-foreground">{s.label}</dt>
-                <dd className="order-1 text-xl font-bold tracking-tight">{s.value}</dd>
+              <div key={s.label} className="flex flex-col gap-1 bg-surface px-6 py-5">
+                <dt className="order-2 font-mono text-[11px] uppercase tracking-[0.07em] text-fg-subtle">{s.label}</dt>
+                <dd className="order-1 font-display text-xl font-medium tracking-tight text-fg">{s.value}</dd>
               </div>
             ))}
           </dl>

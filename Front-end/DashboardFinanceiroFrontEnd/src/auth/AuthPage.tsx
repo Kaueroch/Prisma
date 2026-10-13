@@ -332,7 +332,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="border-border/60 shadow-[0_0_30px_rgba(255,255,255,0.02)]">
+            <Card className="rounded-none border-edge bg-surface shadow-none">
               <CardContent className="pt-6 pb-6">
                 <Tabs value={tab} onValueChange={setTab}>
                   <motion.div

@@ -74,26 +74,31 @@ export function TransactionsPage() {
   }, [expenses, searchQuery, filterCategory, filterType])
 
   return (
-    <div className="p-6 lg:p-8 max-w-[1400px] mx-auto w-full space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Transações</h1>
-          <p className="text-muted-foreground text-sm mt-1">Toda a sua atividade financeira centralizada em um só lugar.</p>
+    <div className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col gap-2.5">
+          <span className="eyebrow">Movimentações</span>
+          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
+          <p className="text-[15px] text-fg-muted">Toda a sua atividade financeira centralizada em um só lugar.</p>
         </div>
-        <Button onClick={() => openTransactionForm()}>
-          <Plus className="mr-2 h-4 w-4" />
+        <button
+          type="button"
+          onClick={() => openTransactionForm()}
+          className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+        >
+          <Plus className="h-4 w-4" strokeWidth={2.2} />
           Nova Transação
-        </Button>
+        </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="mb-6 flex flex-col md:flex-row gap-3">
+        <div className="flex-1 relative border border-edge bg-surface">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
           <Input
             placeholder="Buscar transação..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 rounded-none border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
           />
         </div>
         <div className="flex gap-4">
@@ -118,14 +123,14 @@ export function TransactionsPage() {
               <SelectItem value="expense">Despesas</SelectItem>
             </SelectContent>
           </Select>
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 border border-border">
-            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth}>
+          <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
+            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-none">
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-sm font-medium px-2 min-w-[120px] text-center">
+            <span className="text-xs font-mono px-2 min-w-[120px] text-center text-fg-muted capitalize">
               {formatMonthYear(selectedMonth.month, selectedMonth.year)}
             </span>
-            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth}>
+            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-none">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -133,22 +138,20 @@ export function TransactionsPage() {
       </div>
 
       {categoryGroups.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            Nenhuma transação encontrada.
-          </CardContent>
-        </Card>
+        <div className="flex flex-col items-center gap-2 border border-dashed border-edge px-6 py-12 text-center">
+          <p className="text-sm text-fg-muted">Nenhuma transação encontrada.</p>
+          <p className="font-mono text-xs text-fg-subtle">Ajuste os filtros ou registre uma nova.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
           {categoryGroups.map(({ id, total, maxExpense, items }) => {
             const catInfo = categories.find(c => c.id === id) || { name: 'Desconhecido', color: '#666' }
             const isExpanded = expandedId === id
-            const isIncome = items[0]?.type === 'income'
 
             return (
               <Card
                 key={id}
-                className={`cursor-pointer transition-all ${isExpanded ? 'ring-1 ring-ring' : ''}`}
+                className={`cursor-pointer rounded-none border-edge bg-surface transition-all ${isExpanded ? 'ring-1 ring-brand' : ''}`}
                 onClick={() => setExpandedId(isExpanded ? null : id)}
               >
                 <CardHeader className="pb-3">

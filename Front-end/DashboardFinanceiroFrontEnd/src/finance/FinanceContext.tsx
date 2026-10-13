@@ -28,6 +28,16 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    function onTelegram(e: Event) {
+      const expense = (e as CustomEvent).detail as Expense
+      if (!expense?.id) return
+      setExpenses((prev) => (prev.some((x) => x.id === expense.id) ? prev : [expense, ...prev]))
+    }
+    window.addEventListener('prisma:telegram-expense', onTelegram)
+    return () => window.removeEventListener('prisma:telegram-expense', onTelegram)
+  }, [])
+
+  useEffect(() => {
     const loadData = async () => {
       setExpenses(financeService.getExpenses());
 

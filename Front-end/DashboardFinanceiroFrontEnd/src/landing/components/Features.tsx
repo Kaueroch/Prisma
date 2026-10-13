@@ -19,7 +19,7 @@ const categorias = [
 
 function GastosVisual() {
   return (
-    <div className="mt-6 flex items-center gap-6 rounded-xl border border-border bg-background p-4">
+    <div className="mt-6 flex items-center gap-6  border border-edge bg-surface p-4">
       <div className="relative h-20 w-20 shrink-0">
         <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
           <circle cx="70" cy="70" r="34" fill="none" stroke="#3b82f6" strokeWidth="14" strokeDasharray="72.6 213.6" />
@@ -37,8 +37,8 @@ function GastosVisual() {
           ['Lazer', '#8b5cf6', '18%'],
         ].map(([label, color, pct]) => (
           <div key={label as string} className="flex items-center gap-2 text-[11px]">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color as string }} />
-            <span className="text-muted-foreground">{label}</span>
+            <span className="h-2 w-2 " style={{ backgroundColor: color as string }} />
+            <span className="text-fg-muted">{label}</span>
             <span className="ml-auto font-semibold">{pct}</span>
           </div>
         ))}
@@ -49,12 +49,12 @@ function GastosVisual() {
 
 function CategoriasVisual() {
   return (
-    <div className="mt-6 space-y-3 rounded-xl border border-border bg-background p-4">
+    <div className="mt-6 space-y-3  border border-edge bg-surface p-4">
       {categorias.map((c) => (
         <div key={c.name} className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-lg" style={{ backgroundColor: c.color }} />
+          <span className="h-8 w-8 " style={{ backgroundColor: c.color }} />
           <span className="text-xs font-medium">{c.name}</span>
-          <span className="ml-auto text-[11px] text-muted-foreground">{c.amount}</span>
+          <span className="ml-auto text-[11px] text-fg-muted">{c.amount}</span>
         </div>
       ))}
     </div>
@@ -68,19 +68,19 @@ const registro = [
 
 function RegistroVisual() {
   return (
-    <div className="mt-6 rounded-xl border border-border bg-background p-4">
+    <div className="mt-6  border border-edge bg-surface p-4">
       <div className="mb-3 flex items-center gap-2">
-        <span className="flex flex-1 items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-[11px] text-muted-foreground">
+        <span className="flex flex-1 items-center gap-1.5  border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted">
           <Plus className="h-3 w-3" /> Nova despesa
         </span>
-        <span className="rounded-lg bg-orange-500/10 px-2.5 py-2 text-[11px] font-medium text-orange-400">-R$ 0,00</span>
+        <span className=" bg-orange-500/10 px-2.5 py-2 text-[11px] font-medium text-orange-400">-R$ 0,00</span>
       </div>
       <div className="space-y-2">
         {registro.map((r) => (
-          <div key={r.name} className="flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-2 border border-border/60">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: r.color }} />
+          <div key={r.name} className="flex items-center gap-2  bg-muted/40 px-3 py-2 border border-edge/60">
+            <span className="h-2 w-2 " style={{ backgroundColor: r.color }} />
             <span className="text-[11px] font-medium">{r.name}</span>
-            <span className="ml-auto text-[11px] text-muted-foreground">{r.category}</span>
+            <span className="ml-auto text-[11px] text-fg-muted">{r.category}</span>
             <span className="text-[11px] font-semibold">{r.amount}</span>
           </div>
         ))}
@@ -91,12 +91,12 @@ function RegistroVisual() {
 
 export function Features() {
   return (
-    <section id="recursos" className="relative border-t border-border">
+    <section id="recursos" className="relative border-t border-edge">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-widest text-lime-400/90">{features.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{features.kicker}</h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">{features.subtitle}</p>
+          <p className="eyebrow">{features.eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-normal tracking-[-0.02em] text-fg sm:text-4xl">{features.kicker}</h2>
+          <p className="mt-4 text-fg-muted leading-relaxed">{features.subtitle}</p>
         </Reveal>
 
         <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -118,15 +118,15 @@ export function Features() {
 function FeatureCard({ item, excerpt }: { item: typeof features.items[number]; excerpt: ReactNode }) {
   const Icon = iconMap[item.icon] ?? Tags
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-colors duration-200 hover:bg-card/80">
+    <article className="flex h-full flex-col  border border-edge bg-surface p-6 transition-colors duration-200 hover:bg-surface">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted">
-          <Icon className="h-4.5 w-4.5 text-muted-foreground" />
+        <span className="flex h-9 w-9 items-center justify-center  bg-muted">
+          <Icon className="h-4.5 w-4.5 text-fg-muted" />
         </span>
-        <span className="text-xs font-medium text-muted-foreground">{item.highlight}</span>
+        <span className="text-xs font-medium text-fg-muted">{item.highlight}</span>
       </div>
-      <h3 className="mt-5 text-lg font-semibold tracking-tight">{item.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+      <h3 className="mt-5 font-display text-lg font-medium text-fg">{item.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-fg-muted">{item.description}</p>
       <div className="mt-auto">{excerpt}</div>
     </article>
   )

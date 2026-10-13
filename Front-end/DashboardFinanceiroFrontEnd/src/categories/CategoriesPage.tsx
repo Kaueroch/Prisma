@@ -88,43 +88,40 @@ export function CategoriesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto w-full space-y-6">
+    <div className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4 animate-pulse">
-                  <div className="w-12 h-12 rounded-2xl bg-muted" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-muted rounded w-24" />
-                    <div className="h-3 bg-muted rounded w-16" />
-                  </div>
-                  <div className="text-right space-y-2">
-                    <div className="h-5 bg-muted rounded w-20" />
-                    <div className="h-3 bg-muted rounded w-12" />
-                  </div>
+            <div key={i} className="border border-edge bg-surface p-6">
+              <div className="flex items-center gap-4 animate-pulse">
+                <div className="w-12 h-12 bg-surface-raised" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-surface-raised w-24" />
+                  <div className="h-3 bg-surface-raised w-16" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}
 
       {!loading && (
         <>
-          <Card>
-            <CardContent className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Categorias</h1>
-                <p className="text-muted-foreground text-xs sm:text-sm mt-1">Gerencie suas categorias e veja seus gastos</p>
-              </div>
-              <Button onClick={() => setIsAdding(true)} className="w-full sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" />
-                Nova Categoria
-              </Button>
-            </CardContent>
-          </Card>
+          <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
+            <div className="flex flex-col gap-2.5">
+              <span className="eyebrow">Organização</span>
+              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
+              <p className="text-[15px] text-fg-muted">Gerencie suas categorias e veja seus gastos.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2.2} />
+              Nova Categoria
+            </button>
+          </header>
 
           <AnimatePresence>
             {isAdding && (

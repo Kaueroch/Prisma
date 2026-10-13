@@ -1,232 +1,121 @@
-import { useState, useMemo } from 'react'
-import { ArrowDownLeft, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Wallet } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useMemo, useState } from 'react'
+import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus } from 'lucide-react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
-import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
-import { DonutChart } from './components/DonutChart'
+import { getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
 import type { Tab, MonthFilter } from '../shared/types'
+import { KpiStrip } from '../tinta/KpiStrip'
+import { CategoryDonutTinta } from '../tinta/CategoryDonutTinta'
+import { BalanceHistoryTinta } from '../tinta/BalanceHistoryTinta'
+import { IncomeExpenseTinta } from '../tinta/IncomeExpenseTinta'
+import { RecentTinta } from '../tinta/RecentTinta'
+import { SaldoTinta } from '../tinta/SaldoTinta'
+import { MonthPickerTinta } from '../tinta/MonthPickerTinta'
 
 interface HomePageProps {
-  setActiveTab?: (tab: Tab) => void;
+  setActiveTab?: (tab: Tab) => void
 }
 
 export function HomePage({ setActiveTab }: HomePageProps = {}) {
-  const { expenses, categories } = useFinance()
+  const { expenses, categories, loading } = useFinance()
   const { openTransactionForm } = useTransactionForm()
-  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
+  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth)
+  const [mask, setMask] = useState(() => localStorage.getItem('prisma:mask') === '1')
 
-  const goToPrevMonth = () => {
-    setSelectedMonth(prev => {
-      if (prev.month === 0) return { month: 11, year: prev.year - 1 }
-      return { month: prev.month - 1, year: prev.year }
+  const toggleMask = () => {
+    setMask((m) => {
+      localStorage.setItem('prisma:mask', m ? '0' : '1')
+      return !m
     })
   }
 
-  const goToNextMonth = () => {
-    setSelectedMonth(prev => {
-      if (prev.month === 11) return { month: 0, year: prev.year + 1 }
-      return { month: prev.month + 1, year: prev.year }
-    })
-  }
-
-  const filteredExpenses = useMemo(() => {
-    return expenses.filter(e => isSameMonth(e.date, selectedMonth.month, selectedMonth.year))
-  }, [expenses, selectedMonth])
-
-  const filteredIncomes = useMemo(() => filteredExpenses.filter(e => e.type === 'income'), [filteredExpenses])
-  const filteredOutcomes = useMemo(() => filteredExpenses.filter(e => e.type === 'expense'), [filteredExpenses])
-
-  const totalIncome = useMemo(() => filteredIncomes.reduce((sum, item) => sum + item.amount, 0), [filteredIncomes])
-  const totalExpense = useMemo(() => filteredOutcomes.reduce((sum, item) => sum + item.amount, 0), [filteredOutcomes])
+  const filtered = useMemo(
+    () => expenses.filter((e) => isSameMonth(e.date, selectedMonth.month, selectedMonth.year)),
+    [expenses, selectedMonth],
+  )
+  const totalIncome = useMemo(() => filtered.filter((e) => e.type === 'income').reduce((s, i) => s + i.amount, 0), [filtered])
+  const totalExpense = useMemo(() => filtered.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0), [filtered])
   const balance = totalIncome - totalExpense
 
-  const recentActivity = useMemo(() => {
-    return [...filteredExpenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6)
-  }, [filteredExpenses])
-
   const chartData = useMemo(() => {
-    const expenseByCategory: Record<string, { name: string; value: number; color: string }> = {}
-    filteredOutcomes.forEach(e => {
-      const cat = categories.find(c => c.id === e.categoryId)
+    const byCat: Record<string, number> = {}
+    for (const e of filtered) {
+      if (e.type !== 'expense') continue
+      const cat = categories.find((c) => c.id === e.categoryId)
       const name = cat?.name || 'Sem categoria'
-      if (!expenseByCategory[name]) {
-        expenseByCategory[name] = { name, value: 0, color: cat?.color || '#666' }
-      }
-      expenseByCategory[name].value += e.amount
-    })
-    return Object.values(expenseByCategory)
-  }, [filteredOutcomes, categories])
+      byCat[name] = (byCat[name] ?? 0) + e.amount
+    }
+    return Object.entries(byCat).map(([name, value]) => ({ name, value }))
+  }, [filtered, categories])
 
   return (
-    <div className="p-6 lg:p-8 gap-6 flex flex-col max-w-[1400px] mx-auto w-full">
-      <div className="bg-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center border border-border relative overflow-hidden">
-        <div className="flex flex-col gap-1">
-          <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">Saldo Atual</span>
-          <h1 className="text-4xl font-bold tracking-tight">{formatBRL(balance)}</h1>
-          <div className="flex items-center gap-2 mt-4">
-            <Button
-              onClick={() => openTransactionForm('income')}
-              size="sm"
-              className="rounded-full h-8"
+    <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+      <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col gap-2.5">
+          <span className="eyebrow">Visão geral</span>
+          <div className="flex items-center gap-4">
+            <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Dashboard</h1>
+            <button
+              type="button"
+              onClick={toggleMask}
+              className="flex size-8 items-center justify-center border border-edge text-fg-muted transition-colors duration-150 hover:border-white/30 hover:text-fg"
+              title={mask ? 'Mostrar valores' : 'Ocultar valores'}
+              aria-label={mask ? 'Mostrar valores' : 'Ocultar valores'}
             >
-              <ArrowDownLeft className="mr-1.5 h-3.5 w-3.5" />
-              Nova Receita
-            </Button>
-            <Button
-              onClick={() => openTransactionForm('expense')}
-              variant="secondary"
-              size="sm"
-              className="rounded-full h-8"
-            >
-              <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
-              Nova Despesa
-            </Button>
+              {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
+            </button>
           </div>
+          <p className="text-[15px] text-fg-muted">Suas finanças organizadas em 5 segundos.</p>
         </div>
-        <div className="flex items-center gap-2 mt-4 md:mt-0">
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5 border border-border">
-            <Button variant="ghost" size="icon-xs" onClick={goToPrevMonth}>
-              <ChevronLeft className="h-3.5 w-3.5" />
-            </Button>
-            <span className="text-xs font-medium px-2 min-w-[110px] text-center text-muted-foreground">
-              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
-            </span>
-            <Button variant="ghost" size="icon-xs" onClick={goToNextMonth}>
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+        <div className="flex flex-wrap items-stretch gap-3">
+          <MonthPickerTinta value={selectedMonth} onChange={setSelectedMonth} />
+          <button
+            type="button"
+            onClick={() => openTransactionForm('income')}
+            className="flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+          >
+            <Plus className="size-4" strokeWidth={2.2} /> Receita
+          </button>
+          <button
+            type="button"
+            onClick={() => openTransactionForm('expense')}
+            className="flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-white/30"
+          >
+            <Plus className="size-4" strokeWidth={2.2} /> Despesa
+          </button>
         </div>
+      </header>
+
+      <section className="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-[400px_1fr]">
+        <SaldoTinta total={balance} count={filtered.length} loading={loading} mask={mask} />
+        <BalanceHistoryTinta expenses={filtered} month={selectedMonth.month} year={selectedMonth.year} />
+      </section>
+
+      <div className="mb-7">
+        <KpiStrip
+          loading={loading}
+          mask={mask}
+          items={[
+            { label: 'Entrada', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
+            { label: 'Gasto', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
+            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
+          ]}
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-lime-400/10 flex items-center justify-center">
-              <ArrowDownLeft className="w-5 h-5 text-lime-400" />
-            </div>
-            <div className="text-sm text-muted-foreground font-medium">Receitas Totais</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatBRL(totalIncome)}</div>
-            <p className="text-lime-400/90 text-xs mt-1 font-medium flex items-center gap-1">
-              <ArrowUpRight className="w-3 h-3" />
-              Em dia
-            </p>
-          </CardContent>
-        </Card>
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <CategoryDonutTinta data={chartData} loading={loading} />
+          <IncomeExpenseTinta expenses={expenses} />
+        </div>
+        <RecentTinta expenses={filtered} categories={categories} />
+      </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
-              <ArrowUpRight className="w-5 h-5 text-orange-500" />
-            </div>
-            <div className="text-sm text-muted-foreground font-medium">Despesas Totais</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatBRL(totalExpense)}</div>
-            <p className="text-muted-foreground text-xs mt-1 font-medium">{formatMonthYear(selectedMonth.month, selectedMonth.year)}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-3 pb-3">
-            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-foreground" />
-            </div>
-            <div className="text-sm text-muted-foreground font-medium">Economia (Líquido)</div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatBRL(totalIncome - totalExpense)}</div>
-            <p className="text-muted-foreground text-xs mt-1 font-medium">Diferença do mês</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Atividade Recente</CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setActiveTab?.('transactions')}
-              className="text-xs"
-            >
-              Ver todas
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {recentActivity.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground">
-                Nenhuma transação recente encontrada.
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Valor</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentActivity.map((transaction) => {
-                    const isIncome = transaction.type === 'income'
-                    const catInfo = categories.find(c => c.id === transaction.categoryId)
-                    return (
-                      <TableRow key={transaction.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isIncome ? 'bg-lime-400/10' : 'bg-muted'}`}>
-                              {isIncome
-                                ? <ArrowDownLeft className="w-3.5 h-3.5 text-lime-400" />
-                                : <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground" />}
-                            </div>
-                            <span className="font-medium text-sm">{transaction.name}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">{formatDateBR(transaction.date)}</TableCell>
-                        <TableCell className="font-medium">
-                          {isIncome ? '+' : '-'}{formatBRL(transaction.amount)}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {catInfo && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: catInfo.color }} />}
-                            <span className="text-muted-foreground text-sm">{catInfo?.name || 'Sem categoria'}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge variant="secondary" className="bg-lime-400/10 text-lime-400/90 border-lime-400/20">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Concluído
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Gastos por Categoria</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px]">
-              <DonutChart data={chartData} />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+      {setActiveTab && (
+        <button type="button" onClick={() => setActiveTab('transactions')} className="mt-6 font-mono text-xs text-fg-subtle hover:text-brand">
+          Ver todas as transações →
+        </button>
+      )}
+    </main>
   )
 }

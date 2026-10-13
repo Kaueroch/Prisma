@@ -2,7 +2,6 @@ export const nav = {
   links: [
     { label: 'Recursos', href: '#recursos' },
     { label: 'Como funciona', href: '#como-funciona' },
-    { label: 'Preços', href: '#precos' },
     { label: 'FAQ', href: '#faq' },
   ],
   loginLabel: 'Entrar',
@@ -156,7 +155,6 @@ export const footer = {
       links: [
         { label: 'Recursos', href: '#recursos' },
         { label: 'Como funciona', href: '#como-funciona' },
-        { label: 'Preços', href: '#precos' },
         { label: 'FAQ', href: '#faq' },
       ],
     },

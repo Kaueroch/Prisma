@@ -1,70 +1,131 @@
-import { User, Palette, Download, LogOut, ChevronRight } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useState } from 'react'
+import { Send, LogOut, Tags, ArrowRight, ExternalLink, Clock, FlaskConical } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
+import type { Tab } from '../shared/types'
+import { telegramInbox } from '../telegram/TelegramInbox'
+import { useFinance } from '../finance/useFinance'
 
-export function ProfilePage() {
+export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => void } = {}) {
   const { user, logout } = useAuth()
+  const { categories } = useFinance()
+  const [link, setLink] = useState<string | null>(null)
+  const [simMsg, setSimMsg] = useState<string | null>(null)
+
+  const initials = user?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
+
+  function handleGenerate() {
+    // Frontend-only: gera deep-link simulado. O backend real emitiria
+    // POST /owner/telegram-invite como no money-flow.
+    const fake = `https://t.me/PrismaBot?start=${Math.random().toString(36).slice(2, 10)}`
+    setLink(fake)
+  }
+
+  function handleSimulate() {
+    const cat = categories[0]
+    const res = telegramInbox.simulate({
+      text: 'Café 12',
+      amount: 12,
+      categoryId: cat?.id,
+      categoryName: cat?.name,
+    })
+    setSimMsg(`Gasto “${res.name}” de ${res.amount} entrou na caixa do Telegram e já está no painel.`)
+    setActiveTab?.('home')
+  }
 
   return (
-    <div className="p-6 lg:p-8 max-w-3xl mx-auto w-full space-y-8">
-      <div className="flex flex-col items-center gap-4">
-        <Avatar className="w-24 h-24 border-2 border-border">
-          <AvatarFallback className="text-2xl bg-muted text-muted-foreground">
-            {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
-          </AvatarFallback>
-        </Avatar>
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">{user?.name || 'Usuário'}</h2>
-          <p className="text-muted-foreground text-sm">{user?.email || ''}</p>
-        </div>
-      </div>
+    <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+      <header className="mb-7 flex flex-col gap-2.5">
+        <span className="eyebrow">Preferências</span>
+        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Configurações</h1>
+        <p className="text-[15px] text-fg-muted">Conecte seus serviços à sua conta Prisma.</p>
+      </header>
 
-      <div>
-        <h3 className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-3 pl-1">Preferências</h3>
-        <Card>
-          <CardContent className="p-0">
-            <button className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors border-b border-border">
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                <Palette className="w-5 h-5" />
-              </div>
-              <span className="flex-1 text-left font-medium">Aparência</span>
-              <span className="text-muted-foreground text-sm">Escuro</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <button className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                <Palette className="w-5 h-5" />
-              </div>
-              <span className="flex-1 text-left font-medium">Gerenciar Categorias</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </button>
-          </CardContent>
-        </Card>
-      </div>
+      <div className="flex max-w-xl flex-col gap-6">
+        <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
+          <div className="flex items-center gap-4">
+            <span className="flex size-12 items-center justify-center border border-edge font-display text-lg font-bold text-fg">
+              {initials}
+            </span>
+            <div className="flex flex-col">
+              <span className="font-display text-xl text-fg">{user?.name || 'Usuário'}</span>
+              <span className="font-mono text-xs text-fg-subtle">{user?.email || ''}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab?.('categories')}
+            className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
+          >
+            <Tags className="size-4" strokeWidth={1.8} />
+            Gerenciar categorias
+          </button>
+        </section>
 
-      <div>
-        <h3 className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-3 pl-1">Conta & Dados</h3>
-        <Card>
-          <CardContent className="p-0">
-            <button className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors border-b border-border">
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                <Download className="w-5 h-5" />
-              </div>
-              <span className="flex-1 text-left font-medium">Exportar Dados</span>
+        <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
+          <div className="flex items-start gap-4">
+            <span className="flex size-10 shrink-0 items-center justify-center border border-edge">
+              <Send className="size-5 text-fg-muted" strokeWidth={1.8} />
+            </span>
+            <div className="flex flex-col gap-1">
+              <h2 className="font-display text-2xl font-normal text-fg">Telegram</h2>
+              <p className="text-sm text-fg-muted">
+                Vincule o bot para registrar gastos por mensagem. Cada gasto cai na caixa de entrada e entra no painel.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={handleGenerate}
+              className="flex w-fit items-center gap-2.5 bg-brand px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.04em] text-black transition-opacity duration-150 hover:opacity-90"
+            >
+              Vincular Telegram
+              <ArrowRight className="size-4" strokeWidth={2.2} />
             </button>
             <button
-              onClick={logout}
-              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors"
+              type="button"
+              onClick={handleSimulate}
+              className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
             >
-              <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <LogOut className="w-5 h-5 text-destructive" />
-              </div>
-              <span className="flex-1 text-left font-medium text-destructive">Sair</span>
+              <FlaskConical className="size-4" strokeWidth={1.8} />
+              Simular gasto via bot
             </button>
-          </CardContent>
-        </Card>
+          </div>
+
+          {link && (
+            <div className="flex flex-col gap-3 border border-edge bg-surface-raised px-5 py-4">
+              <a href={link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 break-all text-sm font-medium text-data hover:underline">
+                <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} />
+                {link}
+              </a>
+              <p className="flex items-center gap-2 font-mono text-xs text-fg-subtle">
+                <Clock className="size-3.5 shrink-0" strokeWidth={1.8} />
+                Link simulado (frontend-only). O backend real geraria com expiração de 1 minuto.
+              </p>
+            </div>
+          )}
+          {simMsg && (
+            <div className="border border-brand/40 bg-brand-soft px-4 py-3 text-sm text-fg">{simMsg}</div>
+          )}
+          <p className="font-mono text-[11px] leading-relaxed text-fg-subtle">
+            Sem backend novo: a simulação escreve direto no localStorage via telegramInbox. Quando o bot real existir, troque simulate() por polling de /telegram/inbox.
+          </p>
+        </section>
+
+        <section className="flex flex-col border border-edge bg-surface">
+          <button
+            type="button"
+            onClick={logout}
+            className="flex w-full items-center gap-4 p-5 transition-colors hover:bg-white/[0.03]"
+          >
+            <span className="flex size-10 items-center justify-center border border-negative/40">
+              <LogOut className="size-5 text-negative" strokeWidth={1.8} />
+            </span>
+            <span className="flex-1 text-left font-medium text-negative">Sair</span>
+          </button>
+        </section>
       </div>
-    </div>
+    </main>
   )
 }

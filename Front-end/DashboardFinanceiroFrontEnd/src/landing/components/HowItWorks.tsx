@@ -6,11 +6,11 @@ const icons: LucideIcon[] = [UserPlus, Wallet, BarChart3]
 
 export function HowItWorks() {
   return (
-    <section id="como-funciona" className="border-t border-border bg-[#0c0c0c]">
+    <section id="como-funciona" className="border-t border-edge bg-[#0b0d12]">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-lime-400/90">{howItWorks.eyebrow}</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{howItWorks.kicker}</h2>
+          <p className="eyebrow">{howItWorks.eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-normal tracking-[-0.02em] text-fg sm:text-4xl">{howItWorks.kicker}</h2>
         </Reveal>
 
         <div className="relative mt-12 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
@@ -21,15 +21,15 @@ export function HowItWorks() {
               <div key={step.title}>
                 <Reveal delay={i * 0.08}>
                   <div className="relative flex flex-col items-center gap-4 text-center md:items-start md:text-left">
-                    <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card">
-                      <Icon className="h-6 w-6 text-muted-foreground" />
-                      <span className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+                    <div className="relative z-10 flex h-14 w-14 items-center justify-center  border border-edge bg-surface">
+                      <Icon className="h-6 w-6 text-fg-muted" />
+                      <span className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center  bg-brand text-[11px] font-bold text-black">
                         {i + 1}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-base font-semibold tracking-tight">{step.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
+                      <h3 className="font-display text-base font-medium text-fg">{step.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-fg-muted">{step.description}</p>
                     </div>
                   </div>
                 </Reveal>
