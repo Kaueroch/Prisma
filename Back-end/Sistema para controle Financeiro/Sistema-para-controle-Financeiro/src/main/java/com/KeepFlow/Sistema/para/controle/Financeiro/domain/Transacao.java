@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoVazio;
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.ValorNegativo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,14 +36,21 @@ public class Transacao {
     
     protected Transacao() {}
     
-    public Transacao(BigDecimal valor,String descricao,String data,Categoria categoria) {
+    public Transacao(BigDecimal _valor,String _descricao,String _data,Categoria _categoria) {
+    	validaCampoData(data);
+    	validaCampoDescricao(descricao);
+    	validaCampoValor(_valor);
+    	this.valor = _valor;
+    	this.descricao = _descricao;
+    	this.data = _data;
+    	this.categoria = _categoria;
     	
     }
     private void validaCampoData(String data) {
     	if(data.isBlank()) {
     		throw new CampoVazio("Please enter the date correctly");
     	}
-    	// Otherwise call the method to parse it
+    	converteStringToDate(data);
     }
     private LocalDate converteStringToDate(String data) {
      DateTimeFormatter parser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -54,11 +62,9 @@ public class Transacao {
  		throw new CampoVazio("Please enter the date correctly");
      }
   }
-    
-    
-  //private void validaCampoValor(BigDecimal valor) {
-    //if(){
-    	
-    //}
-  //}
+  private void validaCampoValor(BigDecimal  valor) {
+    if(valor.compareTo(valor) < 0){
+    	throw new ValorNegativo("Please enter the correct value.");
+    }
+  }
 }
