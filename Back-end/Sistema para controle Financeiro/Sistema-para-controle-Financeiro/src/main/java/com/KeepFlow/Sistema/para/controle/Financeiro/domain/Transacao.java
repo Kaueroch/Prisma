@@ -34,16 +34,16 @@ public class Transacao {
     @JoinColumn(name = "categoria_id")   // Creates the FK column in the database
     private Categoria categoria;
     
-    protected Transacao() {}
+    public Transacao() {}
     
-    public Transacao(BigDecimal _valor,String _descricao,String _data,Categoria _categoria) {
-    	validaCampoData(data);
-    	validaCampoDescricao(descricao);
+    public Transacao(BigDecimal _valor,String _descricao,String _data,Categoria categoria_id) {
+    	validaCampoData(_data);
+    	validaCampoDescricao(_descricao);
     	validaCampoValor(_valor);
     	this.valor = _valor;
     	this.descricao = _descricao;
     	this.data = _data;
-    	this.categoria = _categoria;
+    	this.categoria = categoria_id;
     	
     }
     private void validaCampoData(String data) {
@@ -67,4 +67,6 @@ public class Transacao {
     	throw new ValorNegativo("Please enter the correct value.");
     }
   }
+  
+  
 }

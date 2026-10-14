@@ -65,4 +65,13 @@ public class Categoria{
     throw new TipoTextoNaoAutorizado("Only Receita or Despesas values are accepted to be saved in the database.");
     }
   }
+
+  public Integer getId() {
+	return id;
+  }
+
+  public void setId(Integer id) {
+	this.id = id;
+  }
+  
 }
