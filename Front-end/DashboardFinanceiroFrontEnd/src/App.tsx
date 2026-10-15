@@ -14,6 +14,7 @@ import { LandingPage } from './landing/LandingPage'
 import { FinanceProvider } from './finance/FinanceContext'
 import { TransactionFormProvider, useTransactionForm } from './finance/TransactionFormContext'
 import { ToastProvider } from './shared/components/Toast'
+import { Celebrate } from './shared/components/Celebrate'
 import { AuthProvider, useAuth } from './auth/AuthContext'
 import { useFinance } from './finance/useFinance'
 import type { Tab } from './shared/types'
@@ -87,6 +88,7 @@ function AuthenticatedApp() {
           </div>
         </div>
         <TransactionFormGate />
+        <Celebrate />
       </div>
     </TooltipProvider>
 

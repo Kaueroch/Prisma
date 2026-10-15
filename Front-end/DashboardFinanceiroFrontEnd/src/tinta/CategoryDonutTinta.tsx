@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { ChartPie } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { CATEGORY_PALETTE, OTHERS_COLOR, categoryColor } from './chartColors'
 import { formatBRL } from '../shared/utils/formatters'
@@ -50,9 +51,12 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
           </div>
         </div>
       ) : slices.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-10 text-center">
-          <p className="text-sm text-fg-muted">No spending recorded this month.</p>
-          <p className="text-xs text-fg-subtle">Log an expense or simulate one via the Telegram bot.</p>
+        <div className="flex flex-col items-center gap-3 py-12 text-center">
+          <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft">
+            <ChartPie className="size-6 text-brand" strokeWidth={1.8} />
+          </span>
+          <p className="font-display text-lg text-fg">Sem gastos por aqui</p>
+          <p className="max-w-[260px] text-sm text-fg-muted">Quando você registrar uma despesa, o gráfico ganha vida.</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-12 sm:flex-row">

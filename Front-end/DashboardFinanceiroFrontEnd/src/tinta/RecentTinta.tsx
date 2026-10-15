@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
-import { ArrowLeftRight, ArrowUpRight, ShoppingBag } from 'lucide-react'
+import { ArrowLeftRight, ArrowUpRight, ShoppingBag, ReceiptText, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
+import { useTransactionForm } from '../finance/TransactionFormContext'
 import type { Expense } from '../shared/types'
 import type { CategoryInfo } from '../shared/types'
 
@@ -34,6 +35,7 @@ export function RecentTinta({
 
   const catById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories])
   const newestId = groups[0]?.items[0]?.id
+  const { openTransactionForm } = useTransactionForm()
 
   return (
     <section className="flex h-full flex-col border border-edge bg-surface">
@@ -49,9 +51,20 @@ export function RecentTinta({
         )}
       </div>
       {groups.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-10 text-center">
-          <p className="text-sm text-fg-muted">No transactions this month.</p>
-          <p className="text-xs text-fg-subtle">Log an entry or simulate one via the Telegram bot.</p>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-12 text-center">
+          <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft">
+            <ReceiptText className="size-6 text-brand" strokeWidth={1.8} />
+          </span>
+          <p className="font-display text-lg text-fg">Mês zerado, mente leve</p>
+          <p className="max-w-[240px] text-sm text-fg-muted">Registre sua primeira movimentação e ela aparece aqui.</p>
+          <button
+            type="button"
+            onClick={() => openTransactionForm()}
+            className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-brand-strong"
+          >
+            <Plus className="size-4" strokeWidth={2.2} />
+            Registrar
+          </button>
         </div>
       ) : (
         <div className="flex flex-col">

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus } from 'lucide-react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
+import { useAuth } from '../auth/AuthContext'
 import { getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
 import type { Tab, MonthFilter } from '../shared/types'
 import { KpiStrip } from '../tinta/KpiStrip'
@@ -19,6 +20,7 @@ interface HomePageProps {
 export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const { expenses, categories, loading } = useFinance()
   const { openTransactionForm } = useTransactionForm()
+  const { user } = useAuth()
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth)
   const [mask, setMask] = useState(() => localStorage.getItem('prisma:mask') === '1')
 
@@ -37,6 +39,12 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const totalExpense = useMemo(() => filtered.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0), [filtered])
   const balance = totalIncome - totalExpense
 
+  const firstName = user?.name?.split(' ')[0] || 'por aqui'
+  const todayLabel = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
+  const greeting = balance >= 0 || filtered.length === 0
+    ? 'Tudo sob controle por aqui.'
+    : 'Vamos recuperar esse saldo juntos.'
+
   const chartData = useMemo(() => {
     const byCat: Record<string, number> = {}
     for (const e of filtered) {
@@ -52,9 +60,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="text-[13px] font-medium text-fg-muted">Overview</span>
+          <span className="text-[13px] font-medium text-fg-muted capitalize">{todayLabel}</span>
           <div className="flex items-center gap-4">
-            <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Dashboard</h1>
+            <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Olá, {firstName}</h1>
             <button
               type="button"
               onClick={toggleMask}
@@ -65,7 +73,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
             </button>
           </div>
-          <p className="text-[15px] text-fg-muted">Your finances organized in 5 seconds.</p>
+          <p className="text-[15px] text-fg-muted">{greeting}</p>
         </div>
         <div className="flex flex-wrap items-stretch gap-3">
           <MonthPickerTinta value={selectedMonth} onChange={setSelectedMonth} />

@@ -14,6 +14,7 @@ import {
 import { useFinance } from '../../finance/useFinance'
 import { useToast } from '../../shared/components/Toast'
 import { extractErrorMessage } from '../../shared/utils/backendError'
+import { formatBRL } from '../../shared/utils/formatters'
 import type { CategoryId, Expense, TransactionType } from '../../shared/types'
 import { resolveSymbol } from '../../shared/components/CategorySymbol'
 
@@ -117,7 +118,12 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
       // Debug: loga no console exatamente o objeto enviado ao backend.
       console.log('[transacao] criando com payload:', previewPayload, 'json:', JSON.stringify(previewPayload))
       await onAdd({ amount: numericAmount, name, date, categoryId, type })
-      showToast('Transaction saved successfully.')
+      window.dispatchEvent(new CustomEvent('prisma:celebrate'))
+      showToast(
+        type === 'income'
+          ? `Receita "${name}" registrada: ${formatBRL(numericAmount)}`
+          : `"${name}" registrado: ${formatBRL(numericAmount)}`,
+      )
       setAmount('')
       setName('')
       setDate(new Date().toISOString().split('T')[0])
