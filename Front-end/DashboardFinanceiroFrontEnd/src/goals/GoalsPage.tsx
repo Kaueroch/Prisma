@@ -2,12 +2,9 @@ import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, Plus, Target, Trash2 } from 'lucide-react'
 import { useFinance } from '../finance/useFinance'
 import { getGoals, setGoal, type GoalsMap } from '../shared/services/goalsService'
+import { GoalModal, type GoalModalState } from './GoalModal'
 import { formatBRL, formatMonthYear, isSameMonth } from '../shared/utils/formatters'
 import type { MonthFilter } from '../shared/types'
-
-function parseValue(raw: string): number {
-  return parseFloat(raw.replace(/\./g, '').replace(',', '.'))
-}
 
 /** Aba Metas: quanto cada categoria pode gastar no mês. Só front, sem backend. */
 export function GoalsPage() {
@@ -15,11 +12,7 @@ export function GoalsPage() {
   const now = new Date()
   const [month, setMonth] = useState<MonthFilter>({ month: now.getMonth(), year: now.getFullYear() })
   const [goals, setGoalsState] = useState<GoalsMap>(() => getGoals())
-  const [adding, setAdding] = useState(false)
-  const [newCat, setNewCat] = useState('')
-  const [newVal, setNewVal] = useState('')
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [draft, setDraft] = useState('')
+  const [modal, setModal] = useState<GoalModalState | null>(null)
 
   const prevMonth = () =>
     setMonth((m) => (m.month === 0 ? { month: 11, year: m.year - 1 } : { month: m.month - 1, year: m.year }))
@@ -55,21 +48,8 @@ export function GoalsPage() {
   const over = rows.filter((r) => r.spent > r.goal).length
   const freeCats = categories.filter((c) => c.type === 'expense' && !(c.id in goals))
 
-  const saveNew = () => {
-    const value = parseValue(newVal)
-    if (!newCat || !Number.isFinite(value) || value <= 0) return
-    setGoalsState(setGoal(newCat, value))
-    setAdding(false)
-    setNewCat('')
-    setNewVal('')
-  }
-
-  const saveEdit = (id: string) => {
-    const value = parseValue(draft)
-    if (!Number.isFinite(value) || value <= 0) return
-    setGoalsState(setGoal(id, value))
-    setEditingId(null)
-    setDraft('')
+  const saveModal = (categoryId: string, value: number) => {
+    setGoalsState(setGoal(categoryId, value))
   }
 
   const remove = (id: string, name: string) => {
@@ -99,7 +79,7 @@ export function GoalsPage() {
           </div>
           <button
             type="button"
-            onClick={() => setAdding((v) => !v)}
+            onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '' })}
             disabled={freeCats.length === 0}
             className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -119,7 +99,7 @@ export function GoalsPage() {
           {freeCats.length > 0 && (
             <button
               type="button"
-              onClick={() => setAdding(true)}
+              onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '' })}
               className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
               <Plus className="size-4" strokeWidth={2.2} />
@@ -153,7 +133,6 @@ export function GoalsPage() {
             {rows.map(({ id, goal, spent, cat }) => {
               const pct = Math.min(100, Math.round((spent / goal) * 100))
               const isOver = spent > goal
-              const isEditing = editingId === id
               return (
                 <div key={id} className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface p-5">
                   <div className="flex items-center gap-3">
@@ -161,10 +140,7 @@ export function GoalsPage() {
                     <span className="min-w-0 flex-1 truncate font-medium text-fg">{cat!.name}</span>
                     <button
                       type="button"
-                      onClick={() => {
-                        setDraft(String(goal).replace('.', ','))
-                        setEditingId(id)
-                      }}
+                      onClick={() => setModal({ mode: 'edit', categoryId: id, categoryName: cat!.name, value: String(goal).replace('.', ',') })}
                       aria-label={`Editar meta de ${cat!.name}`}
                       className="flex size-8 items-center justify-center rounded-lg text-fg-subtle transition-colors hover:text-brand"
                     >
@@ -179,50 +155,18 @@ export function GoalsPage() {
                       <Trash2 className="size-4" strokeWidth={1.8} />
                     </button>
                   </div>
-                  {isEditing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-fg-subtle">R$</span>
-                        <input
-                          autoFocus
-                          inputMode="decimal"
-                          value={draft}
-                          onChange={(e) => setDraft(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && saveEdit(id)}
-                          className="h-10 w-full rounded-xl border border-edge bg-surface-raised pl-9 pr-3 text-sm text-fg outline-none placeholder:text-fg-subtle focus:border-brand/60"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => saveEdit(id)}
-                        className="h-10 shrink-0 rounded-xl bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
-                      >
-                        Salvar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingId(null)}
-                        className="h-10 shrink-0 rounded-xl border border-edge px-4 text-sm text-fg-muted transition-colors hover:text-fg"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span className={`font-display text-xl font-medium tabular-nums ${isOver ? 'text-negative' : 'text-fg'}`}>
-                          {formatBRL(spent)}
-                        </span>
-                        <span className="text-xs tabular-nums text-fg-muted">de {formatBRL(goal)}</span>
-                      </div>
-                      <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
-                        <span
-                          className={`block h-full rounded-full ${isOver ? 'bg-negative' : 'bg-brand'}`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </span>
-                    </>
-                  )}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className={`font-display text-xl font-medium tabular-nums ${isOver ? 'text-negative' : 'text-fg'}`}>
+                      {formatBRL(spent)}
+                    </span>
+                    <span className="text-xs tabular-nums text-fg-muted">de {formatBRL(goal)}</span>
+                  </div>
+                  <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
+                    <span
+                      className={`block h-full rounded-full ${isOver ? 'bg-negative' : 'bg-brand'}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </span>
                 </div>
               )
             })}
@@ -230,50 +174,12 @@ export function GoalsPage() {
         </>
       )}
 
-      {adding && (
-        <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-edge bg-surface p-5 sm:flex-row sm:items-end">
-          <div className="flex flex-1 flex-col gap-2">
-            <label htmlFor="goal-cat" className="text-xs font-medium text-fg-muted">Categoria</label>
-            <select
-              id="goal-cat"
-              value={newCat}
-              onChange={(e) => setNewCat(e.target.value)}
-              className="h-10 rounded-xl border border-edge bg-surface-raised px-3 text-sm text-fg outline-none focus:border-brand/60"
-            >
-              <option value="">Escolher…</option>
-              {freeCats.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label htmlFor="goal-val" className="text-xs font-medium text-fg-muted">Teto mensal (R$)</label>
-            <input
-              id="goal-val"
-              inputMode="decimal"
-              placeholder="300,00"
-              value={newVal}
-              onChange={(e) => setNewVal(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && saveNew()}
-              className="h-10 w-36 rounded-xl border border-edge bg-surface-raised px-3 text-sm text-fg outline-none placeholder:text-fg-subtle focus:border-brand/60"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={saveNew}
-            className="h-10 shrink-0 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
-          >
-            Salvar
-          </button>
-          <button
-            type="button"
-            onClick={() => setAdding(false)}
-            className="h-10 shrink-0 rounded-xl border border-edge px-5 text-sm text-fg-muted transition-colors hover:text-fg"
-          >
-            Cancelar
-          </button>
-        </div>
-      )}
+      <GoalModal
+        state={modal}
+        categories={categories}
+        onClose={() => setModal(null)}
+        onSave={saveModal}
+      />
     </main>
   )
 }

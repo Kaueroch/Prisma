@@ -7,7 +7,7 @@ export function CTASection() {
   return (
     <section className="relative overflow-hidden border-t border-edge">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 h-[420px] w-[680px] -translate-x-1/2 -translate-y-1/2  bg-violet-500/[0.05] blur-[130px]" />
+        <div className="absolute left-1/2 top-1/2 h-[420px] w-[680px] -translate-x-1/2 -translate-y-1/2  bg-emerald-500/[0.05] blur-[130px]" />
       </div>
       <div className="relative mx-auto w-full max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-28">
         <Reveal>

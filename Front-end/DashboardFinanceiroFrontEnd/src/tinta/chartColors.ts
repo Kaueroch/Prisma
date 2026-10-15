@@ -1,25 +1,25 @@
-// Prisma palette — roxo contido sobre preto, apoios dessaturados.
+// Prisma palette — verde sobre preto, apoios dessaturados.
 export const CHART = {
-  income: '#5AB99A',
+  income: '#6FD3A0',
   expense: '#D48A90',
-  brand: '#8578C8',
-  grid: 'rgba(200,190,230,0.06)',
-  axis: 'rgba(236,233,245,0.45)',
-  surface: '#1A1628',
-  edge: 'rgba(200,190,230,0.09)',
+  brand: '#3DA56F',
+  grid: 'rgba(240,245,242,0.06)',
+  axis: 'rgba(240,245,242,0.4)',
+  surface: '#18201C',
+  edge: 'rgba(143,214,174,0.1)',
 } as const
 
 export const CATEGORY_PALETTE = [
-  '#8578C8',
-  '#8FBF9F',
+  '#3DA56F',
+  '#6FD3A0',
   '#D48A90',
-  '#C9A86A',
-  '#7EA8D8',
-  '#A89FD0',
-  '#C78BB0',
+  '#D9B45F',
+  '#6AA5D2',
+  '#8FD6AE',
+  '#D28BB0',
 ] as const
 
-export const OTHERS_COLOR = 'rgba(236,233,245,0.3)'
+export const OTHERS_COLOR = 'rgba(240,245,242,0.3)'
 
 export function categoryColor(index: number): string {
   return CATEGORY_PALETTE[index % CATEGORY_PALETTE.length]

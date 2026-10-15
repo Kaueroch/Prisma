@@ -6,32 +6,32 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ===== Prisma tokens — roxo contido sobre preto ===== */
+/* ===== Prisma tokens — verde sobre preto ===== */
 @theme {
-  --color-surface: #14111f;
-  --color-surface-raised: #1a1628;
-  --color-edge: rgba(200, 190, 230, 0.09);
-  --color-grid: rgba(133, 120, 200, 0.035);
-  --color-brand: #8578c8;
-  --color-brand-strong: #7568bd;
-  --color-brand-soft: rgba(133, 120, 200, 0.1);
+  --color-surface: #111614;
+  --color-surface-raised: #18201c;
+  --color-edge: rgba(143, 214, 174, 0.1);
+  --color-grid: rgba(61, 165, 111, 0.035);
+  --color-brand: #3da56f;
+  --color-brand-strong: #338a5d;
+  --color-brand-soft: rgba(61, 165, 111, 0.12);
   --color-indigo: #6d6df5;
   --color-paper: #fbfaf6;
   --color-ink: #0b0e3a;
-  --color-data: #5ab99a;
+  --color-data: #6fd3a0;
   --color-data-strong: #3f9a7d;
   --color-negative: #d48a90;
-  --color-fg: #ece9f5;
-  --color-fg-muted: rgba(236, 233, 245, 0.64);
-  --color-fg-subtle: rgba(236, 233, 245, 0.45);
+  --color-fg: #f0f5f2;
+  --color-fg-muted: rgba(240, 245, 242, 0.62);
+  --color-fg-subtle: rgba(240, 245, 242, 0.42);
   --font-display: "Space Grotesk Variable", "Geist Variable", system-ui, sans-serif;
   --font-sans: "Geist Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Mono", monospace;
 }
 
 body {
-  background: #0c0a13;
-  color: #ece9f5;
+  background: #0b0e0c;
+  color: #f0f5f2;
   font-family: "Geist Variable", system-ui, sans-serif;
   min-height: 100vh;
   position: relative;
@@ -45,8 +45,8 @@ html {
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(133, 120, 200, 0.18); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(133, 120, 200, 0.3); }
+::-webkit-scrollbar-thumb { background: rgba(61, 165, 111, 0.25); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(61, 165, 111, 0.4); }
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -92,13 +92,13 @@ html {
 }
 
 :root {
-  --background: oklch(0.14 0.03 290);
-  --foreground: oklch(0.95 0.01 290);
-  --card: oklch(0.19 0.04 290);
-  --card-foreground: oklch(0.95 0.01 290);
-  --popover: oklch(0.19 0.04 290);
-  --popover-foreground: oklch(0.95 0.01 290);
-  --primary: oklch(0.62 0.12 290);
+  --background: oklch(0.15 0.02 160);
+  --foreground: oklch(0.95 0.01 160);
+  --card: oklch(0.2 0.03 160);
+  --card-foreground: oklch(0.95 0.01 160);
+  --popover: oklch(0.2 0.03 160);
+  --popover-foreground: oklch(0.95 0.01 160);
+  --primary: oklch(0.65 0.14 160);
   --primary-foreground: oklch(0.98 0 0);
   --secondary: oklch(0.24 0.04 290);
   --secondary-foreground: oklch(0.9 0.02 290);
@@ -109,21 +109,21 @@ html {
   --destructive: oklch(0.6 0.15 25);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 9%);
-  --ring: oklch(0.62 0.12 290);
-  --chart-1: oklch(0.62 0.12 290);
+  --ring: oklch(0.65 0.14 160);
+  --chart-1: oklch(0.65 0.14 160);
   --chart-2: oklch(0.68 0.1 160);
   --chart-3: oklch(0.72 0.06 290);
   --chart-4: oklch(0.6 0.08 340);
   --chart-5: oklch(0.72 0.05 250);
   --radius: 0.75rem;
-  --sidebar: oklch(0.12 0.03 290);
+  --sidebar: oklch(0.13 0.02 160);
   --sidebar-foreground: oklch(0.88 0.02 290);
-  --sidebar-primary: oklch(0.62 0.12 290);
+  --sidebar-primary: oklch(0.65 0.14 160);
   --sidebar-primary-foreground: oklch(0.98 0 0);
   --sidebar-accent: oklch(0.2 0.04 290);
   --sidebar-accent-foreground: oklch(0.9 0.02 290);
   --sidebar-border: oklch(1 0 0 / 7%);
-  --sidebar-ring: oklch(0.62 0.12 290);
+  --sidebar-ring: oklch(0.65 0.14 160);
 }
 
 @layer base {
@@ -191,7 +191,7 @@ html {
     line-height: 18px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: #a89fd0;
+    color: #8fd6ae;
   }
 
   .label-mono {
@@ -204,8 +204,8 @@ html {
 
   .bg-page-grid {
     background-image:
-      radial-gradient(640px 320px at 18% -40px, rgba(133, 120, 200, 0.04), transparent 70%),
-      radial-gradient(760px 380px at 92% 0%, rgba(117, 104, 189, 0.03), transparent 70%);
+      radial-gradient(640px 320px at 18% -40px, rgba(61, 165, 111, 0.05), transparent 70%),
+      radial-gradient(760px 380px at 92% 0%, rgba(51, 138, 93, 0.04), transparent 70%);
     background-size: 100% 100%;
     background-attachment: local;
   }

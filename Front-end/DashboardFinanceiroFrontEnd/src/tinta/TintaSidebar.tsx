@@ -96,7 +96,7 @@ export function TintaSidebar({
     <aside
       aria-label="Menu lateral"
       className={cn(
-        'flex shrink-0 flex-col items-stretch gap-7 border-r border-edge bg-[#100d1a] py-5 transition-[width] duration-200 ease-out',
+        'flex shrink-0 flex-col items-stretch gap-7 border-r border-edge bg-[#0d100e] py-5 transition-[width] duration-200 ease-out',
         expanded ? 'w-[232px]' : 'w-[76px] items-center',
       )}
     >

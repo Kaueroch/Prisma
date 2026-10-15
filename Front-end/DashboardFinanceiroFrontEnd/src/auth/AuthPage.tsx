@@ -164,14 +164,14 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex bg-[#0b0714]"
+      className="min-h-screen flex bg-[#0b0e0c]"
     >
       {/* Hero */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
         <motion.div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(135deg, #1d1633, #0b0714, #070512)',
+            background: 'linear-gradient(135deg, #16241d, #0b0e0c, #070a08)',
             backgroundSize: '200% 200%',
           }}
           animate={{ backgroundPosition: ['0% 0%', '50% 50%', '0% 0%'] }}
