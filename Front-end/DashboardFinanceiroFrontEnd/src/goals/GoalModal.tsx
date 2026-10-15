@@ -18,13 +18,14 @@ export interface GoalModalState {
   categoryId: string
   categoryName: string
   value: string
+  description: string
 }
 
 interface GoalModalProps {
   state: GoalModalState | null
   categories: CategoryInfo[]
   onClose: () => void
-  onSave: (categoryId: string, value: number) => void
+  onSave: (categoryId: string, value: number, description: string) => void
 }
 
 function parseValue(raw: string): number {
@@ -35,12 +36,14 @@ function parseValue(raw: string): number {
 export function GoalModal({ state, categories, onClose, onSave }: GoalModalProps) {
   const [categoryId, setCategoryId] = useState('')
   const [value, setValue] = useState('')
+  const [description, setDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (state) {
       setCategoryId(state.categoryId)
       setValue(state.value)
+      setDescription(state.description)
       setError(null)
     }
   }, [state])
@@ -58,7 +61,7 @@ export function GoalModal({ state, categories, onClose, onSave }: GoalModalProps
       setError('Informe um valor maior que zero.')
       return
     }
-    onSave(categoryId, Math.round(parsed * 100) / 100)
+    onSave(categoryId, Math.round(parsed * 100) / 100, description)
     onClose()
   }
 
@@ -105,6 +108,17 @@ export function GoalModal({ state, categories, onClose, onSave }: GoalModalProps
               value={value}
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && save()}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="goal-modal-desc">Descrição <span className="font-normal text-fg-subtle">(opcional)</span></Label>
+            <Input
+              id="goal-modal-desc"
+              placeholder="Ex.: segurar o delivery este mês"
+              maxLength={120}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 

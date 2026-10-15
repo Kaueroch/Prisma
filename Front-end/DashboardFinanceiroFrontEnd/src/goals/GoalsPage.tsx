@@ -31,9 +31,10 @@ export function GoalsPage() {
   const rows = useMemo(
     () =>
       Object.entries(goals)
-        .map(([id, goal]) => ({
+        .map(([id, g]) => ({
           id,
-          goal,
+          goal: g.value,
+          description: g.description,
           spent: spentByCat.get(id) ?? 0,
           cat: categories.find((c) => c.id === id),
         }))
@@ -48,8 +49,8 @@ export function GoalsPage() {
   const over = rows.filter((r) => r.spent > r.goal).length
   const freeCats = categories.filter((c) => c.type === 'expense' && !(c.id in goals))
 
-  const saveModal = (categoryId: string, value: number) => {
-    setGoalsState(setGoal(categoryId, value))
+  const saveModal = (categoryId: string, value: number, description: string) => {
+    setGoalsState(setGoal(categoryId, value, description))
   }
 
   const remove = (id: string, name: string) => {
@@ -79,7 +80,7 @@ export function GoalsPage() {
           </div>
           <button
             type="button"
-            onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '' })}
+            onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '', description: '' })}
             disabled={freeCats.length === 0}
             className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -99,7 +100,7 @@ export function GoalsPage() {
           {freeCats.length > 0 && (
             <button
               type="button"
-              onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '' })}
+              onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '', description: '' })}
               className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
               <Plus className="size-4" strokeWidth={2.2} />
@@ -130,17 +131,16 @@ export function GoalsPage() {
           </section>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {rows.map(({ id, goal, spent, cat }) => {
-              const pct = Math.min(100, Math.round((spent / goal) * 100))
+            {rows.map(({ id, goal, description, spent, cat }) => {
+              const pct = goal > 0 ? Math.min(100, Math.round((spent / goal) * 100)) : 0
               const isOver = spent > goal
               return (
                 <div key={id} className="flex flex-col gap-3 rounded-2xl border border-edge bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <span className="size-3 shrink-0 rounded-full" style={{ backgroundColor: cat!.color }} aria-hidden />
-                    <span className="min-w-0 flex-1 truncate font-medium text-fg">{cat!.name}</span>
-                    <button
+                    <span className="min-w-0 flex-1 truncate font-medium text-fg">{cat!.name}</span>                    <button
                       type="button"
-                      onClick={() => setModal({ mode: 'edit', categoryId: id, categoryName: cat!.name, value: String(goal).replace('.', ',') })}
+                      onClick={() => setModal({ mode: 'edit', categoryId: id, categoryName: cat!.name, value: String(goal).replace('.', ','), description })}
                       aria-label={`Editar meta de ${cat!.name}`}
                       className="flex size-8 items-center justify-center rounded-lg text-fg-subtle transition-colors hover:text-brand"
                     >
@@ -155,6 +155,9 @@ export function GoalsPage() {
                       <Trash2 className="size-4" strokeWidth={1.8} />
                     </button>
                   </div>
+                  {description && (
+                    <p className="truncate text-[13px] text-fg-muted">{description}</p>
+                  )}
                   <div className="flex items-baseline justify-between gap-2">
                     <span className={`font-display text-xl font-medium tabular-nums ${isOver ? 'text-negative' : 'text-fg'}`}>
                       {formatBRL(spent)}

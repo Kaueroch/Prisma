@@ -20,7 +20,8 @@ export function GoalEditor({ categoryId, expenses }: { categoryId: string; expen
     )
     .reduce((s, e) => s + e.amount, 0)
 
-  const goal = goals[categoryId]
+  const goal = goals[categoryId]?.value
+  const goalDescription = goals[categoryId]?.description
   const pct = goal ? Math.min(100, Math.round((spent / goal) * 100)) : 0
 
   const save = () => {
@@ -85,8 +86,7 @@ export function GoalEditor({ categoryId, expenses }: { categoryId: string; expen
         <span className="flex items-center gap-1.5 text-xs text-fg-muted">
           <Target className="size-3.5" strokeWidth={1.8} />
           Meta do mês
-        </span>
-        <button
+        </span>        <button
           type="button"
           onClick={() => {
             setDraft(String(goal).replace('.', ','))
@@ -99,6 +99,9 @@ export function GoalEditor({ categoryId, expenses }: { categoryId: string; expen
           Editar
         </button>
       </div>
+      {goalDescription && (
+        <p className="truncate text-[13px] text-fg-muted">{goalDescription}</p>
+      )}
       <div className="flex items-baseline justify-between gap-2">
         <span className="font-display text-lg font-medium tabular-nums text-fg">{formatBRL(spent)}</span>
         <span className="text-xs tabular-nums text-fg-muted">de {formatBRL(goal)}</span>

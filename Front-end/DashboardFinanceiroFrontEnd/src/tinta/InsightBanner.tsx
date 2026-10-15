@@ -39,7 +39,7 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
     const topName = topId ? categories.find((c) => c.id === topId)?.name ?? 'Categoria' : null
 
     const goals = getGoals()
-    const goalTotal = Object.values(goals).reduce((s, v) => s + v, 0)
+    const goalTotal = Object.values(goals).reduce((s, g) => s + g.value, 0)
 
     return {
       hasAny: expenses.length > 0,
