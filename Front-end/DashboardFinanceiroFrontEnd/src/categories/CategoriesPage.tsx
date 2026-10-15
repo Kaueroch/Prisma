@@ -7,18 +7,30 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { motion, AnimatePresence } from 'motion/react'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
+import { symbolicCategoryColor } from '../shared/utils/categoryColor'
+import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
 
 export function CategoriesPage() {
   const { categories, expenses, addCategory, deleteCategory, updateCategory, loading } = useFinance()
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
   const [isAdding, setIsAdding] = useState(false)
   const [newCatName, setNewCatName] = useState('')
-  const [newCatColor, setNewCatColor] = useState('#8b5cf6')
   const [newCatType, setNewCatType] = useState<CategoryKind>('expense')
+  const [newCatSymbol, setNewCatSymbol] = useState<string>(() => symbolicCategorySymbol('?'))
+  const [symbolTouched, setSymbolTouched] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
-  const [editColor, setEditColor] = useState('')
+  const [editSymbol, setEditSymbol] = useState('')
   const [editType, setEditType] = useState<CategoryKind>('expense')
+  const newAutoColor = symbolicCategoryColor(newCatName.trim() || '?')
+  const pickSymbol = (id: string) => {
+    setNewCatSymbol(id)
+    setSymbolTouched(true)
+  }
+  const handleNewName = (value: string) => {
+    setNewCatName(value)
+    if (!symbolTouched) setNewCatSymbol(symbolicCategorySymbol(value || '?'))
+  }
 
   const grouped = useMemo(() => expenses.reduce((acc, expense) => {
     if (!acc[expense.categoryId]) {
@@ -34,7 +46,8 @@ export function CategoriesPage() {
     [expenses]
   )
 
-  // Send the new category to the backend and refresh the list
+  // Send the new category to the backend and refresh the list.
+  // Color is symbolic and local-only (backend has no color field).
   const handleAdd = async () => {
     if (!newCatName.trim()) return
     if (categories.some(c => c.name.toLowerCase() === newCatName.trim().toLowerCase())) {
@@ -44,14 +57,16 @@ export function CategoriesPage() {
     try {
       await addCategory({
         name: newCatName.trim(),
-        color: newCatColor,
+        color: symbolicCategoryColor(newCatName.trim()),
         bgClass: 'bg-white/10',
         textClass: 'text-white',
+        icon: newCatSymbol,
         type: newCatType,
       })
       setNewCatName('')
-      setNewCatColor('#8b5cf6')
       setNewCatType('expense')
+      setNewCatSymbol(symbolicCategorySymbol('?'))
+      setSymbolTouched(false)
       setIsAdding(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
@@ -80,7 +95,7 @@ export function CategoriesPage() {
       return
     }
     try {
-      await updateCategory(id, { name: editName.trim(), color: editColor, type: editType })
+      await updateCategory(id, { name: editName.trim(), icon: editSymbol, type: editType })
       setEditingId(null)
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Could not update category. Check that the backend is running.')
@@ -88,7 +103,7 @@ export function CategoriesPage() {
   }
 
   return (
-    <div className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+    <div className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map(i => (
@@ -109,14 +124,14 @@ export function CategoriesPage() {
         <>
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-col gap-2.5">
-              <span className="eyebrow">Organization</span>
+              <span className="text-[13px] font-medium text-fg-muted">Organization</span>
               <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categories</h1>
               <p className="text-[15px] text-fg-muted">Manage your categories and review your spending.</p>
             </div>
             <button
               type="button"
               onClick={() => setIsAdding(true)}
-              className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+              className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
               <Plus className="h-4 w-4" strokeWidth={2.2} />
               New category
@@ -129,24 +144,24 @@ export function CategoriesPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="border border-border rounded-2xl p-4 sm:p-5 bg-card flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4"
+                className="border border-border rounded-xl p-4 sm:p-5 bg-card flex flex-col gap-4"
               >
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-xs text-muted-foreground font-medium">Category name</label>
+                  <label htmlFor="new-cat-name" className="text-xs text-muted-foreground font-medium">Category name</label>
                   <Input
+                    id="new-cat-name"
                     value={newCatName}
-                    onChange={(e) => setNewCatName(e.target.value)}
+                    onChange={(e) => handleNewName(e.target.value)}
                     placeholder="E.g. Travel"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-muted-foreground font-medium">Color</label>
-                  <input
-                    type="color"
-                    value={newCatColor}
-                    onChange={(e) => setNewCatColor(e.target.value)}
-                    className="h-9 w-12 rounded-lg border border-border bg-transparent cursor-pointer"
-                  />
+                  <span className="text-xs text-muted-foreground font-medium">Symbol color</span>
+                  <span className="flex h-9 items-center gap-2 rounded-lg border border-edge bg-white/[0.02] px-3" title="Color is assigned automatically">
+                    <span className="h-5 w-5 rounded-md" style={{ backgroundColor: newAutoColor }} aria-hidden />
+                    <span className="text-xs text-fg-muted">Auto</span>
+                  </span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-muted-foreground font-medium">Used for</label>
@@ -165,6 +180,33 @@ export function CategoriesPage() {
                 </div>
                 <Button onClick={handleAdd}>Create</Button>
                 <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancel</Button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span id="new-cat-symbol-label" className="text-xs text-muted-foreground font-medium">Symbol</span>
+                  <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5" role="radiogroup" aria-labelledby="new-cat-symbol-label">
+                    {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
+                      const selected = newCatSymbol === id
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          title={label}
+                          aria-label={label}
+                          onClick={() => pickSymbol(id)}
+                          className={`flex h-9 items-center justify-center rounded-lg border transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                            selected
+                              ? 'border-brand bg-brand-soft ring-1 ring-brand/40'
+                              : 'border-edge hover:border-brand/40 hover:bg-white/[0.04]'
+                          }`}
+                        >
+                          <Icon className={`size-4 ${selected ? 'text-brand' : 'text-fg-muted'}`} strokeWidth={2} aria-hidden />
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -175,32 +217,21 @@ export function CategoriesPage() {
               const percent = totalOverall > 0 ? Math.round((data.total / totalOverall) * 100) : 0
               const isExpanded = expandedId === cat.id
               const isEditing = editingId === cat.id
-              const initial = cat.name.charAt(0).toUpperCase()
 
               return (
                 <Card key={cat.id} className="overflow-hidden">
                   <CardContent className="p-0">
                     <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0 group">
                       <div className="flex items-center gap-4 flex-1">
-                        <div
-                          className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-base font-bold text-black"
-                          style={{ backgroundColor: cat.color }}
-                        >
-                          {initial}
-                        </div>
+                        <CategorySymbol symbol={isEditing ? editSymbol : cat.icon} color={cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
                         {isEditing ? (
-                          <div className="flex items-center gap-3 flex-wrap flex-1">
+                          <div className="flex flex-col gap-2.5 flex-1">
+                          <div className="flex items-center gap-3 flex-wrap">
                             <Input
                               value={editName}
                               onChange={e => setEditName(e.target.value)}
                               className="w-32"
                               autoFocus
-                            />
-                            <input
-                              type="color"
-                              value={editColor}
-                              onChange={e => setEditColor(e.target.value)}
-                              className="h-9 w-10 rounded-lg border border-border bg-transparent cursor-pointer"
                             />
                             <div className="flex bg-muted p-0.5 rounded-lg border border-border">
                               {(['expense', 'income'] as CategoryKind[]).map((kind) => (
@@ -215,18 +246,42 @@ export function CategoriesPage() {
                               ))}
                             </div>
                             <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
-                              <Check className="w-4 h-4 text-lime-400/90" />
+                              <Check className="w-4 h-4 text-emerald-300" />
                             </Button>
                             <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
                               <X className="w-4 h-4" />
                             </Button>
+                          </div>
+                          <div className="grid grid-cols-6 gap-1 max-w-[280px]" role="radiogroup" aria-label="Symbol">
+                            {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
+                              const selected = editSymbol === id
+                              return (
+                                <button
+                                  key={id}
+                                  type="button"
+                                  role="radio"
+                                  aria-checked={selected}
+                                  title={label}
+                                  aria-label={label}
+                                  onClick={() => setEditSymbol(id)}
+                                  className={`flex h-8 items-center justify-center rounded-lg border transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                                    selected
+                                      ? 'border-brand bg-brand-soft ring-1 ring-brand/40'
+                                      : 'border-edge hover:border-brand/40 hover:bg-white/[0.04]'
+                                  }`}
+                                >
+                                  <Icon className={`size-3.5 ${selected ? 'text-brand' : 'text-fg-muted'}`} strokeWidth={2} aria-hidden />
+                                </button>
+                              )
+                            })}
+                          </div>
                           </div>
                         ) : (
                           <div className="flex flex-col">
                             <span className="font-medium text-sm sm:text-base flex items-center gap-2">
                               {cat.name}
                               <span className="sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 transition-opacity">
-                                <button onClick={(e) => { e.stopPropagation(); setEditName(cat.name); setEditColor(cat.color); setEditType(cat.type); setEditingId(cat.id) }} className="p-1 text-muted-foreground hover:text-foreground">
+                                <button onClick={(e) => { e.stopPropagation(); setEditName(cat.name); setEditSymbol(cat.icon ?? symbolicCategorySymbol(cat.name)); setEditType(cat.type); setEditingId(cat.id) }} className="p-1 text-muted-foreground hover:text-foreground">
                                   <Edit2 className="w-3 h-3" />
                                 </button>
                                 <button onClick={(e) => {

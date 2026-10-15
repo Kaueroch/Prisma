@@ -11,7 +11,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-edge bg-[#0b0d12]/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
-          <span className="flex h-7 w-7 items-center justify-center bg-brand text-black">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-white">
             <Wallet className="h-4 w-4" strokeWidth={2.6} />
           </span>
           <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">prisma</span>
@@ -22,7 +22,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="px-3 py-2 font-mono text-xs uppercase tracking-[0.04em] text-fg-muted transition-colors duration-150 outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="px-3 py-2 text-sm text-fg-muted transition-colors duration-150 outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50"
             >
               {link.label}
             </a>
@@ -63,7 +63,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="px-3 py-2 font-mono text-xs uppercase tracking-[0.04em] text-fg-muted hover:text-fg"
+                className="px-3 py-2 text-sm text-fg-muted hover:text-fg"
               >
                 {link.label}
               </a>

@@ -1,14 +1,18 @@
 import React, { createContext, useCallback, useContext, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { CheckCircle2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
+
+type ToastVariant = 'success' | 'error'
 
 interface ToastContextType {
   showToast: (message: string) => void
+  showError: (message: string) => void
 }
 
 interface ToastItem {
   id: number
   message: string
+  variant: ToastVariant
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
@@ -30,12 +34,18 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const showToast = useCallback((message: string) => {
     const id = Date.now() + Math.random()
-    setToasts(prev => [...prev, { id, message }])
+    setToasts(prev => [...prev, { id, message, variant: 'success' as ToastVariant }])
     setTimeout(() => removeToast(id), 3000)
   }, [removeToast])
 
+  const showError = useCallback((message: string) => {
+    const id = Date.now() + Math.random()
+    setToasts(prev => [...prev, { id, message, variant: 'error' as ToastVariant }])
+    setTimeout(() => removeToast(id), 6000)
+  }, [removeToast])
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ showToast, showError }}>
       {children}
       <div className="fixed bottom-5 right-5 z-[100] flex flex-col gap-2">
         <AnimatePresence>
@@ -46,9 +56,18 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-lg"
+              role="alert"
+              className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm shadow-lg ${
+                toast.variant === 'error'
+                  ? 'border-destructive/50 bg-destructive/10'
+                  : 'border-border bg-card'
+              }`}
             >
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-lime-400/90" />
+              {toast.variant === 'error' ? (
+                <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-300" />
+              )}
               <span className="font-medium">{toast.message}</span>
             </motion.div>
           ))}

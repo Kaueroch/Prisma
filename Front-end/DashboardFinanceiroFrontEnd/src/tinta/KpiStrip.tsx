@@ -53,7 +53,7 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
           )}
         >
           <div className="flex items-center justify-between gap-3">
-            <span className="label-mono text-fg-muted">{label}</span>
+            <span className="text-[13px] font-medium text-fg-muted">{label}</span>
             <span className="flex size-7 shrink-0 items-center justify-center border border-edge">
               <Icon className={cn('size-4', toneIcon[tone])} strokeWidth={1.8} />
             </span>

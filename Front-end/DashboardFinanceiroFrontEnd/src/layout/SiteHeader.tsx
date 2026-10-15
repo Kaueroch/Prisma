@@ -66,7 +66,7 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
       <div className="flex items-center gap-4 ml-auto">
         <span className="text-sm text-muted-foreground hidden sm:block">
           Balance:{' '}
-          <span className={`font-semibold ${balance >= 0 ? 'text-lime-400/90' : 'text-red-400'}`}>
+          <span className={`font-semibold ${balance >= 0 ? 'text-emerald-300' : 'text-red-400'}`}>
             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
           </span>
         </span>

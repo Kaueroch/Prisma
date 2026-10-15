@@ -35,7 +35,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
   return (
     <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
       <div className="flex flex-col gap-1.5">
-        <span className="eyebrow">Spending by category</span>
+        <span className="text-[13px] font-medium text-fg-muted">Spending by category</span>
         <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">
           Where the money went
         </h2>
@@ -52,7 +52,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
       ) : slices.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-10 text-center">
           <p className="text-sm text-fg-muted">No spending recorded this month.</p>
-          <p className="font-mono text-xs text-fg-subtle">Log an expense or simulate one via the Telegram bot.</p>
+          <p className="text-xs text-fg-subtle">Log an expense or simulate one via the Telegram bot.</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-12 sm:flex-row">
@@ -78,7 +78,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
               </PieChart>
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-              <span className="label-mono text-[11px] text-fg-subtle">Total</span>
+              <span className="text-[12px] text-fg-subtle">Total</span>
               <span className="font-display text-xl font-medium tracking-[-0.02em] tabular-nums text-fg">
                 {formatBRL(total)}
               </span>
@@ -96,7 +96,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
                   <span className={`min-w-0 flex-1 truncate text-sm ${s.muted ? 'text-fg-muted' : 'text-fg'}`}>
                     {s.name}
                   </span>
-                  <span className="w-12 shrink-0 text-right font-mono text-xs text-fg-subtle">{pct.toFixed(0)}%</span>
+                  <span className="w-12 shrink-0 text-right text-xs text-fg-subtle tabular-nums">{pct.toFixed(0)}%</span>
                   <span className="w-28 shrink-0 text-right font-display text-sm font-medium tabular-nums text-fg">
                     {formatBRL(s.value)}
                   </span>

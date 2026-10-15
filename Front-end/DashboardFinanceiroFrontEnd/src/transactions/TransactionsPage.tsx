@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react'
-import { Search, ChevronDown, ChevronUp, Grid, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { resolveSymbol } from '../shared/components/CategorySymbol'
 import {
   Select,
   SelectContent,
@@ -71,20 +72,20 @@ export function TransactionsPage() {
       id: id as CategoryId,
       ...data
     })).sort((a, b) => b.total - a.total)
-  }, [expenses, searchQuery, filterCategory, filterType])
+  }, [expenses, searchQuery, filterCategory, filterType, selectedMonth])
 
   return (
-    <div className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+    <div className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="eyebrow">Activity</span>
+          <span className="text-[13px] font-medium text-fg-muted">Activity</span>
           <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transactions</h1>
           <p className="text-[15px] text-fg-muted">All your financial activity in one place.</p>
         </div>
         <button
           type="button"
           onClick={() => openTransactionForm()}
-          className="flex items-center gap-2 bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+          className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
         >
           <Plus className="h-4 w-4" strokeWidth={2.2} />
           New transaction
@@ -98,7 +99,7 @@ export function TransactionsPage() {
             placeholder="Search transactions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 rounded-none border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
+            className="pl-9 rounded-lg border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
           />
         </div>
         <div className="flex gap-4">
@@ -124,13 +125,13 @@ export function TransactionsPage() {
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
-            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-none">
+            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-xs font-mono px-2 min-w-[120px] text-center text-fg-muted capitalize">
+            <span className="text-xs px-2 min-w-[120px] text-center text-fg-muted capitalize tabular-nums">
               {formatMonthYear(selectedMonth.month, selectedMonth.year)}
             </span>
-            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-none">
+            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-lg">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -140,18 +141,19 @@ export function TransactionsPage() {
       {categoryGroups.length === 0 ? (
         <div className="flex flex-col items-center gap-2 border border-dashed border-edge px-6 py-12 text-center">
           <p className="text-sm text-fg-muted">No transactions found.</p>
-          <p className="font-mono text-xs text-fg-subtle">Adjust the filters or log a new one.</p>
+          <p className="text-xs text-fg-subtle">Adjust the filters or log a new one.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
           {categoryGroups.map(({ id, total, maxExpense, items }) => {
-            const catInfo = categories.find(c => c.id === id) || { name: 'Unknown', color: '#666' }
+            const catInfo = categories.find(c => c.id === id) || { name: 'Unknown', color: '#666', icon: 'other' as const }
             const isExpanded = expandedId === id
+            const { Icon: CatIcon } = resolveSymbol('icon' in catInfo ? catInfo.icon : undefined, catInfo.name)
 
             return (
               <Card
                 key={id}
-                className={`cursor-pointer rounded-none border-edge bg-surface transition-all ${isExpanded ? 'ring-1 ring-brand' : ''}`}
+                className={`cursor-pointer rounded-xl border-edge bg-surface transition-colors ${isExpanded ? 'ring-1 ring-brand/40' : ''}`}
                 onClick={() => setExpandedId(isExpanded ? null : id)}
               >
                 <CardHeader className="pb-3">
@@ -161,7 +163,7 @@ export function TransactionsPage() {
                         className="w-10 h-10 rounded-xl flex items-center justify-center"
                         style={{ backgroundColor: `${catInfo.color}20` }}
                       >
-                        <Grid className="w-5 h-5" style={{ color: catInfo.color }} strokeWidth={2.5} />
+                        <CatIcon className="w-5 h-5" style={{ color: catInfo.color }} strokeWidth={2.2} aria-hidden />
                       </div>
                       <span className="font-semibold">{catInfo.name}</span>
                     </div>
@@ -204,11 +206,11 @@ export function TransactionsPage() {
                           <div key={expense.id} className="flex flex-col gap-0.5">
                             <div className="flex items-start justify-between">
                               <span className="text-sm font-medium">{expense.name}</span>
-                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-lime-400/90' : ''}`}>
+                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-emerald-300' : ''}`}>
                                 {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
                               </span>
                             </div>
-                            <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                            <span className="text-[12px] text-muted-foreground">
                               {formatDateBR(expense.date, { day: '2-digit', month: 'short' })}
                             </span>
                           </div>

@@ -9,9 +9,9 @@ export function Hero() {
   return (
     <section id="inicio" className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-lime-400/[0.06] blur-[130px]" />
-        <div className="absolute right-[-10%] top-1/3 h-[420px] w-[420px] rounded-full bg-white/[0.03] blur-[120px]" />
-        <div className="absolute bottom-[-20%] left-[-10%] h-[460px] w-[460px] rounded-full bg-white/[0.03] blur-[120px]" />
+        <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-brand/[0.05] blur-[130px]" />
+        <div className="absolute right-[-10%] top-1/3 h-[420px] w-[420px] rounded-full bg-white/[0.02] blur-[120px]" />
+        <div className="absolute bottom-[-20%] left-[-10%] h-[460px] w-[460px] rounded-full bg-white/[0.02] blur-[120px]" />
       </div>
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pt-16 pb-14 sm:px-6 sm:pt-24 sm:pb-20">
@@ -44,11 +44,11 @@ export function Hero() {
               </Button>
             </div>
 
-            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.04em] text-fg-subtle">
+            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-fg-subtle">
               <Check className="h-3.5 w-3.5 text-brand" />
-              {hero.trustLine.split('·').map((item) => (
+              {hero.trustLine.map((item) => (
                 <span key={item} className="flex items-center gap-1.5">
-                  {item.trim()}
+                  {item}
                 </span>
               ))}
             </p>
@@ -67,8 +67,8 @@ export function Hero() {
           <dl className="grid grid-cols-2 gap-px overflow-hidden border border-edge bg-edge md:grid-cols-4">
             {statStrip.map((s) => (
               <div key={s.label} className="flex flex-col gap-1 bg-surface px-6 py-5">
-                <dt className="order-2 font-mono text-[11px] uppercase tracking-[0.07em] text-fg-subtle">{s.label}</dt>
-                <dd className="order-1 font-display text-xl font-medium tracking-tight text-fg">{s.value}</dd>
+                <dt className="order-2 text-[13px] text-fg-subtle">{s.label}</dt>
+                <dd className="order-1 font-display text-xl font-medium tracking-tight text-fg tabular-nums">{s.value}</dd>
               </div>
             ))}
           </dl>

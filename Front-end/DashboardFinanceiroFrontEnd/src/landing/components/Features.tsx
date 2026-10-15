@@ -11,10 +11,10 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const categorias = [
-  { name: 'Food', amount: 'R$ 1.428,00', color: '#a3e635' },
-  { name: 'Bills', amount: 'R$ 1.092,00', color: '#3b82f6' },
-  { name: 'Transport', amount: 'R$ 924,00', color: '#f97316' },
-  { name: 'Leisure', amount: 'R$ 756,00', color: '#8b5cf6' },
+  { name: 'Food', amount: 'R$ 1.428,00', color: '#8fbf9f' },
+  { name: 'Bills', amount: 'R$ 1.092,00', color: '#7ea8d8' },
+  { name: 'Transport', amount: 'R$ 924,00', color: '#d8a36c' },
+  { name: 'Leisure', amount: 'R$ 756,00', color: '#a88cc8' },
 ]
 
 function GastosVisual() {
@@ -22,19 +22,19 @@ function GastosVisual() {
     <div className="mt-6 flex items-center gap-6  border border-edge bg-surface p-4">
       <div className="relative h-20 w-20 shrink-0">
         <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
-          <circle cx="70" cy="70" r="34" fill="none" stroke="#3b82f6" strokeWidth="14" strokeDasharray="72.6 213.6" />
-          <circle cx="70" cy="70" r="34" fill="none" stroke="#a3e635" strokeWidth="14" strokeDasharray="47 213.6" strokeDashoffset="-72.6" />
-          <circle cx="70" cy="70" r="34" fill="none" stroke="#8b5cf6" strokeWidth="14" strokeDasharray="38.5 213.6" strokeDashoffset="-119.6" />
-          <circle cx="70" cy="70" r="34" fill="none" stroke="#f97316" strokeWidth="14" strokeDasharray="55.5 213.6" strokeDashoffset="-158.1" />
+          <circle cx="70" cy="70" r="34" fill="none" stroke="#7ea8d8" strokeWidth="14" strokeDasharray="72.6 213.6" />
+          <circle cx="70" cy="70" r="34" fill="none" stroke="#8fbf9f" strokeWidth="14" strokeDasharray="47 213.6" strokeDashoffset="-72.6" />
+          <circle cx="70" cy="70" r="34" fill="none" stroke="#a88cc8" strokeWidth="14" strokeDasharray="38.5 213.6" strokeDashoffset="-119.6" />
+          <circle cx="70" cy="70" r="34" fill="none" stroke="#d8a36c" strokeWidth="14" strokeDasharray="55.5 213.6" strokeDashoffset="-158.1" />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">R$</div>
       </div>
       <div className="flex-1 space-y-2">
         {[
-          ['Food', '#a3e635', '34%'],
-          ['Bills', '#3b82f6', '26%'],
-          ['Transport', '#f97316', '22%'],
-          ['Leisure', '#8b5cf6', '18%'],
+          ['Food', '#8fbf9f', '34%'],
+          ['Bills', '#7ea8d8', '26%'],
+          ['Transport', '#d8a36c', '22%'],
+          ['Leisure', '#a88cc8', '18%'],
         ].map(([label, color, pct]) => (
           <div key={label as string} className="flex items-center gap-2 text-[11px]">
             <span className="h-2 w-2 " style={{ backgroundColor: color as string }} />
@@ -62,8 +62,8 @@ function CategoriasVisual() {
 }
 
 const registro = [
-  { name: 'Bakery', amount: 'R$ 18,90', category: 'Food', color: '#a3e635' },
-  { name: 'Fuel', amount: 'R$ 210,00', category: 'Transport', color: '#f97316' },
+  { name: 'Bakery', amount: 'R$ 18,90', category: 'Food', color: '#8fbf9f' },
+  { name: 'Fuel', amount: 'R$ 210,00', category: 'Transport', color: '#d8a36c' },
 ]
 
 function RegistroVisual() {
@@ -73,7 +73,7 @@ function RegistroVisual() {
         <span className="flex flex-1 items-center gap-1.5  border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted">
           <Plus className="h-3 w-3" /> New expense
         </span>
-        <span className=" bg-orange-500/10 px-2.5 py-2 text-[11px] font-medium text-orange-400">-R$ 0,00</span>
+        <span className="bg-brand-soft px-2.5 py-2 text-[11px] font-medium text-fg">-R$ 0,00</span>
       </div>
       <div className="space-y-2">
         {registro.map((r) => (

@@ -30,7 +30,7 @@ export function buildDailySeries(expenses: Expense[], month: number, year: numbe
   return out
 }
 
-const AXIS_TICK = { fontFamily: 'Space Mono', fontSize: 11, fill: CHART.axis }
+const AXIS_TICK = { fontFamily: 'Geist Variable, system-ui, sans-serif', fontSize: 12, fill: CHART.axis }
 
 export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expense[]; month: number; year: number }) {
   const filled = useMemo(() => buildDailySeries(expenses, month, year), [expenses, month, year])
@@ -41,10 +41,10 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
     <section className="flex h-full min-h-[300px] flex-col gap-4 border border-edge bg-surface p-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">Flow over time</span>
+          <span className="text-[13px] font-medium text-fg-muted">Flow over time</span>
           <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Balance history</h2>
         </div>
-        <span className={`font-mono text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-data'}`}>
+        <span className={`text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-data'}`}>
           {periodNet < 0 ? '−' : '+'}
           {formatBRL(Math.abs(periodNet))} this month
         </span>
@@ -74,7 +74,7 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
             <Tooltip
               cursor={{ stroke: CHART.edge }}
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
-              labelStyle={{ fontFamily: 'Space Mono', color: CHART.axis, marginBottom: 4 }}
+              labelStyle={{ fontFamily: 'Geist Variable, system-ui, sans-serif', color: CHART.axis, marginBottom: 4 }}
               itemStyle={{ color: '#fff' }}
               formatter={(value) => [formatBRL(Number(value)), 'Balance']}
             />

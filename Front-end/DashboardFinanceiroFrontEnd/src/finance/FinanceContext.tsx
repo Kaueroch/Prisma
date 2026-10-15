@@ -2,12 +2,15 @@ import { createContext, useState, useEffect, useMemo, type ReactNode } from 'rea
 import { Expense, CategoryInfo, CategoryKind } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
 import { categoriesApi, getLoggedUserId } from '../shared/services/categoriesApi';
+import { symbolicCategoryColor } from '../shared/utils/categoryColor';
+import { symbolicCategorySymbol } from '../shared/components/CategorySymbol';
+import { transacoesApi } from '../shared/services/transacoesApi';
 
 interface FinanceContextType {
   expenses: Expense[];
   categories: CategoryInfo[];
   loading: boolean;
-  addExpense: (expense: Omit<Expense, 'id'>) => void;
+  addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
   addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<void>;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => Promise<void>;
   deleteCategory: (id: string, nome?: string) => Promise<void>;
@@ -46,12 +49,14 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         const userId = getLoggedUserId();
         const backendCategories = await categoriesApi.listar(userId);
         const mapped = backendCategories.map((c) => ({
-          // Use the cd_id from the database, never a fabricated id here
+          // Use the cd_id from the database, never a fabricated id here.
+          // Color and symbol are symbolic and local-only (backend has no such fields).
           id: String(c.id),
           name: c.nome,
-          color: '#8b5cf6',
+          color: symbolicCategoryColor(c.nome),
           bgClass: 'bg-white/10',
           textClass: 'text-white',
+          icon: symbolicCategorySymbol(c.nome),
           type: (c.tipoCategoria === 'Despesas' ? 'expense' : 'income') as CategoryKind,
         }));
         setCategories(mapped);
@@ -65,7 +70,24 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     loadData();
   }, []);
 
-  const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
+  const handleAddExpense = async (newExpense: Omit<Expense, 'id'>) => {
+    // 1. Persist in the backend first: POST /api/v1/transacao/criar.
+    // The payload mapping (valor/descricao/data dd/MM/yyyy/categoria_id direto)
+    // follows the TransacaoDTO record contract.
+    try {
+      await transacoesApi.criar({
+        valor: newExpense.amount,
+        descricao: newExpense.name,
+        data: newExpense.date,
+        categoriaId: newExpense.categoryId,
+      });
+    } catch (err) {
+      console.error('Could not create transaction in the backend:', err);
+      throw err instanceof Error ? err : new Error('Could not create transaction.');
+    }
+
+    // 2. Only mirror locally after the database confirms the creation,
+    // so the UI never lies about state (same pattern as categories).
     const expense: Expense = {
       ...newExpense,
       id: financeService.nextExpenseId(),
@@ -109,8 +131,22 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   };
 
   // Update a category: send object + id to the backend and only update the
-  // local list after the database confirms the change
+  // local list after the database confirms the change.
+  // Local-only ids (ex.: "food", UUID) are never sent as ?id=NaN:
+  // they update only localStorage.
   const handleUpdateCategory = async (id: string, updates: Partial<CategoryInfo>): Promise<void> => {
+    const numericId = Number(id);
+    const isBackendId = Number.isInteger(numericId);
+
+    if (!isBackendId) {
+      setCategories((prev) => {
+        const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
+        financeService.saveCategories(updated);
+        return updated;
+      });
+      return;
+    }
+
     try {
       const existing = categories.find(c => c.id === id);
       const nome = updates.name ?? existing?.name ?? '';
@@ -121,8 +157,8 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
       // Only send the id (query, same as delete) plus the editable fields.
       // No userId here: owner validation happens via the JWT token in the backend.
-      await categoriesApi.atualizar(Number(id), {
-        id: Number(id),
+      await categoriesApi.atualizar(numericId, {
+        id: numericId,
         nome,
         tipoCategoria,
       });
@@ -139,10 +175,23 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   };
 
   // Delete a category: send the cd_id to the backend and only remove it locally
-  // after the database confirms the deletion, so the UI never lies about state
+  // after the database confirms the deletion, so the UI never lies about state.
+  // Local-only ids are removed locally without calling DELETE ?id=NaN.
   const handleDeleteCategory = async (id: string, nome?: string): Promise<void> => {
+    const numericId = Number(id);
+    const isBackendId = Number.isInteger(numericId);
+
+    if (!isBackendId) {
+      setCategories((prev) => {
+        const updated = prev.filter(c => c.id !== id);
+        financeService.saveCategories(updated);
+        return updated;
+      });
+      return;
+    }
+
     try {
-      await categoriesApi.deletar(Number(id));
+      await categoriesApi.deletar(numericId);
     } catch (err) {
       console.error(`Could not delete "${nome ?? id}" in the backend (cd_id: ${id}).`, err);
       throw err instanceof Error ? err : new Error('Could not delete category.');

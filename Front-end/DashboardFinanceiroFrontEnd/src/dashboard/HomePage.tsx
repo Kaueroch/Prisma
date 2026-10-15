@@ -49,16 +49,16 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   }, [filtered, categories])
 
   return (
-    <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+    <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="eyebrow">Overview</span>
+          <span className="text-[13px] font-medium text-fg-muted">Overview</span>
           <div className="flex items-center gap-4">
             <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Dashboard</h1>
             <button
               type="button"
               onClick={toggleMask}
-              className="flex size-8 items-center justify-center border border-edge text-fg-muted transition-colors duration-150 hover:border-white/30 hover:text-fg"
+              className="flex size-8 items-center justify-center rounded-lg border border-edge text-fg-muted transition-colors duration-150 hover:border-brand/40 hover:text-fg"
               title={mask ? 'Show values' : 'Hide values'}
               aria-label={mask ? 'Show values' : 'Hide values'}
             >
@@ -72,14 +72,14 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           <button
             type="button"
             onClick={() => openTransactionForm('income')}
-            className="flex items-center gap-2 bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+            className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
           >
             <Plus className="size-4" strokeWidth={2.2} /> Income
           </button>
           <button
             type="button"
             onClick={() => openTransactionForm('expense')}
-            className="flex items-center gap-2 border border-edge px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-white/30"
+            className="flex items-center gap-2 rounded-lg border border-edge bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-brand/40 hover:bg-white/[0.06]"
           >
             <Plus className="size-4" strokeWidth={2.2} /> Expense
           </button>
@@ -112,8 +112,8 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       </section>
 
       {setActiveTab && (
-        <button type="button" onClick={() => setActiveTab('transactions')} className="mt-6 font-mono text-xs text-fg-subtle hover:text-brand">
-          View all transactions →
+        <button type="button" onClick={() => setActiveTab('transactions')} className="mt-6 text-sm font-medium text-fg-subtle transition-colors hover:text-brand">
+          View all transactions
         </button>
       )}
     </main>

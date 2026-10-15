@@ -76,7 +76,7 @@ function AuthenticatedApp() {
   return (
     <>
       <TooltipProvider>
-      <div className="flex h-screen bg-[#0b0d12] text-fg overflow-hidden">
+      <div className="flex h-screen bg-[#0c0a13] text-fg overflow-hidden">
         <TintaSidebar active={activeTab} onNavigate={setActiveTab} />
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div className="flex-1 relative z-10 overflow-hidden flex flex-col">

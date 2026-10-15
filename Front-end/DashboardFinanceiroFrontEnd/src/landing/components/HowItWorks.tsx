@@ -23,7 +23,7 @@ export function HowItWorks() {
                   <div className="relative flex flex-col items-center gap-4 text-center md:items-start md:text-left">
                     <div className="relative z-10 flex h-14 w-14 items-center justify-center  border border-edge bg-surface">
                       <Icon className="h-6 w-6 text-fg-muted" />
-                      <span className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center  bg-brand text-[11px] font-bold text-black">
+                      <span className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
                         {i + 1}
                       </span>
                     </div>

@@ -18,7 +18,7 @@ export const hero = {
     'Prisma brings income, expenses, and categories together in a fast, dark, to-the-point dashboard — no stray spreadsheets, no red tape.',
   primaryCta: 'Create free account',
   secondaryCta: 'See how it works',
-  trustLine: 'Free during the MVP · Open source · Runs on Docker · End-to-end protection',
+  trustLine: ['Free during the MVP', 'Open source', 'Runs on Docker', 'End-to-end protection'],
   loginHref: '#/login',
   ctaHref: '#/cadastro',
 }
@@ -26,7 +26,7 @@ export const hero = {
 export const statStrip = [
   { label: 'Integrated modules', value: '3' },
   { label: 'Log an entry', value: '5 sec' },
-  { label: 'Light mode', value: 'Never' },
+  { label: 'Free plan', value: 'R$ 0' },
   { label: 'Hidden fees', value: 'Zero' },
 ]
 

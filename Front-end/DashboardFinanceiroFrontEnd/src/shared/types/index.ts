@@ -9,6 +9,8 @@ export interface CategoryInfo {
   bgClass: string;
   textClass: string;
   type: CategoryKind;
+  /** User-chosen symbol id (see shared/components/CategorySymbol). Frontend-only, never sent to the backend. */
+  icon?: string;
 }
 
 export type TransactionType = 'expense' | 'income';

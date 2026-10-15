@@ -4,10 +4,10 @@ import { cn } from '@/lib/utils'
 /** Running balance — Prisma version without accounts API (all local transactions). */
 export function SaldoTinta({ total, count, loading = false, mask = false }: { total: number; count: number; loading?: boolean; mask?: boolean }) {
   return (
-    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 border border-edge bg-surface p-6">
+    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-xl border border-edge bg-surface p-6">
       <div className="flex items-center justify-between gap-4">
-        <span className="eyebrow">Running balance</span>
-        <span className="font-mono text-[11px] text-fg-subtle">
+        <span className="text-[13px] font-medium text-fg-muted">Running balance</span>
+        <span className="text-xs text-fg-subtle">
           {count} {count === 1 ? 'transaction' : 'transactions'}
         </span>
       </div>
@@ -21,12 +21,12 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
           <span className={cn('font-display text-[44px] leading-[48px] font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap', total < 0 ? 'text-negative' : 'text-fg')}>
             {mask ? '••••••' : formatBRL(total)}
           </span>
-          <span className="truncate font-mono text-xs text-fg-subtle">•••• 0000 / All local activity</span>
+          <span className="truncate text-[13px] text-fg-subtle">All local activity</span>
         </div>
       )}
       <div className="flex flex-wrap gap-2">
-        <span className="border border-brand bg-brand px-3 py-1.5 text-[13px] font-semibold text-black">All</span>
-        <span className="border border-edge px-3 py-1.5 text-[13px] text-fg-muted">Bot accounts coming soon</span>
+        <span className="rounded-full border border-edge bg-brand-soft px-4 py-1.5 text-[13px] font-semibold text-fg">All</span>
+        <span className="rounded-full border border-edge bg-white/[0.03] px-4 py-1.5 text-[13px] text-fg-muted">Bot accounts coming soon</span>
       </div>
     </section>
   )

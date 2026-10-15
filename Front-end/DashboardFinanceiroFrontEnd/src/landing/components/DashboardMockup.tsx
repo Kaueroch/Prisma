@@ -3,29 +3,29 @@ import type { ReactNode } from 'react'
 
 const stats = [
   { label: 'Total income', value: 'R$ 8.400,00', accent: 'text-data', icon: ArrowDownLeft, chip: 'bg-brand-soft text-data', note: 'On track' },
-  { label: 'Total expenses', value: 'R$ 4.200,00', accent: 'text-orange-400', icon: ArrowUpRight, chip: 'bg-orange-500/10 text-orange-400', note: 'August 2026' },
+  { label: 'Total expenses', value: 'R$ 4.200,00', accent: 'text-negative', icon: ArrowUpRight, chip: 'bg-brand-soft text-negative', note: 'August 2026' },
   { label: 'Savings (Net)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-surface-raised text-fg', note: 'Month difference' },
 ]
 
 const donut = [
-  { label: 'Food', value: 34, color: '#a3e635', amount: 'R$ 1.428,00' },
-  { label: 'Bills', value: 26, color: '#3b82f6', amount: 'R$ 1.092,00' },
-  { label: 'Transport', value: 22, color: '#f97316', amount: 'R$ 924,00' },
-  { label: 'Leisure', value: 18, color: '#8b5cf6', amount: 'R$ 756,00' },
+  { label: 'Food', value: 34, color: '#8fbf9f', amount: 'R$ 1.428,00' },
+  { label: 'Bills', value: 26, color: '#7ea8d8', amount: 'R$ 1.092,00' },
+  { label: 'Transport', value: 22, color: '#d8a36c', amount: 'R$ 924,00' },
+  { label: 'Leisure', value: 18, color: '#a88cc8', amount: 'R$ 756,00' },
 ]
 
 const segments = [
-  { dash: 72.6, offset: 0, color: '#a3e635' },
-  { dash: 47, offset: -72.6, color: '#f97316' },
-  { dash: 55.5, offset: -119.6, color: '#3b82f6' },
-  { dash: 38.5, offset: -175.1, color: '#8b5cf6' },
+  { dash: 72.6, offset: 0, color: '#8fbf9f' },
+  { dash: 47, offset: -72.6, color: '#d8a36c' },
+  { dash: 55.5, offset: -119.6, color: '#7ea8d8' },
+  { dash: 38.5, offset: -175.1, color: '#a88cc8' },
 ]
 
 const activity = [
-  { name: 'Freelance design', type: 'income', category: 'Salary', color: '#a3e635', amount: '+R$ 2.400,00' },
-  { name: 'Grocery run', type: 'expense', category: 'Food', color: '#a3e635', amount: '-R$ 486,90' },
-  { name: 'Fuel', type: 'expense', category: 'Transport', color: '#f97316', amount: '-R$ 210,00' },
-  { name: 'Rent', type: 'expense', category: 'Bills', color: '#3b82f6', amount: '-R$ 1.250,00' },
+  { name: 'Freelance design', type: 'income', category: 'Salary', color: '#8fbf9f', amount: '+R$ 2.400,00' },
+  { name: 'Grocery run', type: 'expense', category: 'Food', color: '#8fbf9f', amount: '-R$ 486,90' },
+  { name: 'Fuel', type: 'expense', category: 'Transport', color: '#d8a36c', amount: '-R$ 210,00' },
+  { name: 'Rent', type: 'expense', category: 'Bills', color: '#7ea8d8', amount: '-R$ 1.250,00' },
 ]
 
 function windowFrame(children: ReactNode) {
@@ -37,7 +37,7 @@ function windowFrame(children: ReactNode) {
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <span className="h-2.5 w-2.5 bg-zinc-700" />
-          <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 font-mono text-[11px] text-fg-subtle">
+          <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 text-[12px] text-fg-subtle">
             <span className="h-1 w-1 bg-zinc-600" />
             app.prisma.com.br/dashboard
           </div>
@@ -69,7 +69,7 @@ export function DashboardMockup() {
             <p className="text-[11px] font-medium uppercase tracking-wider text-fg-muted">Current balance</p>
             <p className="mt-1 text-3xl font-bold tracking-tight">R$ 4.200,00</p>
             <div className="mt-3 flex items-center gap-2">
-              <span className="inline-flex h-7 items-center gap-1  bg-brand px-3 text-[11px] font-medium text-black">
+              <span className="inline-flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[11px] font-medium text-white">
                 <ArrowDownLeft className="h-3 w-3" /> New income
               </span>
               <span className="inline-flex h-7 items-center gap-1  bg-secondary px-3 text-[11px] font-medium text-secondary-foreground">
@@ -119,7 +119,7 @@ export function DashboardMockup() {
                   <span className="text-[11px] text-fg-muted">{t.category}</span>
                 </span>
                 <span className={`text-xs font-semibold ${t.type === 'income' ? 'text-data' : ''}`}>{t.amount}</span>
-                <span className="hidden items-center gap-1  border border-lime-400/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-data lg:flex">
+                <span className="hidden items-center gap-1 rounded-full border border-emerald-400/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-data lg:flex">
                   <CheckCircle2 className="h-3 w-3" /> Done
                 </span>
               </div>

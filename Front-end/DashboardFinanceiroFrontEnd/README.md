@@ -35,7 +35,7 @@ Manage categories with custom colors (expenses and income) and edit your profile
 | Icons | Lucide React |
 | Charts | Recharts |
 | Animations | Motion (Framer Motion) |
-| Fonts | Geist Variable, Plus Jakarta Sans, Space Grotesk, Space Mono |
+| Fonts | Geist Variable, Space Grotesk Variable |
 
 Config: `package.json`, `vite.config.ts`, `components.json`, `tsconfig.json`.
 

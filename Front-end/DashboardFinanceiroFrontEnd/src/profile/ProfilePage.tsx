@@ -33,28 +33,28 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
   }
 
   return (
-    <main className="bg-page-grid flex-1 overflow-y-auto px-10 pt-9 pb-10">
+    <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <header className="mb-7 flex flex-col gap-2.5">
-        <span className="eyebrow">Preferences</span>
+        <span className="text-[13px] font-medium text-fg-muted">Preferences</span>
         <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Settings</h1>
         <p className="text-[15px] text-fg-muted">Connect your services to your Prisma account.</p>
       </header>
 
       <div className="flex max-w-xl flex-col gap-6">
-        <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
+        <section className="flex flex-col gap-6 rounded-xl border border-edge bg-surface p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <span className="flex size-12 items-center justify-center border border-edge font-display text-lg font-bold text-fg">
+            <span className="flex size-12 items-center justify-center rounded-xl bg-brand font-display text-lg font-bold text-white">
               {initials}
             </span>
             <div className="flex flex-col">
               <span className="font-display text-xl text-fg">{user?.name || 'User'}</span>
-              <span className="font-mono text-xs text-fg-subtle">{user?.email || ''}</span>
+              <span className="text-xs text-fg-subtle">{user?.email || ''}</span>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setActiveTab?.('categories')}
-            className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
+            className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
           >
             <Tags className="size-4" strokeWidth={1.8} />
             Manage categories
@@ -78,7 +78,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <button
               type="button"
               onClick={handleGenerate}
-              className="flex w-fit items-center gap-2.5 bg-brand px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.04em] text-black transition-opacity duration-150 hover:opacity-90"
+              className="flex w-fit items-center gap-2.5 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
               Link Telegram
               <ArrowRight className="size-4" strokeWidth={2.2} />
@@ -86,7 +86,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <button
               type="button"
               onClick={handleSimulate}
-              className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-white/30 hover:text-fg"
+              className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
             >
               <FlaskConical className="size-4" strokeWidth={1.8} />
               Simulate a bot expense
@@ -99,7 +99,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
                 <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} />
                 {link}
               </a>
-              <p className="flex items-center gap-2 font-mono text-xs text-fg-subtle">
+              <p className="flex items-center gap-2 text-xs text-fg-subtle">
                 <Clock className="size-3.5 shrink-0" strokeWidth={1.8} />
                 Simulated link (frontend-only). The real backend would generate one expiring in 1 minute.
               </p>
@@ -108,7 +108,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
           {simMsg && (
             <div className="border border-brand/40 bg-brand-soft px-4 py-3 text-sm text-fg">{simMsg}</div>
           )}
-          <p className="font-mono text-[11px] leading-relaxed text-fg-subtle">
+          <p className="text-[12px] leading-relaxed text-fg-subtle">
             No new backend: the simulation writes directly to localStorage via telegramInbox. When the real bot exists, swap simulate() for polling /telegram/inbox.
           </p>
         </section>

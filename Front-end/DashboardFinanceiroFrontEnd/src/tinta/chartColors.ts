@@ -1,26 +1,25 @@
-// Ported from money-flow (Opus 5) — palette derived from the Tinta tokens.
-// Keeps contrast on the dark background and reuses the identity.
+// Prisma palette — roxo contido sobre preto, apoios dessaturados.
 export const CHART = {
-  income: '#3DDC84',
-  expense: '#FF7A6B',
-  brand: '#E2FF2E',
-  grid: 'rgba(255,255,255,0.06)',
-  axis: 'rgba(255,255,255,0.45)',
-  surface: '#1D212B',
-  edge: 'rgba(255,255,255,0.12)',
+  income: '#5AB99A',
+  expense: '#D48A90',
+  brand: '#8578C8',
+  grid: 'rgba(200,190,230,0.06)',
+  axis: 'rgba(236,233,245,0.45)',
+  surface: '#1A1628',
+  edge: 'rgba(200,190,230,0.09)',
 } as const
 
 export const CATEGORY_PALETTE = [
-  '#E2FF2E',
-  '#3DDC84',
-  '#7C83FF',
-  '#FF7A6B',
-  '#FFC24B',
-  '#5FD4F4',
-  '#C9A7FF',
+  '#8578C8',
+  '#8FBF9F',
+  '#D48A90',
+  '#C9A86A',
+  '#7EA8D8',
+  '#A89FD0',
+  '#C78BB0',
 ] as const
 
-export const OTHERS_COLOR = 'rgba(255,255,255,0.35)'
+export const OTHERS_COLOR = 'rgba(236,233,245,0.3)'
 
 export function categoryColor(index: number): string {
   return CATEGORY_PALETTE[index % CATEGORY_PALETTE.length]

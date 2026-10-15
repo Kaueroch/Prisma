@@ -39,11 +39,11 @@ export function RecentTinta({
     <section className="flex h-full flex-col border border-edge bg-surface">
       <div className="flex items-end justify-between gap-4 px-6 pt-6 pb-4">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">Activity</span>
+          <span className="text-[13px] font-medium text-fg-muted">Activity</span>
           <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Recent transactions</h2>
         </div>
         {expenses.length > 0 && (
-          <span className="font-mono text-[11px] text-fg-subtle">
+          <span className="text-[12px] text-fg-subtle tabular-nums">
             {Math.min(limit, expenses.length)} of {expenses.length}
           </span>
         )}
@@ -51,14 +51,14 @@ export function RecentTinta({
       {groups.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-10 text-center">
           <p className="text-sm text-fg-muted">No transactions this month.</p>
-          <p className="font-mono text-xs text-fg-subtle">Log an entry or simulate one via the Telegram bot.</p>
+          <p className="text-xs text-fg-subtle">Log an entry or simulate one via the Telegram bot.</p>
         </div>
       ) : (
         <div className="flex flex-col">
           {groups.map((group) => (
             <div key={group.day} className="flex flex-col">
-              <div className="flex h-9 items-center justify-between border-y border-white/8 bg-white/[0.03] px-6">
-                <span className="label-mono text-[11px] text-fg-muted">{formatDateBR(group.day)}</span>
+              <div className="flex h-9 items-center justify-between border-y border-white/8 bg-white/[0.02] px-6">
+                <span className="text-[12px] text-fg-muted">{formatDateBR(group.day)}</span>
               </div>
               <ul className="flex flex-col">
                 {group.items.map((tx) => {
@@ -81,7 +81,7 @@ export function RecentTinta({
                       </span>
                       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="truncate text-sm font-semibold text-fg first-letter:uppercase">{tx.name}</span>
-                        <span className="truncate font-mono text-[11px] text-fg-subtle">{cat?.name ?? 'Uncategorized'}</span>
+                        <span className="truncate text-[12px] text-fg-subtle">{cat?.name ?? 'Uncategorized'}</span>
                       </div>
                       <span className={cn('shrink-0 font-display text-[15px] font-medium tabular-nums whitespace-nowrap', isIncome ? 'text-data' : 'text-fg')}>
                         {isIncome ? '+' : '−'}

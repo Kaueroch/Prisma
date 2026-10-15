@@ -38,14 +38,14 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   }, [initialTab])
 
   const particles = useMemo(() =>
-    Array.from({ length: 14 }, () => ({
+    Array.from({ length: 8 }, () => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 2.5 + 1,
+      size: Math.random() * 2 + 1,
       duration: Math.random() * 16 + 14,
       delay: Math.random() * 8,
-      xDrift: (Math.random() - 0.5) * 60,
-      yDrift: (Math.random() - 0.5) * 60,
+      xDrift: (Math.random() - 0.5) * 40,
+      yDrift: (Math.random() - 0.5) * 40,
     })), []
   )
 
@@ -98,7 +98,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Secure']
-    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-400', 'bg-lime-400']
+    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-400', 'bg-brand']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
@@ -164,14 +164,14 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex bg-[#07070d]"
+      className="min-h-screen flex bg-[#0b0714]"
     >
       {/* Hero */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
         <motion.div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(135deg, #18181b, #09090b, #000000)',
+            background: 'linear-gradient(135deg, #1d1633, #0b0714, #070512)',
             backgroundSize: '200% 200%',
           }}
           animate={{ backgroundPosition: ['0% 0%', '50% 50%', '0% 0%'] }}
@@ -189,24 +189,24 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
         ))}
 
         <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.15, 0.25, 0.15] }}
+          animate={{ scale: [1, 1.08, 1], opacity: [0.1, 0.16, 0.1] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-lime-400/[0.05] blur-[120px] rounded-full"
+          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-brand/[0.05] blur-[120px] rounded-full"
         />
         <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.18, 0.1] }}
+          animate={{ scale: [1, 1.12, 1], opacity: [0.06, 0.1, 0.06] }}
           transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/5 blur-[130px] rounded-full"
+          className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/[0.02] blur-[130px] rounded-full"
         />
         <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[20%] right-[15%] w-[200px] h-[200px] bg-white/[0.04] blur-[80px] rounded-full"
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[20%] right-[15%] w-[200px] h-[200px] bg-white/[0.02] blur-[80px] rounded-full"
         />
         <motion.div
-          animate={{ y: [0, 10, 0] }}
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute bottom-[25%] left-[10%] w-[250px] h-[250px] bg-white/[0.04] blur-[90px] rounded-full"
+          className="absolute bottom-[25%] left-[10%] w-[250px] h-[250px] bg-white/[0.02] blur-[90px] rounded-full"
         />
 
         <div className="relative z-10 text-center max-w-md">
@@ -216,7 +216,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             transition={{ duration: 0.6 }}
             onClick={onBack}
             title={onBack ? 'Back to the home page' : undefined}
-            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 cursor-pointer"
+            className="w-16 h-16 rounded-xl bg-brand flex items-center justify-center mx-auto mb-8 cursor-pointer"
           >
             <motion.div
               animate={{ rotate: [0, -6, 6, 0] }}
@@ -287,14 +287,14 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
         ))}
 
         <motion.div
-          animate={{ scale: [1, 1.25, 1], opacity: [0.05, 0.1, 0.05] }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.04, 0.07, 0.04] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-lime-400/[0.05] blur-[150px] rounded-full"
+          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-brand/[0.04] blur-[150px] rounded-full"
         />
         <motion.div
-          animate={{ scale: [1, 1.35, 1], opacity: [0.03, 0.08, 0.03] }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.02, 0.05, 0.02] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-          className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/5 blur-[120px] rounded-full"
+          className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/[0.02] blur-[120px] rounded-full"
         />
 
         <motion.div
@@ -321,7 +321,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             title={onBack ? 'Back to the home page' : undefined}
             className="flex items-center justify-center gap-3 mb-8 lg:hidden cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center">
               <Wallet className="w-6 h-6" />
             </div>
             <span className="font-bold text-2xl tracking-tight text-white">Prisma</span>
@@ -332,7 +332,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="rounded-none border-edge bg-surface shadow-none">
+            <Card className="rounded-xl border-edge bg-surface">
               <CardContent className="pt-6 pb-6">
                 <Tabs value={tab} onValueChange={setTab}>
                   <motion.div
@@ -374,7 +374,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
                             error
                               ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-lime-400/10 text-lime-400/90 border border-lime-400/20'
+                              : 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20'
                           }`}
                         >
                           {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
@@ -411,7 +411,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -423,7 +423,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-lime-400" />
+                                          <CheckCircle className="w-4 h-4 text-emerald-300" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -460,7 +460,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                               >
                                 <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
                                   {isSubmitting ? (
-                                    <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                   ) : (
                                     <>Sign in <ArrowRight className="w-4 h-4" /></>
                                   )}
@@ -497,7 +497,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-lime-400/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-emerald-400/40' : 'border-red-500/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -509,7 +509,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-lime-400" />
+                                          <CheckCircle className="w-4 h-4 text-emerald-300" />
                                         ) : (
                                           <XCircle className="w-4 h-4 text-red-500" />
                                         )}
@@ -553,7 +553,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     animate={{ height: 'auto', opacity: 1 }}
                                     className="overflow-hidden"
                                   >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-lime-400' : 'text-red-500'}`}>
+                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-emerald-300' : 'text-red-500'}`}>
                                       {passwordsMatch ? (
                                         <><CheckCircle className="w-3 h-3" /> Passwords match</>
                                       ) : (
@@ -583,7 +583,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                               >
                                 <Button type="submit" disabled={isSubmitting} className="w-full h-9 gap-2 transition-[filter] duration-300 hover:brightness-110">
                                   {isSubmitting ? (
-                                    <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                   ) : (
                                     <>
                                       <Sparkles className="w-4 h-4" />

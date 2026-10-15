@@ -20,7 +20,7 @@ export function MonthPickerTinta({
       <button type="button" onClick={prev} aria-label="Previous month" className="text-fg-muted hover:text-brand">
         <ChevronLeft className="size-3.5" strokeWidth={2.2} />
       </button>
-      <span className="min-w-[130px] text-center font-mono text-xs text-fg capitalize">
+      <span className="min-w-[130px] text-center text-[13px] text-fg capitalize tabular-nums">
         {formatMonthYear(value.month, value.year)}
       </span>
       <button type="button" onClick={next} aria-label="Next month" className="text-fg-muted hover:text-brand">
