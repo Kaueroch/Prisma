@@ -55,8 +55,8 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
           <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft">
             <ChartPie className="size-6 text-brand" strokeWidth={1.8} />
           </span>
-          <p className="font-display text-lg text-fg">Sem gastos por aqui</p>
-          <p className="max-w-[260px] text-sm text-fg-muted">Quando você registrar uma despesa, o gráfico ganha vida.</p>
+          <p className="font-display text-lg text-fg">Nenhum gasto neste mês</p>
+          <p className="max-w-[260px] text-sm text-fg-muted">Registre uma despesa para ver o gráfico.</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-12 sm:flex-row">

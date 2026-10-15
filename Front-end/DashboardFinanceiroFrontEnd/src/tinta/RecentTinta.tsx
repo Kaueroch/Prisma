@@ -55,8 +55,8 @@ export function RecentTinta({
           <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-soft">
             <ReceiptText className="size-6 text-brand" strokeWidth={1.8} />
           </span>
-          <p className="font-display text-lg text-fg">Mês zerado, mente leve</p>
-          <p className="max-w-[240px] text-sm text-fg-muted">Registre sua primeira movimentação e ela aparece aqui.</p>
+          <p className="font-display text-lg text-fg">Nenhuma transação neste mês</p>
+          <p className="max-w-[240px] text-sm text-fg-muted">Registre a primeira e ela aparece aqui embaixo.</p>
           <button
             type="button"
             onClick={() => openTransactionForm()}

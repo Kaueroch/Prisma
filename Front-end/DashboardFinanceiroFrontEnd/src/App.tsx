@@ -112,7 +112,7 @@ function AuthenticatedApp() {
               Boas-vindas, {user?.name?.split(' ')[0] || 'por aqui'}!
             </DialogTitle>
             <DialogDescription className="pt-1">
-              Que bom ter você aqui. Registre sua primeira transação e o painel ganha vida.
+              Que bom ter você aqui. Registre a primeira transação para ver seus números.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

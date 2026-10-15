@@ -62,7 +62,7 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <p className="font-display text-lg text-fg">Comece por uma transação</p>
-          <p className="text-sm text-fg-muted">Leva 5 segundos — e o painel ganha vida a partir daí.</p>
+          <p className="text-sm text-fg-muted">Leva 5 segundos. Seus números aparecem aqui depois disso.</p>
         </div>
         <button
           type="button"
