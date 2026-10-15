@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { motion, AnimatePresence } from 'motion/react'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
+import { GoalEditor } from './GoalEditor'
 import { symbolicCategoryColor } from '../shared/utils/categoryColor'
 import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
 
@@ -316,6 +317,9 @@ export function CategoriesPage() {
                           transition={{ duration: 0.2 }}
                           className="border-t border-border"
                         >
+                          <div className="px-4 pt-4">
+                            <GoalEditor categoryId={cat.id} expenses={expenses} />
+                          </div>
                           <div className="flex flex-col p-4 gap-3 max-h-64 overflow-y-auto bg-muted/20">
                             {data.items.length === 0 ? (
                               <div className="text-center text-muted-foreground text-sm py-4">No transactions recorded.</div>

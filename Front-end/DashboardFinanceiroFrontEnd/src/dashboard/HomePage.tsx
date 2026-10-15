@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext'
 import { getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
 import type { Tab, MonthFilter } from '../shared/types'
 import { KpiStrip } from '../tinta/KpiStrip'
+import { InsightBanner } from '../tinta/InsightBanner'
 import { CategoryDonutTinta } from '../tinta/CategoryDonutTinta'
 import { BalanceHistoryTinta } from '../tinta/BalanceHistoryTinta'
 import { IncomeExpenseTinta } from '../tinta/IncomeExpenseTinta'
@@ -93,6 +94,8 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </button>
         </div>
       </header>
+
+      <InsightBanner expenses={expenses} categories={categories} month={selectedMonth} />
 
       <section className="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-[400px_1fr]">
         <SaldoTinta total={balance} count={filtered.length} loading={loading} mask={mask} />
