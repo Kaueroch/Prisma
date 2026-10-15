@@ -24,7 +24,7 @@ export interface Expense {
   type: TransactionType;
 }
 
-export type Tab = 'home' | 'transactions' | 'categories' | 'profile';
+export type Tab = 'home' | 'transactions' | 'categories' | 'goals' | 'profile';
 
 export interface MonthFilter {
   month: number;

@@ -3,7 +3,8 @@ import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus } from 'lucide-r
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { useAuth } from '../auth/AuthContext'
-import { getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
+import { isSameMonth } from '../shared/utils/formatters'
+import { getPrefs, initialMonthFilter } from '../shared/services/prefsService'
 import type { Tab, MonthFilter } from '../shared/types'
 import { KpiStrip } from '../tinta/KpiStrip'
 import { InsightBanner } from '../tinta/InsightBanner'
@@ -22,8 +23,12 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const { expenses, categories, loading } = useFinance()
   const { openTransactionForm } = useTransactionForm()
   const { user } = useAuth()
-  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth)
-  const [mask, setMask] = useState(() => localStorage.getItem('prisma:mask') === '1')
+  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(initialMonthFilter)
+  const [mask, setMask] = useState(() => {
+    const stored = localStorage.getItem('prisma:mask')
+    if (stored !== null) return stored === '1'
+    return getPrefs().maskByDefault
+  })
 
   const toggleMask = () => {
     setMask((m) => {
@@ -40,7 +45,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const totalExpense = useMemo(() => filtered.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0), [filtered])
   const balance = totalIncome - totalExpense
 
-  const firstName = user?.name?.split(' ')[0] || 'por aqui'
+  const firstName = getPrefs().displayName.trim().split(' ')[0] || user?.name?.split(' ')[0] || 'por aqui'
   const todayLabel = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   const greeting = balance >= 0 || filtered.length === 0
     ? 'Tudo sob controle por aqui.'

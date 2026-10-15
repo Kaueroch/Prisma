@@ -15,7 +15,8 @@ import {
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
-import { formatBRL, formatDateBR, formatMonthYear, getCurrentMonth, isSameMonth } from '../shared/utils/formatters'
+import { formatBRL, formatDateBR, formatMonthYear, isSameMonth } from '../shared/utils/formatters'
+import { initialMonthFilter } from '../shared/services/prefsService'
 import type { CategoryId, MonthFilter } from '../shared/types'
 
 export function TransactionsPage() {
@@ -25,7 +26,7 @@ export function TransactionsPage() {
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
-  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(getCurrentMonth())
+  const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(initialMonthFilter)
 
   const goToPrevMonth = () => {
     setSelectedMonth(prev => {

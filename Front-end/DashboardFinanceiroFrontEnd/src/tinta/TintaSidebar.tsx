@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeftRight, Tags, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Tags, Target, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Tab } from '../shared/types'
 import { useAuth } from '../auth/AuthContext'
+import { getPrefs } from '../shared/services/prefsService'
 
 const STORAGE_KEY = 'prisma_sidebar_expanded'
 
@@ -10,6 +11,7 @@ const NAV: { icon: LucideIcon; label: string; tab: Tab }[] = [
   { icon: LayoutGrid, label: 'Painel', tab: 'home' },
   { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },
   { icon: Tags, label: 'Categorias', tab: 'categories' },
+  { icon: Target, label: 'Metas', tab: 'goals' },
 ]
 
 function NavButton({
@@ -62,7 +64,9 @@ export function TintaSidebar({
   const { logout } = useAuth()
   const [expanded, setExpanded] = useState(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) === 'true'
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored !== null) return stored === 'true'
+      return getPrefs().sidebarExpanded
     } catch {
       return false
     }

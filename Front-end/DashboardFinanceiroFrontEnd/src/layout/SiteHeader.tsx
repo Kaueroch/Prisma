@@ -35,6 +35,7 @@ const tabLabels: Record<Tab, string> = {
   home: 'Dashboard',
   transactions: 'Transactions',
   categories: 'Categories',
+  goals: 'Metas',
   profile: 'Settings',
 }
 

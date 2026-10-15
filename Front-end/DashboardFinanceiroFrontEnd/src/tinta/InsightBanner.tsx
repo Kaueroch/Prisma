@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { Flame, TrendingDown, TrendingUp, Crown, Target, Plus } from 'lucide-react'
+import { TrendingDown, TrendingUp, Crown, Target, Plus } from 'lucide-react'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { isSameMonth, formatBRL, formatMonthYear } from '../shared/utils/formatters'
-import { calcStreak } from '../shared/utils/streak'
 import { getGoals } from '../shared/services/goalsService'
 import type { CategoryInfo, Expense, MonthFilter } from '../shared/types'
 
@@ -12,7 +11,7 @@ interface InsightBannerProps {
   month: MonthFilter
 }
 
-/** Faixa de destaques do mês: streak, maior categoria, comparativo e metas. */
+/** Faixa de destaques do mês: maior categoria, comparativo e metas. */
 export function InsightBanner({ expenses, categories, month }: InsightBannerProps) {
   const { openTransactionForm } = useTransactionForm()
 
@@ -44,7 +43,6 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
 
     return {
       hasAny: expenses.length > 0,
-      streak: calcStreak(expenses.map((e) => e.date)),
       spent,
       spentPrev,
       prevLabel: formatMonthYear(prev.month, prev.year),
@@ -80,18 +78,7 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
   const goalPct = data.goalTotal > 0 ? Math.min(100, Math.round((data.spent / data.goalTotal) * 100)) : null
 
   return (
-    <section aria-label="Destaques do mês" className="mb-7 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-edge bg-edge sm:grid-cols-3">
-      <div className="flex items-center gap-3 bg-surface p-5">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft">
-          <Flame className="size-5 text-brand" strokeWidth={1.9} />
-        </span>
-        <div className="flex min-w-0 flex-col">
-          <span className="font-display text-lg leading-6 text-fg tabular-nums">
-            {data.streak} {data.streak === 1 ? 'dia' : 'dias'}
-          </span>
-          <span className="truncate text-[13px] text-fg-muted">registrando sem falhar</span>
-        </div>
-      </div>
+    <section aria-label="Destaques do mês" className="mb-7 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-edge bg-edge sm:grid-cols-2">
       <div className="flex items-center gap-3 bg-surface p-5">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft">
           {delta !== null && delta > 0 ? (

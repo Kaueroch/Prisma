@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import type { TransactionType } from '../shared/types'
+import { getPrefs } from '../shared/services/prefsService'
 
 interface TransactionFormContextType {
   isOpen: boolean
@@ -22,8 +23,8 @@ export function TransactionFormProvider({ children }: { children: React.ReactNod
   const [isOpen, setIsOpen] = useState(false)
   const [initialType, setInitialType] = useState<TransactionType>('expense')
 
-  const openTransactionForm = useCallback((transactionType: TransactionType = 'expense') => {
-    setInitialType(transactionType)
+  const openTransactionForm = useCallback((transactionType?: TransactionType) => {
+    setInitialType(transactionType ?? getPrefs().defaultTxType)
     setIsOpen(true)
   }, [])
 

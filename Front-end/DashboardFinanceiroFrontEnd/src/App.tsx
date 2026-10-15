@@ -9,6 +9,7 @@ import { AddTransactionForm } from './transactions/components/AddTransactionForm
 import { HomePage } from './dashboard/HomePage'
 import { TransactionsPage } from './transactions/TransactionsPage'
 import { CategoriesPage } from './categories/CategoriesPage'
+import { GoalsPage } from './goals/GoalsPage'
 import { ProfilePage } from './profile/ProfilePage'
 import { AuthPage } from './auth/AuthPage'
 import { LandingPage } from './landing/LandingPage'
@@ -94,6 +95,7 @@ function AuthenticatedApp() {
                 {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
                 {activeTab === 'transactions' && <TransactionsPage />}
                 {activeTab === 'categories' && <CategoriesPage />}
+                {activeTab === 'goals' && <GoalsPage />}
                 {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
               </motion.div>
             </AnimatePresence>
