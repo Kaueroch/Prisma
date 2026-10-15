@@ -68,8 +68,8 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               type="button"
               onClick={toggleMask}
               className="flex size-8 items-center justify-center rounded-lg border border-edge text-fg-muted transition-colors duration-150 hover:border-brand/40 hover:text-fg"
-              title={mask ? 'Show values' : 'Hide values'}
-              aria-label={mask ? 'Show values' : 'Hide values'}
+              title={mask ? 'Mostrar valores' : 'Ocultar valores'}
+              aria-label={mask ? 'Mostrar valores' : 'Ocultar valores'}
             >
               {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
             </button>
@@ -83,14 +83,14 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
             onClick={() => openTransactionForm('income')}
             className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
           >
-            <Plus className="size-4" strokeWidth={2.2} /> Income
+            <Plus className="size-4" strokeWidth={2.2} /> Receita
           </button>
           <button
             type="button"
             onClick={() => openTransactionForm('expense')}
             className="flex items-center gap-2 rounded-lg border border-edge bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-brand/40 hover:bg-white/[0.06]"
           >
-            <Plus className="size-4" strokeWidth={2.2} /> Expense
+            <Plus className="size-4" strokeWidth={2.2} /> Despesa
           </button>
         </div>
       </header>
@@ -107,9 +107,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           loading={loading}
           mask={mask}
           items={[
-            { label: 'Income', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
-            { label: 'Expense', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
-            { label: 'Period balance', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
+            { label: 'Receitas', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
+            { label: 'Gastos', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
+            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
           ]}
         />
       </div>
@@ -124,7 +124,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
 
       {setActiveTab && (
         <button type="button" onClick={() => setActiveTab('transactions')} className="mt-6 text-sm font-medium text-fg-subtle transition-colors hover:text-brand">
-          View all transactions
+          Ver todas as transações
         </button>
       )}
     </main>

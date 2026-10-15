@@ -28,16 +28,16 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
       categoryId: cat?.id,
       categoryName: cat?.name,
     })
-    setSimMsg(`Expense "${res.name}” of ${res.amount} landed in the Telegram inbox and is already in the dashboard.`)
+    setSimMsg(`Gasto "${res.name}" de ${res.amount} chegou pela caixa do Telegram e já está no painel.`)
     setActiveTab?.('home')
   }
 
   return (
     <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <header className="mb-7 flex flex-col gap-2.5">
-        <span className="text-[13px] font-medium text-fg-muted">Preferences</span>
-        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Settings</h1>
-        <p className="text-[15px] text-fg-muted">Connect your services to your Prisma account.</p>
+        <span className="text-[13px] font-medium text-fg-muted">Preferências</span>
+        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Configurações</h1>
+        <p className="text-[15px] text-fg-muted">Conecte seus serviços à sua conta Prisma.</p>
       </header>
 
       <div className="flex max-w-xl flex-col gap-6">
@@ -57,7 +57,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
           >
             <Tags className="size-4" strokeWidth={1.8} />
-            Manage categories
+            Gerenciar categorias
           </button>
         </section>
 
@@ -80,7 +80,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               onClick={handleGenerate}
               className="flex w-fit items-center gap-2.5 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
-              Link Telegram
+              Conectar Telegram
               <ArrowRight className="size-4" strokeWidth={2.2} />
             </button>
             <button
@@ -89,7 +89,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
               className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
             >
               <FlaskConical className="size-4" strokeWidth={1.8} />
-              Simulate a bot expense
+              Simular gasto do bot
             </button>
           </div>
 
@@ -122,7 +122,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => voi
             <span className="flex size-10 items-center justify-center border border-negative/40">
               <LogOut className="size-5 text-negative" strokeWidth={1.8} />
             </span>
-            <span className="flex-1 text-left font-medium text-negative">Sign out</span>
+            <span className="flex-1 text-left font-medium text-negative">Sair</span>
           </button>
         </section>
       </div>

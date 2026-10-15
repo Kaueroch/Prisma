@@ -36,9 +36,9 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
   return (
     <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
       <div className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-fg-muted">Spending by category</span>
+        <span className="text-[13px] font-medium text-fg-muted">Gastos por categoria</span>
         <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">
-          Where the money went
+          Para onde foi o dinheiro
         </h2>
       </div>
       {loading ? (

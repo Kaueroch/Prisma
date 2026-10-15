@@ -82,10 +82,10 @@ async function readErrorBody(response: Response): Promise<string> {
 }
 
 function defaultErrorForStatus(status: number): string {
-  if (status === 401 || status === 403) return 'Session expired. Please sign in again.';
-  if (status === 404) return 'Endpoint not found (POST /api/v1/transacao/criar).';
-  if (status >= 500) return 'Backend failed to create the transaction. Check the backend logs.';
-  return 'Could not create transaction. Check the fields and try again.';
+  if (status === 401 || status === 403) return 'Sessão expirada. Entre novamente.';
+  if (status === 404) return 'Endpoint não encontrado (POST /api/v1/transacao/criar).';
+  if (status >= 500) return 'O backend não conseguiu criar a transação. Verifique os logs do backend.';
+  return 'Não foi possível criar a transação. Confira os campos e tente de novo.';
 }
 
 /** Read the stored JWT from localStorage for auth */
@@ -128,13 +128,13 @@ export const transacoesApi = {
     console.groupEnd();
 
     if (!Number.isFinite(payload.valor) || payload.valor <= 0) {
-      throw new Error('Enter an amount greater than zero.');
+      throw new Error('Informe um valor maior que zero.');
     }
     if (!payload.descricao.trim()) {
-      throw new Error('Enter a description.');
+      throw new Error('Informe uma descrição.');
     }
     if (!Number.isFinite(payload.categoria_id)) {
-      throw new Error('Select a valid category.');
+      throw new Error('Escolha uma categoria válida.');
     }
 
     let response: Response;
@@ -145,7 +145,7 @@ export const transacoesApi = {
         body: JSON.stringify(payload),
       });
     } catch {
-      throw new Error(`Could not reach the backend at ${API_URL}. Is it running?`);
+      throw new Error(`Não foi possível alcançar o backend em ${API_URL}. Ele está rodando?`);
     }
 
     if (!response.ok) {

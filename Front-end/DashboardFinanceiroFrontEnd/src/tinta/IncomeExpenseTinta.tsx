@@ -34,11 +34,11 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
   if (data.every((d) => d.income === 0 && d.expense === 0)) {
     return (
       <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
-        <span className="text-[13px] font-medium text-fg-muted">Comparison</span>
-        <h2 className="font-display text-2xl font-normal text-fg">Income and spending</h2>
+        <span className="text-[13px] font-medium text-fg-muted">Comparativo</span>
+        <h2 className="font-display text-2xl font-normal text-fg">Receitas e gastos</h2>
         <div className="flex min-h-56 flex-1 flex-col items-center justify-center gap-2 border border-dashed border-edge px-6 text-center">
-          <p className="text-sm text-fg-muted">No activity in the last 6 months.</p>
-          <p className="text-xs text-fg-subtle">Log an entry or simulate one via the Telegram bot.</p>
+          <p className="text-sm text-fg-muted">Sem movimento nos últimos 6 meses.</p>
+          <p className="text-xs text-fg-subtle">Registre uma transação para ver o comparativo.</p>
         </div>
       </section>
     )
@@ -48,15 +48,15 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
     <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-medium text-fg-muted">Comparison</span>
-          <h2 className="font-display text-2xl font-normal text-fg">Income and spending</h2>
+          <span className="text-[13px] font-medium text-fg-muted">Comparativo</span>
+          <h2 className="font-display text-2xl font-normal text-fg">Receitas e gastos</h2>
         </div>
         <div className="flex gap-4 text-[12px] text-fg-muted">
           <span className="flex items-center gap-1.5">
-            <span className="size-2 bg-data" /> Income
+            <span className="size-2 bg-data" /> Receitas
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="size-2 bg-negative" /> Expense
+            <span className="size-2 bg-negative" /> Gastos
           </span>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
               cursor={{ fill: 'rgba(255,255,255,0.04)' }}
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
               labelFormatter={(label) => monthLabel(String(label))}
-              formatter={(value, name) => [formatBRL(Number(value)), name === 'income' ? 'Income' : 'Expense']}
+              formatter={(value, name) => [formatBRL(Number(value)), name === 'income' ? 'Receitas' : 'Gastos']}
             />
             <Bar dataKey="income" fill={CHART.income} radius={0} />
             <Bar dataKey="expense" fill={CHART.expense} radius={0} />

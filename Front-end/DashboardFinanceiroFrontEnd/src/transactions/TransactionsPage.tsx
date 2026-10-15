@@ -78,9 +78,9 @@ export function TransactionsPage() {
     <div className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="text-[13px] font-medium text-fg-muted">Activity</span>
-          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transactions</h1>
-          <p className="text-[15px] text-fg-muted">All your financial activity in one place.</p>
+          <span className="text-[13px] font-medium text-fg-muted">Atividade</span>
+          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
+          <p className="text-[15px] text-fg-muted">Toda a sua movimentação em um só lugar.</p>
         </div>
         <button
           type="button"
@@ -88,7 +88,7 @@ export function TransactionsPage() {
           className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
         >
           <Plus className="h-4 w-4" strokeWidth={2.2} />
-          New transaction
+          Nova transação
         </button>
       </div>
 
@@ -96,7 +96,7 @@ export function TransactionsPage() {
         <div className="flex-1 relative border border-edge bg-surface">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
           <Input
-            placeholder="Search transactions..."
+            placeholder="Buscar transações..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 rounded-lg border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
@@ -105,10 +105,10 @@ export function TransactionsPage() {
         <div className="flex gap-4">
           <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v as CategoryId | 'all')}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Category" />
+              <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">Todas</SelectItem>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
               ))}
@@ -116,12 +116,12 @@ export function TransactionsPage() {
           </Select>
           <Select value={filterType} onValueChange={(v) => setFilterType(v as 'all' | 'income' | 'expense')}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Type" />
+              <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="income">Income</SelectItem>
-              <SelectItem value="expense">Expenses</SelectItem>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="income">Receitas</SelectItem>
+              <SelectItem value="expense">Despesas</SelectItem>
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
@@ -192,14 +192,14 @@ export function TransactionsPage() {
                   <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                     {maxExpense && (
                       <p className="truncate">
-                        Largest expense:{' '}
+                        Maior gasto:{' '}
                         <span className="font-medium text-foreground/60">
                           {formatBRL(maxExpense.amount)}
                         </span>{' '}
                         ({maxExpense.name})
                       </p>
                     )}
-                    <p>{items.length} {items.length === 1 ? 'transaction' : 'transactions'}</p>
+                    <p>{items.length} {items.length === 1 ? 'transação' : 'transações'}</p>
                   </div>
                 </CardContent>
 

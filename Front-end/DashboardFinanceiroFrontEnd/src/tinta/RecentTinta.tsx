@@ -41,12 +41,12 @@ export function RecentTinta({
     <section className="flex h-full flex-col border border-edge bg-surface">
       <div className="flex items-end justify-between gap-4 px-6 pt-6 pb-4">
         <div className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-medium text-fg-muted">Activity</span>
-          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Recent transactions</h2>
+          <span className="text-[13px] font-medium text-fg-muted">Movimento</span>
+          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Transações recentes</h2>
         </div>
         {expenses.length > 0 && (
           <span className="text-[12px] text-fg-subtle tabular-nums">
-            {Math.min(limit, expenses.length)} of {expenses.length}
+            {Math.min(limit, expenses.length)} de {expenses.length}
           </span>
         )}
       </div>

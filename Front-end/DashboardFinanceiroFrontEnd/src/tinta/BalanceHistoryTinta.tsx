@@ -41,12 +41,12 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
     <section className="flex h-full min-h-[300px] flex-col gap-4 border border-edge bg-surface p-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <span className="text-[13px] font-medium text-fg-muted">Flow over time</span>
-          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Balance history</h2>
+          <span className="text-[13px] font-medium text-fg-muted">Evolução</span>
+          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Histórico do saldo</h2>
         </div>
         <span className={`text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-data'}`}>
           {periodNet < 0 ? '−' : '+'}
-          {formatBRL(Math.abs(periodNet))} this month
+          {formatBRL(Math.abs(periodNet))} no mês
         </span>
       </div>
       <div className="min-h-44 flex-1">
@@ -76,12 +76,12 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
               labelStyle={{ fontFamily: 'Geist Variable, system-ui, sans-serif', color: CHART.axis, marginBottom: 4 }}
               itemStyle={{ color: '#fff' }}
-              formatter={(value) => [formatBRL(Number(value)), 'Balance']}
+              formatter={(value) => [formatBRL(Number(value)), 'Saldo']}
             />
             <Area
               type="monotone"
               dataKey="net"
-              name="Balance"
+              name="Saldo"
               stroke={CHART.brand}
               fill={CHART.brand}
               fillOpacity={0.12}

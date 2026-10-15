@@ -7,9 +7,9 @@ import { useAuth } from '../auth/AuthContext'
 const STORAGE_KEY = 'prisma_sidebar_expanded'
 
 const NAV: { icon: LucideIcon; label: string; tab: Tab }[] = [
-  { icon: LayoutGrid, label: 'Dashboard', tab: 'home' },
-  { icon: ArrowLeftRight, label: 'Transactions', tab: 'transactions' },
-  { icon: Tags, label: 'Categories', tab: 'categories' },
+  { icon: LayoutGrid, label: 'Painel', tab: 'home' },
+  { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },
+  { icon: Tags, label: 'Categorias', tab: 'categories' },
 ]
 
 function NavButton({
@@ -97,7 +97,7 @@ export function TintaSidebar({
       )}
     >
       <div className={cn('flex items-center', expanded ? 'justify-start gap-3 px-4' : 'justify-center')}>
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand" aria-hidden>
+        <div className="group flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand transition-transform duration-200 hover:scale-105" aria-hidden>
           <TrendingUp className="size-4 text-white" strokeWidth={2.6} />
         </div>
         {expanded && (
@@ -124,15 +124,15 @@ export function TintaSidebar({
         )}
         <NavButton
           icon={Settings}
-          label="Settings"
+          label="Configurações"
           expanded={expanded}
           active={active === 'profile'}
           onClick={() => onNavigate('profile')}
         />
         <button
           type="button"
-          title={expanded ? undefined : 'Sign out'}
-          aria-label="Sign out"
+          title={expanded ? undefined : 'Sair'}
+          aria-label="Sair"
           onClick={logout}
           className={cn(
             'flex h-11 w-full items-center gap-3 text-fg-subtle transition-all duration-150 outline-none hover:bg-white/[0.04] hover:text-fg',
@@ -141,7 +141,7 @@ export function TintaSidebar({
           )}
         >
           <LogOut className="size-5 shrink-0" strokeWidth={1.8} aria-hidden />
-          {expanded && <span className="truncate text-sm font-medium">Sign out</span>}
+          {expanded && <span className="truncate text-sm font-medium">Sair</span>}
         </button>
         <div className={cn('mt-4 flex', expanded ? 'justify-end px-3' : 'justify-center')}>
           <button

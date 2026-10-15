@@ -6,9 +6,9 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
   return (
     <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-xl border border-edge bg-surface p-6">
       <div className="flex items-center justify-between gap-4">
-        <span className="text-[13px] font-medium text-fg-muted">Running balance</span>
+        <span className="text-[13px] font-medium text-fg-muted">Saldo atual</span>
         <span className="text-xs text-fg-subtle">
-          {count} {count === 1 ? 'transaction' : 'transactions'}
+          {count} {count === 1 ? 'transação' : 'transações'}
         </span>
       </div>
       {loading ? (
@@ -25,8 +25,8 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
         </div>
       )}
       <div className="flex flex-wrap gap-2">
-        <span className="rounded-full border border-edge bg-brand-soft px-4 py-1.5 text-[13px] font-semibold text-fg">All</span>
-        <span className="rounded-full border border-edge bg-white/[0.03] px-4 py-1.5 text-[13px] text-fg-muted">Bot accounts coming soon</span>
+        <span className="rounded-full border border-edge bg-brand-soft px-4 py-1.5 text-[13px] font-semibold text-fg">Todas</span>
+        <span className="rounded-full border border-edge bg-white/[0.03] px-4 py-1.5 text-[13px] text-fg-muted">Contas de bots em breve</span>
       </div>
     </section>
   )

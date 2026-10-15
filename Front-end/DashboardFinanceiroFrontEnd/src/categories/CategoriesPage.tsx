@@ -52,7 +52,7 @@ export function CategoriesPage() {
   const handleAdd = async () => {
     if (!newCatName.trim()) return
     if (categories.some(c => c.name.toLowerCase() === newCatName.trim().toLowerCase())) {
-      alert('A category with this name already exists.')
+      alert('Já existe uma categoria com esse nome.')
       return
     }
     try {
@@ -71,35 +71,35 @@ export function CategoriesPage() {
       setIsAdding(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
-      alert(message || 'Could not create category. Check that the backend is running.')
+      alert(message || 'Não foi possível criar a categoria. Verifique se o backend está rodando.')
     }
   }
 
   const handleDelete = async (cat: CategoryInfo) => {
     if ((grouped[cat.id]?.items.length ?? 0) > 0) {
-      alert('Cannot delete this category because it has associated transactions.')
+      alert('Não dá para excluir: essa categoria tem transações vinculadas.')
       return
     }
-    if (!window.confirm(`Are you sure you want to delete the category "${cat.name}"?`)) return
+    if (!window.confirm(`Excluir a categoria "${cat.name}"?`)) return
 
     try {
       await deleteCategory(cat.id, cat.name)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Could not delete category.')
+      alert(err instanceof Error ? err.message : 'Não foi possível excluir a categoria.')
     }
   }
 
   const handleSaveEdit = async (id: string) => {
     if (!editName.trim()) return
     if (categories.some(c => c.id !== id && c.name.toLowerCase() === editName.trim().toLowerCase())) {
-      alert('Another category with this name already exists.')
+      alert('Já existe outra categoria com esse nome.')
       return
     }
     try {
       await updateCategory(id, { name: editName.trim(), icon: editSymbol, type: editType })
       setEditingId(null)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Could not update category. Check that the backend is running.')
+      alert(err instanceof Error ? err.message : 'Não foi possível salvar. Verifique se o backend está rodando.')
     }
   }
 
@@ -125,9 +125,9 @@ export function CategoriesPage() {
         <>
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-col gap-2.5">
-              <span className="text-[13px] font-medium text-fg-muted">Organization</span>
-              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categories</h1>
-              <p className="text-[15px] text-fg-muted">Manage your categories and review your spending.</p>
+              <span className="text-[13px] font-medium text-fg-muted">Organização</span>
+              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
+              <p className="text-[15px] text-fg-muted">Organize suas categorias e acompanhe os gastos.</p>
             </div>
             <button
               type="button"
@@ -135,7 +135,7 @@ export function CategoriesPage() {
               className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
             >
               <Plus className="h-4 w-4" strokeWidth={2.2} />
-              New category
+              Nova categoria
             </button>
           </header>
 
@@ -149,7 +149,7 @@ export function CategoriesPage() {
               >
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="new-cat-name" className="text-xs text-muted-foreground font-medium">Category name</label>
+                  <label htmlFor="new-cat-name" className="text-xs text-muted-foreground font-medium">Nome da categoria</label>
                   <Input
                     id="new-cat-name"
                     value={newCatName}
@@ -165,7 +165,7 @@ export function CategoriesPage() {
                   </span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs text-muted-foreground font-medium">Used for</label>
+                  <label className="text-xs text-muted-foreground font-medium">Tipo</label>
                   <div className="flex bg-muted p-1 rounded-lg border border-border">
                     {(['expense', 'income'] as CategoryKind[]).map((kind) => (
                       <button
@@ -174,13 +174,13 @@ export function CategoriesPage() {
                         onClick={() => setNewCatType(kind)}
                         className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-md transition-all ${newCatType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
                       >
-                        {kind === 'expense' ? 'Expense' : 'Income'}
+                        {kind === 'expense' ? 'Despesa' : 'Receita'}
                       </button>
                     ))}
                   </div>
                 </div>
-                <Button onClick={handleAdd}>Create</Button>
-                <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancel</Button>
+                <Button onClick={handleAdd}>Criar</Button>
+                <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancelar</Button>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span id="new-cat-symbol-label" className="text-xs text-muted-foreground font-medium">Symbol</span>
@@ -242,7 +242,7 @@ export function CategoriesPage() {
                                   onClick={() => setEditType(kind)}
                                   className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all ${editType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
-                                  {kind === 'expense' ? 'Expense' : 'Income'}
+                                  {kind === 'expense' ? 'Despesa' : 'Receita'}
                                 </button>
                               ))}
                             </div>
@@ -293,14 +293,14 @@ export function CategoriesPage() {
                                 </button>
                               </span>
                             </span>
-                            <span className="text-muted-foreground text-xs">{data.items.length} transactions</span>
+                            <span className="text-muted-foreground text-xs">{data.items.length} {data.items.length === 1 ? 'transação' : 'transações'}</span>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-3 sm:gap-4 cursor-pointer justify-between sm:justify-end" onClick={() => setExpandedId(isExpanded ? null : cat.id)}>
                         <div className="flex flex-col items-end">
                           <p className="text-lg font-semibold">{formatBRL(data.total)}</p>
-                          <span className="text-muted-foreground text-xs">{percent}% of total</span>
+                          <span className="text-muted-foreground text-xs">{percent}% do total</span>
                         </div>
                         <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -322,7 +322,7 @@ export function CategoriesPage() {
                           </div>
                           <div className="flex flex-col p-4 gap-3 max-h-64 overflow-y-auto bg-muted/20">
                             {data.items.length === 0 ? (
-                              <div className="text-center text-muted-foreground text-sm py-4">No transactions recorded.</div>
+                              <div className="text-center text-muted-foreground text-sm py-4">Sem transações registradas.</div>
                             ) : (
                               data.items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(item => (
                                 <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">

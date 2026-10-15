@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
@@ -81,10 +82,21 @@ function AuthenticatedApp() {
         <TintaSidebar active={activeTab} onNavigate={setActiveTab} />
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div className="flex-1 relative z-10 overflow-hidden flex flex-col">
-            {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
-            {activeTab === 'transactions' && <TransactionsPage />}
-            {activeTab === 'categories' && <CategoriesPage />}
-            {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.16, ease: 'easeOut' }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
+                {activeTab === 'transactions' && <TransactionsPage />}
+                {activeTab === 'categories' && <CategoriesPage />}
+                {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
         <TransactionFormGate />
@@ -96,16 +108,16 @@ function AuthenticatedApp() {
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-yellow-400" />
-              Welcome, {user?.name || 'user'}!
+              <Sparkles className="w-5 h-5 text-brand" />
+              Boas-vindas, {user?.name?.split(' ')[0] || 'por aqui'}!
             </DialogTitle>
             <DialogDescription className="pt-1">
-              Good to have you here. Enjoy your finance dashboard!
+              Que bom ter você aqui. Registre sua primeira transação e o painel ganha vida.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button className="w-full sm:w-auto" onClick={closeWelcome}>
-              Get started
+              Começar
             </Button>
           </DialogFooter>
         </DialogContent>

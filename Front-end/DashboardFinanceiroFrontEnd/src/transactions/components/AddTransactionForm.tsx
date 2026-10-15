@@ -130,7 +130,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
       setCategoryId((availableCategories[0]?.id as CategoryId) ?? ('' as CategoryId))
       onClose()
     } catch (err) {
-      const message = extractErrorMessage(err, 'Could not save transaction.')
+      const message = extractErrorMessage(err, 'Não foi possível salvar a transação.')
       setSubmitError(message)
       showError(message)
     } finally {
@@ -154,8 +154,8 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>New transaction</DialogTitle>
-          <DialogDescription>Log income or an expense.</DialogDescription>
+          <DialogTitle>Nova transação</DialogTitle>
+          <DialogDescription>Registre uma receita ou uma despesa.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex bg-muted p-1 rounded-lg border border-border">
@@ -164,19 +164,19 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
               onClick={() => handleTypeChange('expense')}
               className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all ${type === 'expense' ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Expense
+              Despesa
             </button>
             <button
               type="button"
               onClick={() => handleTypeChange('income')}
               className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${type === 'income' ? 'bg-emerald-400/10 text-emerald-300' : 'text-muted-foreground hover:text-foreground'}`}
             >
-              Income
+              Receita
             </button>
           </div>
 
           <div className="space-y-2">
-            <Label>Amount</Label>
+            <Label>Valor</Label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-medium text-muted-foreground">R$</span>
               <Input
@@ -193,16 +193,16 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>Descrição</Label>
               <Input
-                placeholder="E.g. Bakery"
+                placeholder="Ex.: Padaria"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label>Date</Label>
+              <Label>Data</Label>
               <Input
                 type="date"
                 value={date}
@@ -213,13 +213,13 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
           </div>
 
           <div className="space-y-2">
-            <Label>Category</Label>
+            <Label>Categoria</Label>
             {availableCategories.length === 0 ? (
               <p className="border border-dashed border-edge px-4 py-3 text-sm text-fg-muted">
                 No {type} categories yet. Create one in Categories first.
               </p>
             ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Category">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Categoria">
               {availableCategories.map((info) => {
                 const selected = categoryId === info.id
                 const { Icon: InfoIcon } = resolveSymbol(info.icon, info.name)
@@ -230,7 +230,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
                   role="radio"
                   aria-checked={selected}
                   aria-pressed={selected}
-                  aria-label={`Category ${info.name}${selected ? ', selected' : ''}`}
+                  aria-label={`Categoria ${info.name}${selected ? ', selecionada' : ''}`}
                   onClick={() => { setCategoryId(info.id as CategoryId); setSubmitError(null) }}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                     selected
@@ -261,7 +261,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
               </div>
             )}
             <Button type="submit" className="w-full" disabled={saving}>
-              {saving ? 'Saving...' : 'Save transaction'}
+              {saving ? 'Salvando...' : 'Salvar transação'}
             </Button>
           </DialogFooter>
         </form>

@@ -17,13 +17,13 @@ export function MonthPickerTinta({
   return (
     <div className="flex items-center gap-2.5 border border-edge px-3.5 py-2.5">
       <Calendar className="size-3.5 text-fg-muted" strokeWidth={1.8} />
-      <button type="button" onClick={prev} aria-label="Previous month" className="text-fg-muted hover:text-brand">
+      <button type="button" onClick={prev} aria-label="Mês anterior" className="text-fg-muted hover:text-brand">
         <ChevronLeft className="size-3.5" strokeWidth={2.2} />
       </button>
       <span className="min-w-[130px] text-center text-[13px] text-fg capitalize tabular-nums">
         {formatMonthYear(value.month, value.year)}
       </span>
-      <button type="button" onClick={next} aria-label="Next month" className="text-fg-muted hover:text-brand">
+      <button type="button" onClick={next} aria-label="Próximo mês" className="text-fg-muted hover:text-brand">
         <ChevronRight className="size-3.5" strokeWidth={2.2} />
       </button>
     </div>
