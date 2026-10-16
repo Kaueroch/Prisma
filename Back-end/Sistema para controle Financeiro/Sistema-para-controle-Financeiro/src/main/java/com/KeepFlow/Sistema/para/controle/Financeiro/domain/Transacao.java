@@ -3,7 +3,7 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.domain;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.time.format.DateTimeParseException;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.CampoVazio;
 import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.ValorNegativo;
@@ -33,10 +33,13 @@ public class Transacao {
     @ManyToOne
     @JoinColumn(name = "categoria_id")   // Creates the FK column in the database
     private Categoria categoria;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     
     public Transacao() {}
     
-    public Transacao(BigDecimal _valor,String _descricao,String _data,Categoria categoria_id) {
+    public Transacao(BigDecimal _valor,String _descricao,String _data,Categoria categoria_id,User _user_id) {
     	validaCampoData(_data);
     	validaCampoDescricao(_descricao);
     	validaCampoValor(_valor);
@@ -44,26 +47,42 @@ public class Transacao {
     	this.descricao = _descricao;
     	this.data = _data;
     	this.categoria = categoria_id;
-    	
+    	this.user = _user_id;
     }
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
     private void validaCampoData(String data) {
-    	if(data.isBlank()) {
+    	if(data == null || data.isBlank()) {
     		throw new CampoVazio("Please enter the date correctly");
     	}
     	converteStringToDate(data);
     }
     private LocalDate converteStringToDate(String data) {
      DateTimeFormatter parser = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-     LocalDate dataParse = LocalDate.parse(data,parser);
-     return dataParse;
+     try {
+         return LocalDate.parse(data,parser);
+     } catch (DateTimeParseException e) {
+         // AUDITORIA: data fora do padrão estourava DateTimeParseException
+         // sem tratamento -> 500 com stacktrace. Agora é 400 explicável.
+         throw new CampoVazio("Informe a data no formato DD/MM/AAAA.");
+     }
     }
     private void validaCampoDescricao(String descricao) {
-    if(descricao.isBlank()) {
+    if(descricao == null || descricao.isBlank()) {
  		throw new CampoVazio("Please enter the date correctly");
      }
   }
   private void validaCampoValor(BigDecimal  valor) {
-    if(valor.compareTo(valor) < 0){
+    // AUDITORIA: a checagem antiga era `valor.compareTo(valor) < 0` —
+    // compara o valor com ele mesmo, sempre 0, nunca rejeita nada.
+    // Negativos e zero passavam direto para o banco.
+    if(valor == null || valor.compareTo(BigDecimal.ZERO) <= 0){
     	throw new ValorNegativo("Please enter the correct value.");
     }
   }

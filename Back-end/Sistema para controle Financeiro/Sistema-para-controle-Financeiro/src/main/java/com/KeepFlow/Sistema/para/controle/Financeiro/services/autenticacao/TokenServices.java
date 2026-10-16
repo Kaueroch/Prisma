@@ -3,6 +3,8 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.TokenInvalido;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,12 @@ public class TokenServices {
             throw new RuntimeException("Error generating JWT token");
         }
     }
+    /**
+     * Valida o token e devolve o UUID do dono (subject).
+     * AUDITORIA: antes retornava {@code exception.toString()} em caso de falha,
+     * o que fazia o filtro tentar {@code UUID.fromString(...)} numa string
+     * inválida e responder 500. Agora falha com 401 explícito.
+     */
     public String validarToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(Secretkey);
@@ -37,8 +45,8 @@ public class TokenServices {
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (com.auth0.jwt.exceptions.JWTVerificationException exception) {
-            return exception.toString();
+        } catch (JWTVerificationException exception) {
+            throw new TokenInvalido("Token inválido ou expirado.");
         }
     }
 }

@@ -20,12 +20,17 @@ public class User {
     private UUID id;
     @Column(name = "nm_nome", nullable = false)
     private String nome;
-    @Column(name = "ds_email",unique = false, nullable = false)
+    // AUDITORIA: unique era false — emails duplicados passavam na checagem
+    // existsByEmail em condição de corrida e quebravam o login (findByEmail
+    // ambíguo). Unicidade agora é garantida no banco.
+    @Column(name = "ds_email",unique = true, nullable = false)
     private String email;
-    @Column(name = "ds_senha", nullable = true)
+    @Column(name = "ds_senha", nullable = false)
     private String senha;
     @OneToMany(mappedBy = "user")
     private List<Categoria> categoriasLista;
+    @OneToMany(mappedBy = "user")
+    private List<Transacao> TransacaoLista;
 
     // Regex to validate whether emails are valid or not
        private static final String EMAIL_PATTERN =
@@ -43,12 +48,13 @@ public class User {
     }
 
     public void validacaoSenha(String senha){
-        if(senha.length() < 8 || senha.length() >=16) {
+        // AUDITORIA: senha null quebrava com NPE -> 500. Agora é 400.
+        if(senha == null || senha.length() < 8 || senha.length() >=16) {
             throw new SenhaInsuficiente("The password must be at least 8 and at most 16 characters.");
         }
     }
     public void validarEmail(String email){    
-        if(!pattern.matcher(email).matches()){
+        if(email == null || !pattern.matcher(email).matches()){
          	throw new EmailInvalido("Please enter a valid email.");
         }
     }

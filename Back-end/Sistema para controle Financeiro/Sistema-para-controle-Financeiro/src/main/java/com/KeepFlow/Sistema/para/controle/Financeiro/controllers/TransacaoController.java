@@ -1,19 +1,20 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.controllers;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.KeepFlow.Sistema.para.controle.Financeiro.domain.Transacao;
+import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
 import com.KeepFlow.Sistema.para.controle.Financeiro.dtos.request.TransacaoDTO;
 import com.KeepFlow.Sistema.para.controle.Financeiro.services.TransacaoService;
 
-import jakarta.persistence.Entity;
-
 @RestController
-@RequestMapping("api/v1/transacao")
+@RequestMapping("/api/v1/transacao")
 public class TransacaoController {
 	
 	private TransacaoService transacaoService;
@@ -22,7 +23,9 @@ public class TransacaoController {
 	}
 	@PostMapping("/criar")
 	public ResponseEntity<String> criarTransacao(@RequestBody TransacaoDTO dto){
-		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id());
+		// AUDITORIA: dono sai do token, nunca do corpo da requisição.
+		UUID userId = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id(), userId);
 		return ResponseEntity.ok("Transacao Criada.");
 	}
    

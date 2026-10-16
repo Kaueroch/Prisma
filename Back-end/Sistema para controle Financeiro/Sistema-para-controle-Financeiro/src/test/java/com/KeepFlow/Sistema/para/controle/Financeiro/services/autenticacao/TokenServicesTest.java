@@ -1,5 +1,6 @@
 package com.KeepFlow.Sistema.para.controle.Financeiro.services.autenticacao;
 
+import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.TokenInvalido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -47,10 +48,8 @@ class TokenServicesTest {
         // Change the secret key to simulate a validation attempt with the wrong key
         ReflectionTestUtils.setField(tokenServices, "Secretkey", "outra_chave_errada");
 
-        // Act
-        String subject = tokenServices.validarToken(token);
-
-        // Assert
-        assertNotEquals(userUuid.toString(), subject, "Validation should fail and not return the original UUID when using a different secret key");
+        // Act & Assert — AUDITORIA: antes devolvia a string da exceção (que o
+        // filtro tentava converter em UUID -> 500). Agora falha com 401 explícito.
+        assertThrows(TokenInvalido.class, () -> tokenServices.validarToken(token));
     }
 }

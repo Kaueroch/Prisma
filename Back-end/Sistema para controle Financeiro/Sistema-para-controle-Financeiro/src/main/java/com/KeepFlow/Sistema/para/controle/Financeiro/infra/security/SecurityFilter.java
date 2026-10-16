@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -28,18 +30,30 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recuperarToken(request);
 
         if (token != null) {
-            // 2. The token validator checks the signature and returns the token owner (the UUID saved in the subject)
-            var subjectUuid = tokenServices.validarToken(token);
+            try {
+                // 2. The token validator checks the signature and returns the token owner (the UUID saved in the subject)
+                var subjectUuid = tokenServices.validarToken(token);
 
-            // 3. Look up the rich entity in the database using the extracted UUID
-            var usuario = userRepository.findById(java.util.UUID.fromString(subjectUuid))
-                    .orElseThrow(() -> new RuntimeException("User not found."));
+                // 3. Look up the rich entity in the database using the extracted UUID
+                var usuario = userRepository.findById(UUID.fromString(subjectUuid)).orElse(null);
 
+                if (usuario != null) {
+                    // AUDITORIA: antes passava authorities = null (o Spring rejeita) e
+                    // estourava RuntimeException("User not found.") -> 500 com mensagem
+                    // interna. Agora: sem usuário ou token ruim = contexto limpo e a
+                    // cadeia decide (o entry point responde 401 em rota protegida).
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, List.of());
 
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, null);
-
-            // 5. Inject the authentication into the current context for this request
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                    // 5. Inject the authentication into the current context for this request
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    SecurityContextHolder.clearContext();
+                }
+            } catch (Exception e) {
+                // Token inválido/expirado, UUID malformado ou usuário inexistente:
+                // nunca vazar detalhe interno, só seguir sem autenticação.
+                SecurityContextHolder.clearContext();
+            }
         }
 
         // 6. Continue the normal request flow (pass to the next filter or go to the controller)

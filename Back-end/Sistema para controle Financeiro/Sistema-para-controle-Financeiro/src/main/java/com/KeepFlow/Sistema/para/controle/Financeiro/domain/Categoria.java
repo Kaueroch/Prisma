@@ -53,7 +53,8 @@ public class Categoria{
 
 
   private void validaCampoNome(String nome){
-  if(nome.length() < 3 || nome.length() > 15){
+  // AUDITORIA: sem checagem de null, nome ausente quebrava com NPE -> 500.
+  if(nome == null || nome.isBlank() || nome.length() < 3 || nome.length() > 15){
    throw new CampoVazio("Please enter a category name with at least 3 and at most 15 characters"); 
   }
 
@@ -61,7 +62,7 @@ public class Categoria{
   private void validaCampoCategoria(String tipoCategoria){
     String receita = new String("Receita");
     String despesa = new String("Despesas");
-    if(!tipoCategoria.equals(receita) && !tipoCategoria.equals(despesa)){
+    if(tipoCategoria == null || (!tipoCategoria.equals(receita) && !tipoCategoria.equals(despesa))){
     throw new TipoTextoNaoAutorizado("Only Receita or Despesas values are accepted to be saved in the database.");
     }
   }
@@ -72,6 +73,10 @@ public class Categoria{
 
   public void setId(Integer id) {
 	this.id = id;
+  }
+
+  public User getUser() {
+    return user;
   }
   
 }
