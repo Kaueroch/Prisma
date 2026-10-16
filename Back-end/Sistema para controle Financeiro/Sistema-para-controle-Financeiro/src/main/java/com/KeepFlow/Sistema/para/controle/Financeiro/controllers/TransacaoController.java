@@ -23,9 +23,9 @@ public class TransacaoController {
 	}
 	@PostMapping("/criar")
 	public ResponseEntity<String> criarTransacao(@RequestBody TransacaoDTO dto){
-		// AUDITORIA: dono sai do token, nunca do corpo da requisição.
+		// user_id vem no JSON e é conferido contra o token dentro do service.
 		UUID userId = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id(), userId);
+		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id(), dto.user_id(), userId);
 		return ResponseEntity.ok("Transacao Criada.");
 	}
    

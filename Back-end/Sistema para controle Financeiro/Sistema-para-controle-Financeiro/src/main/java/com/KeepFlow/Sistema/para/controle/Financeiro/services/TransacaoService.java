@@ -2,7 +2,6 @@ package com.KeepFlow.Sistema.para.controle.Financeiro.services;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.CategoriaRepository;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -21,27 +20,29 @@ public class TransacaoService {
  private final CategoriaRepository categoriaRepository;
  private final TransacaoRepository transacaoRepository;
  private final UserRepository userRepository;
-	
+
 public TransacaoService(TransacaoRepository _transacaoRepository, CategoriaRepository _categoriaRepository, UserRepository _userRepository) {
 	this.transacaoRepository = _transacaoRepository;
 	this.categoriaRepository = _categoriaRepository;
 	this.userRepository = _userRepository;
     }
-	
- public void salvarTransacao(BigDecimal valor,String descricao, String data, Integer categoriaId, UUID userId){
-	 // AUDITORIA: antes aceitava qualquer categoria_id sem checar o dono —
-	 // permitia gravar transação na categoria de outro usuário — e nunca
-	 // preenchia o dono da transação. Agora as duas coisas são garantidas.
-	 Categoria categoriaBanco = categoriaRepository.findById(categoriaId)
+
+ public void salvarTransacao(BigDecimal valor,String descricao, String data, Integer id, UUID userIdCorpo, UUID userIdToken){
+	 // O user_id vem no JSON e É conferido: se divergir do dono do token,
+	 // a requisição cai com 403. O dono gravado é sempre o do token.
+	 if (userIdCorpo != null && !userIdCorpo.equals(userIdToken)) {
+		 throw new AcessoNegado("user_id do corpo diverge do usuário autenticado.");
+	 }
+	 Categoria categoriaBanco = categoriaRepository.findById(id)
 			 .orElseThrow(() -> new IdNaoExistente("Categoria não encontrada."));
-	 if (categoriaBanco.getUser() == null || !categoriaBanco.getUser().getId().equals(userId)) {
+	 if (categoriaBanco.getUser() == null || !categoriaBanco.getUser().getId().equals(userIdToken)) {
 		 throw new AcessoNegado("Você não tem acesso a esta categoria.");
 	 }
-	 User dono = userRepository.getReferenceById(userId);
-	 Transacao transacaoBanco = new Transacao(valor,descricao,data, categoriaBanco, dono);
+	 User usuarioBanco = userRepository.getReferenceById(userIdToken);
+	 Transacao transacaoBanco = new Transacao(valor,descricao,data, categoriaBanco, usuarioBanco);
 	 transacaoRepository.save(transacaoBanco);
  }
   public void listarTransacoes() {
-	//posso pegar pelo id da categoria e pelo id do usuario. O correto seria pelo ID do usuario pra nao ter erro. Enfim, vou ter que ralar um pouco mais pra essa feature sair.  
+	//posso pegar pelo id da categoria e pelo id do usuario. O correto seria pelo ID do usuario pra nao ter erro. Enfim, vou ter que ralar um pouco mais pra essa feature sair.
   }
 }

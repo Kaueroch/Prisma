@@ -1,3 +1,5 @@
+import { getUserIdFromToken } from '../utils/token';
+
 /**
  * transacoesApi - HTTP client for the backend (Spring Boot)
  *
@@ -19,7 +21,8 @@
  *     "valor": 150.75,
  *     "descricao": "Padaria",
  *     "data": "14/10/2026",
- *     "categoria_id": 3
+ *     "categoria_id": 3,
+ *     "user_id": "uuid-do-usuario"
  *   }
  */
 
@@ -35,6 +38,8 @@ export interface CriarTransacaoPayload {
   /** Date in "dd/MM/yyyy" — the only format Transacao.converteStringToDate parses */
   data: string;
   categoria_id: number;
+  /** Logged-in user UUID — backend confere com o dono do token, nunca confia só nele */
+  user_id: string | null;
 }
 
 /** Friendly input from the transaction form (date comes as yyyy-MM-dd from <input type="date">) */
@@ -116,6 +121,7 @@ export const transacoesApi = {
       descricao: input.descricao,
       data: toBackendDate(input.data),
       categoria_id: Number(input.categoriaId),
+      user_id: getUserIdFromToken(getToken()),
     };
 
     // Debug: mostra exatamente o que será enviado no POST.
