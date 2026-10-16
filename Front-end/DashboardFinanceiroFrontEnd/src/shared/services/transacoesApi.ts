@@ -126,12 +126,6 @@ export const transacoesApi = {
 
     // Debug: mostra exatamente o que será enviado no POST.
     // Abra o DevTools (F12 → Console) para inspecionar antes do fetch.
-    console.groupCollapsed('[transacao] POST /api/v1/transacao/criar — payload');
-    console.log('input (form):', input);
-    console.log('payload (backend):', payload);
-    console.log('json:', JSON.stringify(payload));
-    console.log('url:', `${API_URL}/api/v1/transacao/criar`);
-    console.groupEnd();
 
     if (!Number.isFinite(payload.valor) || payload.valor <= 0) {
       throw new Error('Informe um valor maior que zero.');

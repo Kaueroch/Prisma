@@ -62,24 +62,6 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, type, categories])
 
-  // Preview ao vivo do payload que será enviado no POST /api/v1/transacao/criar.
-  // Mesmo mapeamento do handleSubmit + transacoesApi.criar.
-  const previewPayload = (() => {
-    const digits = amount.replace(/\D/g, '')
-    const valor = digits ? parseInt(digits, 10) / 100 : 0
-    let data = date
-    const parts = date.split('-')
-    if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
-      data = `${parts[2]}/${parts[1]}/${parts[0]}`
-    }
-    return {
-      valor,
-      descricao: name,
-      data,
-      categoria_id: Number(categoryId),
-    }
-  })()
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!amount || !name || !date) return
@@ -115,8 +97,6 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     setSaving(true)
     setSubmitError(null)
     try {
-      // Debug: loga no console exatamente o objeto enviado ao backend.
-      console.log('[transacao] criando com payload:', previewPayload, 'json:', JSON.stringify(previewPayload))
       await onAdd({ amount: numericAmount, name, date, categoryId, type })
       window.dispatchEvent(new CustomEvent('prisma:celebrate'))
       showToast(

@@ -58,4 +58,9 @@ public class User {
          	throw new EmailInvalido("Please enter a valid email.");
         }
     }
+
+	public UUID getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
 }
