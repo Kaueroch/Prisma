@@ -25,11 +25,13 @@ public class CategoriaService{
  }
  
  @Transactional
- public void SalvarCategoria(String nome,String tipoCategoria,UUID userId){
+ public Integer SalvarCategoria(String nome,String tipoCategoria,UUID userId){
    if(!validaNomeCategoria(nome,userId)) {
 	 User usuario = userRepository.getReferenceById(userId); 
-	 categoriaRepository.save(new Categoria(nome,tipoCategoria,usuario));
-   }    
+	 Categoria salva = categoriaRepository.save(new Categoria(nome,tipoCategoria,usuario));
+	 return salva.getId();
+   }
+   return null;
  }
  private boolean validaNomeCategoria(String nome,UUID userID){
  if(categoriaRepository.existsByNomeAndUser_Id(nome,userID)){

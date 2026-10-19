@@ -32,9 +32,9 @@ public class CategoriaController{
 	}
 
 	@PostMapping("/criarCategoria")
-	public ResponseEntity<CategoriaResponseDTO> criarCategoria(@RequestBody CategoriaDTO dto){
-         categoriaService.SalvarCategoria(dto.nome(), dto.tipoCategoria(), usuarioAutenticado());
-         CategoriaResponseDTO response = new CategoriaResponseDTO("The category was created.");
+	public ResponseEntity<CategoriaDTO> criarCategoria(@RequestBody CategoriaDTO dto){
+         Integer id = categoriaService.SalvarCategoria(dto.nome(), dto.tipoCategoria(), usuarioAutenticado());
+         CategoriaDTO response = new CategoriaDTO(id, dto.nome(), dto.tipoCategoria(), usuarioAutenticado());
          return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
