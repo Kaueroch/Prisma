@@ -30,6 +30,8 @@ public class Transacao {
     private String descricao;
     @Column(name = "dt_dataGasto",nullable = false)
     private String data;
+    @Column(name = "ds_observacao",nullable = true)
+    private String observacao;
     @ManyToOne
     @JoinColumn(name = "categoria_id")   // Creates the FK column in the database
     private Categoria categoria;
@@ -55,6 +57,14 @@ public class Transacao {
 
     public User getUser() {
         return user;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 
     private void validaCampoData(String data) {

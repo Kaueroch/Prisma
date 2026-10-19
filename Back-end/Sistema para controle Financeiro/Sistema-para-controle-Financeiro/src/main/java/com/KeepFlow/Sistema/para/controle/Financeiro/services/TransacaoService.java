@@ -27,7 +27,7 @@ public TransacaoService(TransacaoRepository _transacaoRepository, CategoriaRepos
 	this.userRepository = _userRepository;
     }
 
- public void salvarTransacao(BigDecimal valor,String descricao, String data, Integer id, UUID userIdCorpo, UUID userIdToken){
+ public void salvarTransacao(BigDecimal valor,String descricao, String data, Integer id, UUID userIdCorpo, UUID userIdToken, String observacao){
 	 // O user_id vem no JSON e É conferido: se divergir do dono do token,
 	 // a requisição cai com 403. O dono gravado é sempre o do token.
 	 if (userIdCorpo != null && !userIdCorpo.equals(userIdToken)) {
@@ -40,6 +40,7 @@ public TransacaoService(TransacaoRepository _transacaoRepository, CategoriaRepos
 	 }
 	 User usuarioBanco = userRepository.getReferenceById(userIdToken);
 	 Transacao transacaoBanco = new Transacao(valor,descricao,data, categoriaBanco, usuarioBanco);
+	 if (observacao != null && !observacao.isBlank()) transacaoBanco.setObservacao(observacao);
 	 transacaoRepository.save(transacaoBanco);
  }
   public void listarTransacoes() {

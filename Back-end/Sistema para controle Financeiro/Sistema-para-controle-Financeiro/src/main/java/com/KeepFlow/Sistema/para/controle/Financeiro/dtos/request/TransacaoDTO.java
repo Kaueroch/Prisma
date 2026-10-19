@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 
-public record TransacaoDTO(BigDecimal valor,String descricao,String data, Integer categoria_id,UUID user_id) {
+public record TransacaoDTO(BigDecimal valor,String descricao,String data, Integer categoria_id,UUID user_id, String observacao) {
 
 }

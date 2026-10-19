@@ -25,7 +25,7 @@ public class TransacaoController {
 	public ResponseEntity<String> criarTransacao(@RequestBody TransacaoDTO dto){
 		// user_id vem no JSON e é conferido contra o token dentro do service.
 		UUID userId = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id(), dto.user_id(), userId);
+		transacaoService.salvarTransacao(dto.valor(),dto.descricao(),dto.data(),dto.categoria_id(), dto.user_id(), userId, dto.observacao());
 		return ResponseEntity.ok("Transacao Criada.");
 	}
    
