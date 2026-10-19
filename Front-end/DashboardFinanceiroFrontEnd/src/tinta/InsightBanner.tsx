@@ -16,9 +16,11 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
   const { openTransactionForm } = useTransactionForm()
 
   const data = useMemo(() => {
-    const inMonth = expenses.filter((e) => isSameMonth(e.date, month.month, month.year))
+    const inMonth = month.all
+      ? expenses
+      : expenses.filter((e) => isSameMonth(e.date, month.month, month.year))
     const prev = month.month === 0 ? { month: 11, year: month.year - 1 } : { month: month.month - 1, year: month.year }
-    const inPrev = expenses.filter((e) => isSameMonth(e.date, prev.month, prev.year))
+    const inPrev = month.all ? [] : expenses.filter((e) => isSameMonth(e.date, prev.month, prev.year))
 
     const spent = inMonth.filter((e) => e.type === 'expense').reduce((s, e) => s + e.amount, 0)
     const spentPrev = inPrev.filter((e) => e.type === 'expense').reduce((s, e) => s + e.amount, 0)
@@ -65,7 +67,7 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
         <button
           type="button"
           onClick={() => openTransactionForm()}
-          className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+          className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
         >
           <Plus className="size-4" strokeWidth={2.2} />
           Registrar

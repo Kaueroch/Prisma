@@ -32,11 +32,11 @@ interface SiteHeaderProps {
 }
 
 const tabLabels: Record<Tab, string> = {
-  home: 'Dashboard',
-  transactions: 'Transactions',
-  categories: 'Categories',
+  home: 'Painel',
+  transactions: 'Transações',
+  categories: 'Categorias',
   goals: 'Metas',
-  profile: 'Settings',
+  profile: 'Configurações',
 }
 
 export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
@@ -66,8 +66,8 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
 
       <div className="flex items-center gap-4 ml-auto">
         <span className="text-sm text-muted-foreground hidden sm:block">
-          Balance:{' '}
-          <span className={`font-semibold ${balance >= 0 ? 'text-emerald-300' : 'text-red-400'}`}>
+          Saldo:{' '}
+          <span className={`font-semibold ${balance >= 0 ? 'text-data' : 'text-red-400'}`}>
             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
           </span>
         </span>
@@ -82,7 +82,7 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm font-medium hidden sm:block">
-                  {user?.name || 'User'}
+                  {user?.name || 'Usuário'}
                 </span>
               </button>
             }
@@ -96,7 +96,7 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex min-w-0 flex-col gap-0.5">
-                  <SheetTitle className="truncate">{user?.name || 'User'}</SheetTitle>
+                  <SheetTitle className="truncate">{user?.name || 'Usuário'}</SheetTitle>
                   <SheetDescription className="truncate">{user?.email || ''}</SheetDescription>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
               <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
                 <Settings className="w-5 h-5" />
               </div>
-              <span className="flex-1 font-medium">Settings</span>
+              <span className="flex-1 font-medium">Configurações</span>
             </SheetClose>
 
             <SheetFooter className="border-t border-border p-4">
@@ -126,8 +126,8 @@ export function SiteHeader({ activeTab, setActiveTab }: SiteHeaderProps) {
                   <LogOut className="h-4 w-4" />
                 </span>
                 <span className="flex flex-col items-start gap-0.5 text-left">
-                  <span className="text-sm font-semibold text-white">Sign out</span>
-                  <span className="text-xs font-normal text-white/75">You will need to sign in again</span>
+                  <span className="text-sm font-semibold text-white">Sair</span>
+                  <span className="text-xs font-normal text-white/75">Você precisará entrar novamente</span>
                 </span>
               </Button>
             </SheetFooter>

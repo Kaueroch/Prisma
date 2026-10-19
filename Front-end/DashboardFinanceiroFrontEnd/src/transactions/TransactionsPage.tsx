@@ -15,7 +15,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
-import { formatBRL, formatDateBR, formatMonthYear, isSameMonth } from '../shared/utils/formatters'
+import { formatBRL, formatDateBR, formatMonthYear, matchesMonthFilter, formatMonthFilter } from '../shared/utils/formatters'
 import { initialMonthFilter } from '../shared/services/prefsService'
 import type { CategoryId, MonthFilter } from '../shared/types'
 
@@ -47,7 +47,7 @@ export function TransactionsPage() {
       const matchSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchCat = filterCategory === 'all' || e.categoryId === filterCategory
       const matchType = filterType === 'all' || e.type === filterType
-      const matchMonth = isSameMonth(e.date, selectedMonth.month, selectedMonth.year)
+      const matchMonth = matchesMonthFilter(e.date, selectedMonth)
       return matchSearch && matchCat && matchType && matchMonth
     })
 
@@ -86,7 +86,7 @@ export function TransactionsPage() {
         <button
           type="button"
           onClick={() => openTransactionForm()}
-          className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+          className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
         >
           <Plus className="h-4 w-4" strokeWidth={2.2} />
           Nova transação
@@ -126,15 +126,32 @@ export function TransactionsPage() {
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
-            <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
+            {!selectedMonth.all && (
+              <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            )}
             <span className="text-xs px-2 min-w-[120px] text-center text-fg-muted capitalize tabular-nums">
-              {formatMonthYear(selectedMonth.month, selectedMonth.year)}
+              {formatMonthFilter(selectedMonth)}
             </span>
-            <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-lg">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            {!selectedMonth.all && (
+              <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-lg">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+            <button
+              type="button"
+              onClick={() => setSelectedMonth(prev => prev.all
+                ? { month: new Date().getMonth(), year: new Date().getFullYear(), all: false }
+                : { ...prev, all: true })}
+              className={`rounded-lg border px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                selectedMonth.all
+                  ? 'border-brand bg-brand-soft text-brand'
+                  : 'border-edge bg-transparent text-fg-muted hover:border-brand/40 hover:text-fg'
+              }`}
+            >
+              {selectedMonth.all ? 'Por mês' : 'Todos'}
+            </button>
           </div>
         </div>
       </div>
@@ -149,7 +166,7 @@ export function TransactionsPage() {
           <button
             type="button"
             onClick={() => openTransactionForm()}
-            className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+            className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
           >
             <Plus className="size-4" strokeWidth={2.2} />
             Registrar transação
@@ -158,7 +175,7 @@ export function TransactionsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
           {categoryGroups.map(({ id, total, maxExpense, items }) => {
-            const catInfo = categories.find(c => c.id === id) || { name: 'Unknown', color: '#666', icon: 'other' as const }
+            const catInfo = categories.find(c => c.id === id) || { name: 'Sem categoria', color: '#666', icon: 'other' as const }
             const isExpanded = expandedId === id
             const { Icon: CatIcon } = resolveSymbol('icon' in catInfo ? catInfo.icon : undefined, catInfo.name)
 
@@ -218,7 +235,7 @@ export function TransactionsPage() {
                           <div key={expense.id} className="flex flex-col gap-0.5">
                             <div className="flex items-start justify-between">
                               <span className="text-sm font-medium">{expense.name}</span>
-                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-emerald-300' : ''}`}>
+                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-data' : ''}`}>
                                 {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
                               </span>
                             </div>

@@ -71,19 +71,19 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     // Client-side guard before hitting the backend, so the user gets
     // immediate feedback instead of "Select a valid category" from the API.
     if (availableCategories.length === 0) {
-      const message = `No ${type} categories yet. Create one in Categories first.`
+      const message = `Nenhuma categoria de ${type === 'income' ? 'receita' : 'despesa'} ainda. Crie uma em Categorias primeiro.`
       setSubmitError(message)
       showError(message)
       return
     }
     if (!categoryId || !availableCategories.some((c) => c.id === categoryId)) {
-      const message = 'Select a category to continue.'
+      const message = 'Selecione uma categoria para continuar.'
       setSubmitError(message)
       showError(message)
       return
     }
     if (!Number.isInteger(Number(categoryId))) {
-      const message = 'This category is only saved locally. Recreate it in Categories while signed in to sync it, then try again.'
+      const message = 'Esta categoria só está salva localmente. Recrie-a em Categorias estando logado para sincronizar e tente novamente.'
       setSubmitError(message)
       showError(message)
       return
@@ -149,7 +149,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
             <button
               type="button"
               onClick={() => handleTypeChange('income')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${type === 'income' ? 'bg-emerald-400/10 text-emerald-300' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${type === 'income' ? 'bg-data/10 text-data' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Receita
             </button>
@@ -196,7 +196,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
             <Label>Categoria</Label>
             {availableCategories.length === 0 ? (
               <p className="border border-dashed border-edge px-4 py-3 text-sm text-fg-muted">
-                No {type} categories yet. Create one in Categories first.
+                Nenhuma categoria de {type} ainda. Crie uma em Categorias primeiro.
               </p>
             ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Categoria">

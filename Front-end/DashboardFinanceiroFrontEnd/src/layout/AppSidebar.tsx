@@ -20,9 +20,9 @@ interface AppSidebarProps {
 }
 
 const mainItems = [
-  { tab: 'home' as Tab, label: 'Dashboard', icon: Home },
-  { tab: 'transactions' as Tab, label: 'Transactions', icon: ArrowLeftRight },
-  { tab: 'categories' as Tab, label: 'Categories', icon: Tags },
+  { tab: 'home' as Tab, label: 'Painel', icon: Home },
+  { tab: 'transactions' as Tab, label: 'Transações', icon: ArrowLeftRight },
+  { tab: 'categories' as Tab, label: 'Categorias', icon: Tags },
 ]
 
 export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
@@ -43,7 +43,7 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Finance</SidebarGroupLabel>
+          <SidebarGroupLabel>Financeiro</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -63,17 +63,17 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupLabel>Sistema</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   isActive={activeTab === 'profile'}
                   onClick={() => setActiveTab('profile')}
-                  tooltip="Settings"
+                  tooltip="Configurações"
                 >
                   <Settings />
-                  <span>Settings</span>
+                  <span>Configurações</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -86,11 +86,11 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={logout}
-              tooltip="Sign out"
+              tooltip="Sair"
               className="font-medium text-destructive/80 transition-colors hover:bg-destructive/10 hover:text-destructive"
             >
               <LogOut />
-              <span>Sign out</span>
+              <span>Sair</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

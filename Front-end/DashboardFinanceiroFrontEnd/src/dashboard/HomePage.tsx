@@ -3,7 +3,7 @@ import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus } from 'lucide-r
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { useAuth } from '../auth/AuthContext'
-import { isSameMonth } from '../shared/utils/formatters'
+import { isSameMonth, matchesMonthFilter } from '../shared/utils/formatters'
 import { getPrefs, initialMonthFilter } from '../shared/services/prefsService'
 import type { Tab, MonthFilter } from '../shared/types'
 import { KpiStrip } from '../tinta/KpiStrip'
@@ -38,7 +38,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   }
 
   const filtered = useMemo(
-    () => expenses.filter((e) => isSameMonth(e.date, selectedMonth.month, selectedMonth.year)),
+    () => expenses.filter((e) => matchesMonthFilter(e.date, selectedMonth)),
     [expenses, selectedMonth],
   )
   const totalIncome = useMemo(() => filtered.filter((e) => e.type === 'income').reduce((s, i) => s + i.amount, 0), [filtered])
@@ -56,7 +56,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     for (const e of filtered) {
       if (e.type !== 'expense') continue
       const cat = categories.find((c) => c.id === e.categoryId)
-      const name = cat?.name || 'Uncategorized'
+      const name = cat?.name || 'Sem categoria'
       byCat[name] = (byCat[name] ?? 0) + e.amount
     }
     return Object.entries(byCat).map(([name, value]) => ({ name, value }))
@@ -86,7 +86,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           <button
             type="button"
             onClick={() => openTransactionForm('income')}
-            className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+            className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
           >
             <Plus className="size-4" strokeWidth={2.2} /> Receita
           </button>

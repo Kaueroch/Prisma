@@ -101,12 +101,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         const message = await response.text();
-        return message || 'Could not sign in.';
+        return message ||  'Não foi possível entrar.';
       }
 
       const data = await response.json();
 
-      if (!data.token) return 'Could not sign in.';
+      if (!data.token) return  'Não foi possível entrar.';
 
       // Save the backend token
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
@@ -126,7 +126,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return null;
     } catch (error) {
       console.error("Sign-in error:", error);
-      return 'Could not reach the server.';
+      return  'Não foi possível alcançar o servidor.';
     }
   };
 
@@ -140,13 +140,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         const message = await response.text();
-        return message || 'Could not create the account.';
+        return message ||  'Não foi possível criar a conta.';
       }
 
       return null;
     } catch (error) {
       console.error("Sign-up error:", error);
-      return 'Could not reach the server.';
+      return  'Não foi possível alcançar o servidor.';
     }
   };
 

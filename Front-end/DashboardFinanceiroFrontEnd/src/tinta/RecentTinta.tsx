@@ -60,7 +60,7 @@ export function RecentTinta({
           <button
             type="button"
             onClick={() => openTransactionForm()}
-            className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-brand-strong"
+            className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-[13px] font-semibold text-black transition-colors hover:bg-brand-strong"
           >
             <Plus className="size-4" strokeWidth={2.2} />
             Registrar
@@ -94,7 +94,7 @@ export function RecentTinta({
                       </span>
                       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="truncate text-sm font-semibold text-fg first-letter:uppercase">{tx.name}</span>
-                        <span className="truncate text-[12px] text-fg-subtle">{cat?.name ?? 'Uncategorized'}</span>
+                        <span className="truncate text-[12px] text-fg-subtle">{cat?.name ?? 'Sem categoria'}</span>
                       </div>
                       <span className={cn('shrink-0 font-display text-[15px] font-medium tabular-nums whitespace-nowrap', isIncome ? 'text-data' : 'text-fg')}>
                         {isIncome ? '+' : '−'}

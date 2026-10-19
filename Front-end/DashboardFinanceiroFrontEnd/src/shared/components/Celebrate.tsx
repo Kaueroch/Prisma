@@ -10,7 +10,7 @@ interface Piece {
   round: boolean
 }
 
-const COLORS = ['#3da56f', '#6fd3a0', '#d48a90', '#8fd6ae', '#d9b45f', '#f0f5f2']
+const COLORS = ['#fbbf24', '#f59e0b', '#f87171', '#fcd34d', '#d9b45f', '#fafaf9']
 
 function makePieces(n: number): Piece[] {
   return Array.from({ length: n }, (_, i) => ({

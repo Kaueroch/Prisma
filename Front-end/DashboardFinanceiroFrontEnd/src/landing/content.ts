@@ -1,170 +1,170 @@
 export const nav = {
   links: [
-    { label: 'Features', href: '#recursos' },
-    { label: 'How it works', href: '#como-funciona' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Recursos', href: '#recursos' },
+    { label: 'Como funciona', href: '#como-funciona' },
+    { label: 'Perguntas frequentes', href: '#faq' },
   ],
-  loginLabel: 'Sign in',
+  loginLabel: 'Entrar',
   loginHref: '#/login',
-  ctaLabel: 'Create free account',
+  ctaLabel: 'Criar conta grátis',
   ctaHref: '#/cadastro',
 }
 
 export const hero = {
-  badge: 'A simple, straightforward finance dashboard',
-  titleTop: 'Your money, organized.',
-  titleAccent: 'Your bills, on track.',
+  badge: 'Um painel financeiro simples e direto',
+  titleTop: 'Seu dinheiro, organizado.',
+  titleAccent: 'Suas contas, em dia.',
   subtitle:
-    'Prisma brings income, expenses, and categories together in a fast, dark, to-the-point dashboard — no stray spreadsheets, no red tape.',
-  primaryCta: 'Create free account',
-  secondaryCta: 'See how it works',
-  trustLine: ['Free during the MVP', 'Open source', 'Runs on Docker', 'End-to-end protection'],
+    'O Prisma reúne receitas, despesas e categorias em um painel rápido, escuro e objetivo — sem planilhas soltas, sem burocracia.',
+  primaryCta: 'Criar conta grátis',
+  secondaryCta: 'Ver como funciona',
+  trustLine: ['Grátis durante o MVP', 'Código aberto', 'Roda em Docker', 'Proteção ponta a ponta'],
   loginHref: '#/login',
   ctaHref: '#/cadastro',
 }
 
 export const statStrip = [
-  { label: 'Integrated modules', value: '3' },
-  { label: 'Log an entry', value: '5 sec' },
-  { label: 'Free plan', value: 'R$ 0' },
-  { label: 'Hidden fees', value: 'Zero' },
+  { label: 'Módulos integrados', value: '3' },
+  { label: 'Registrar lançamento', value: '5 seg' },
+  { label: 'Plano gratuito', value: 'R$ 0' },
+  { label: 'Taxas ocultas', value: 'Zero' },
 ]
 
 export const features = {
-  eyebrow: 'Features',
-  kicker: 'Built for people who want to understand their money',
-  headline: 'Everything a spreadsheet cannot give you, without the headache.',
+  eyebrow: 'Recursos',
+  kicker: 'Feito para quem quer entender seu dinheiro',
+  headline: 'Tudo que uma planilha não te dá, sem dor de cabeça.',
   subtitle:
-    'Instead of a generic shortcut grid, Prisma ships three modules that answer the question that matters: where does my money go?',
+    'Em vez de uma grade genérica de atalhos, o Prisma entrega três módulos que respondem à pergunta que importa: para onde vai meu dinheiro?',
   items: [
     {
       id: 'gastos',
       icon: 'chart',
-      title: 'See where your money goes',
+      title: 'Veja para onde vai seu dinheiro',
       description:
-        'Each expense is sorted into a colorful category. The dashboard turns it all into a spending donut and a recent activity table — you spot the pattern in seconds, not hours of reconciliation.',
-      highlight: 'Spending by category',
+        'Cada despesa é organizada em uma categoria colorida. O painel transforma tudo em um gráfico de gastos e uma tabela de atividade recente — você percebe o padrão em segundos, não em horas de conciliação.',
+      highlight: 'Gastos por categoria',
     },
     {
       id: 'categorias',
       icon: 'tags',
-      title: 'Categories your way',
+      title: 'Categorias do seu jeito',
       description:
-        'Create, color, and rename categories your way. Income and expenses stay separated automatically, each with its own color.',
-      highlight: 'Colorful, editable categories',
+        'Crie, colore e renomeie categorias do seu jeito. Receitas e despesas ficam separadas automaticamente, cada uma com sua cor.',
+      highlight: 'Categorias coloridas e editáveis',
     },
     {
       id: 'registro',
       icon: 'plus',
-      title: 'Log in seconds',
+      title: 'Registre em segundos',
       description:
-        'Amount, description, date, and category. The dashboard updates the balance, the spending donut, and recent activity instantly.',
-      highlight: 'Quick income and expense entries',
+        'Valor, descrição, data e categoria. O painel atualiza o saldo, o gráfico de gastos e a atividade recente na hora.',
+      highlight: 'Lançamentos rápidos de receita e despesa',
     },
   ],
 }
 
 export const howItWorks = {
-  eyebrow: 'How it works',
-  kicker: 'From your first entry to a full dashboard in minutes',
+  eyebrow: 'Como funciona',
+  kicker: 'Do primeiro lançamento a um painel completo em minutos',
   steps: [
     {
-      title: 'Create your free account',
+      title: 'Crie sua conta grátis',
       description:
-        'Sign up with name, email, and password. It takes less than a minute and needs no credit card.',
+        'Cadastre-se com nome, e-mail e senha. Leva menos de um minuto e não precisa de cartão de crédito.',
     },
     {
-      title: 'Log income and expenses',
+      title: 'Registre receitas e despesas',
       description:
-        'Each entry has a BRL amount, date, description, and category. Organized by default, with no extra effort.',
+        'Cada lançamento tem valor em reais, data, descrição e categoria. Organizado por padrão, sem esforço extra.',
     },
     {
-      title: 'Track everything in the dashboard',
+      title: 'Acompanhe tudo no painel',
       description:
-        'Current balance, net savings, spending by category, and recent activity show up on your first visit.',
+        'Saldo atual, economia líquida, gastos por categoria e atividade recente aparecem na sua primeira visita.',
     },
   ],
 }
 
 export const pricing = {
-  eyebrow: 'Pricing',
-  kicker: 'No pricing spreadsheet. No fine-print forensics.',
+  eyebrow: 'Preços',
+  kicker: 'Sem planilha de preços. Sem letrinhas miúdas.',
   free: {
     name: 'Prisma',
-    tagline: 'Everything unlocked during the MVP',
+    tagline: 'Tudo liberado durante o MVP',
     price: 'R$ 0',
-    priceSuffix: 'forever, for now',
+    priceSuffix: 'para sempre, por enquanto',
     features: [
-      'Dashboard with balance, income, and savings',
-      'Unlimited transactions with colorful categories',
-      'Custom categories with your own colors',
+      'Painel com saldo, receitas e economia',
+      'Transações ilimitadas com categorias coloridas',
+      'Categorias personalizadas com suas cores',
     ],
-    cta: 'Create free account',
+    cta: 'Criar conta grátis',
     href: '#/cadastro',
   },
-  note: 'Prisma is under active development. If something breaks, count on us to hear you out — and access stays free.',
+  note: 'O Prisma está em desenvolvimento ativo. Se algo quebrar, conte conosco para ouvir você — e o acesso continua grátis.',
 }
 
 export const faq = {
-  eyebrow: 'FAQ',
-  kicker: 'Questions people who manage their own money usually ask',
+  eyebrow: 'Perguntas frequentes',
+  kicker: 'Perguntas que quem cuida do próprio dinheiro costuma fazer',
   items: [
     {
-      question: 'Is my financial data safe?',
+      question: 'Meus dados financeiros estão seguros?',
       answer:
-        'Yes. Your data stays protected end to end: traffic between your device and Prisma is secure, and everything you log stays tied exclusively to your account, with no sharing with third parties.',
+        'Sim. Seus dados ficam protegidos de ponta a ponta: o tráfego entre seu dispositivo e o Prisma é seguro, e tudo que você registra fica vinculado exclusivamente à sua conta, sem compartilhamento com terceiros.',
     },
     {
-      question: 'Do I need a credit card to get started?',
+      question: 'Preciso de cartão de crédito para começar?',
       answer:
-        'No. Prisma is an open source project: the code is open and you just run Docker to use the system on your own machine. On the platform, the account is free during the MVP and we never ask for a card.',
+        'Não. O Prisma é um projeto de código aberto: o código é aberto e você só precisa rodar o Docker para usar o sistema na sua máquina. Na plataforma, a conta é gratuita durante o MVP e nunca pedimos cartão.',
     },
     {
-      question: 'What if I mistype an entry amount?',
+      question: 'E se eu errar o valor de um lançamento?',
       answer:
-        'You can correct or delete any transaction at any time. Nothing here is permanent: categories can also be created, renamed, and deleted.',
+        'Você pode corrigir ou excluir qualquer transação a qualquer momento. Nada aqui é permanente: categorias também podem ser criadas, renomeadas e excluídas.',
     },
     {
-      question: 'Do I need to connect my bank?',
+      question: 'Preciso conectar meu banco?',
       answer:
-        'No. Prisma does not connect to bank accounts. You log your income and expenses manually — which means full control over what comes in and what goes out.',
+        'Não. O Prisma não se conecta a contas bancárias. Você registra suas receitas e despesas manualmente — o que significa controle total sobre o que entra e o que sai.',
     },
     {
-      question: 'Can I use it on my phone?',
+      question: 'Posso usar no celular?',
       answer:
-        'Yes. The dashboard is built mobile-first and scales up to large screens. The essentials — logging entries and checking your balance — work well on a phone.',
+        'Sim. O painel é construído mobile-first e se adapta a telas grandes. O essencial — registrar lançamentos e consultar o saldo — funciona bem no celular.',
     },
   ],
 }
 
 export const finalCta = {
-  kicker: 'Start today',
-  headline: 'Ready to get your finances in order?',
+  kicker: 'Comece hoje',
+  headline: 'Pronto para organizar suas finanças?',
   subtitle:
-    'Create your free account and see your first organized month in under ten minutes.',
-  cta: 'Create free account',
+    'Crie sua conta grátis e veja seu primeiro mês organizado em menos de dez minutos.',
+  cta: 'Criar conta grátis',
   href: '#/cadastro',
 }
 
 export const footer = {
   description:
-    'Personal finance dashboard in dark mode. Organize income, expenses, and categories in one place.',
+    'Painel de finanças pessoais em modo escuro. Organize receitas, despesas e categorias em um só lugar.',
   columns: [
     {
-      title: 'Product',
+      title: 'Produto',
       links: [
-        { label: 'Features', href: '#recursos' },
-        { label: 'How it works', href: '#como-funciona' },
-        { label: 'FAQ', href: '#faq' },
+        { label: 'Recursos', href: '#recursos' },
+        { label: 'Como funciona', href: '#como-funciona' },
+        { label: 'Perguntas frequentes', href: '#faq' },
       ],
     },
     {
-      title: 'Account',
+      title: 'Conta',
       links: [
-        { label: 'Create free account', href: '#/cadastro' },
-        { label: 'Sign in', href: '#/login' },
+        { label: 'Criar conta grátis', href: '#/cadastro' },
+        { label: 'Entrar', href: '#/login' },
       ],
     },
   ],
-  rights: 'Prisma © 2026. All rights reserved.',
+  rights: 'Prisma © 2026. Todos os direitos reservados.',
 }

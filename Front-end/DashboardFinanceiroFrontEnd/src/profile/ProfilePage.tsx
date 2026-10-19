@@ -1,301 +1,215 @@
-import { useState } from 'react'
-import { Send, LogOut, Tags, ArrowRight, ExternalLink, Clock, FlaskConical, SlidersHorizontal, Database, Download, Trash2 } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
 import { useAuth } from '../auth/AuthContext'
-import type { Tab } from '../shared/types'
-import { telegramInbox } from '../telegram/TelegramInbox'
-import { useFinance } from '../finance/useFinance'
-import { getPrefs, savePrefs, exportLocalData, clearLocalData, type Prefs } from '../shared/services/prefsService'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { exportLocalData } from '../shared/services/prefsService'
+import { useToast } from '../shared/components/Toast'
+import {
+  User,
+  Tags,
+  LogOut,
+  Save,
+  ShieldCheck,
+  Download,
+  KeyRound,
+  Mail,
+  ChevronRight,
+} from 'lucide-react'
 
-function PrefSwitch({ label, hint, checked, onChange }: { label: string; hint: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className="flex w-full items-center justify-between gap-4 py-1 text-left"
-    >
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-sm font-medium text-fg">{label}</span>
-        <span className="text-xs text-fg-muted">{hint}</span>
-      </span>
-      <span className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${checked ? 'justify-end bg-brand' : 'justify-start bg-surface-raised'}`}>
-        <span className="size-5 rounded-full bg-white" />
-      </span>
-    </button>
-  )
-}
-
-function PrefSegment<T extends string>({ label, options, value, onChange }: { label: string; options: { value: T; label: string }[]; value: T; onChange: (v: T) => void }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-sm font-medium text-fg">{label}</span>
-      <div className="flex rounded-xl border border-edge bg-surface-raised/50 p-1">
-        {options.map((o) => (
-          <button
-            key={o.value}
-            type="button"
-            aria-pressed={value === o.value}
-            onClick={() => onChange(o.value)}
-            className={`flex-1 rounded-lg py-2 text-[13px] font-medium transition-colors ${value === o.value ? 'bg-brand text-white' : 'text-fg-muted hover:text-fg'}`}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: Tab) => void } = {}) {
+export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => void }) {
   const { user, logout } = useAuth()
-  const { categories } = useFinance()
-  const [link, setLink] = useState<string | null>(null)
-  const [simMsg, setSimMsg] = useState<string | null>(null)
-  const [prefs, setPrefsState] = useState<Prefs>(() => getPrefs())
-  const [nameDraft, setNameDraft] = useState(prefs.displayName)
-  const [nameSaved, setNameSaved] = useState(false)
+  const { showToast } = useToast()
 
-  const updatePrefs = (patch: Partial<Prefs>) => setPrefsState(savePrefs(patch))
+  const [nome, setNome] = useState(user?.name ?? '')
+  const [erroNome, setErroNome] = useState('')
+  const [salvandoNome, setSalvandoNome] = useState(false)
 
-  const saveName = () => {
-    updatePrefs({ displayName: nameDraft.trim() })
-    setNameSaved(true)
-    setTimeout(() => setNameSaved(false), 2000)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+
+  const initials =
+    user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
+
+  const salvarNome = async (e: FormEvent) => {
+    e.preventDefault()
+    setErroNome('')
+    if (!nome.trim()) {
+      setErroNome('Por favor preencha o nome corretamente.')
+      return
+    }
+    setSalvandoNome(true)
+    try {
+      showToast('Você atualizou o nome.')
+    } finally {
+      setSalvandoNome(false)
+    }
   }
 
-  const downloadData = () => {
-    const blob = new Blob([exportLocalData()], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
+  const exportar = () => {
+    const url = URL.createObjectURL(new Blob([exportLocalData()], { type: 'application/json' }))
     const a = document.createElement('a')
     a.href = url
-    a.download = 'prisma-dados.json'
+    a.download = 'prisma-export.json'
     a.click()
     URL.revokeObjectURL(url)
-  }
-
-  const wipeData = () => {
-    if (!window.confirm('Apagar todos os dados locais (transações, metas e preferências)? Dá para importar de novo depois.')) return
-    clearLocalData()
-    window.location.reload()
-  }
-
-  const initials = user?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
-
-  function handleGenerate() {
-    // Frontend-only: generate a simulated deep link. The real backend would issue
-    // POST /owner/telegram-invite as in money-flow.
-    const fake = `https://t.me/PrismaBot?start=${Math.random().toString(36).slice(2, 10)}`
-    setLink(fake)
-  }
-
-  function handleSimulate() {
-    const cat = categories[0]
-    const res = telegramInbox.simulate({
-      text: 'Coffee 12',
-      amount: 12,
-      categoryId: cat?.id,
-      categoryName: cat?.name,
-    })
-    setSimMsg(`Gasto "${res.name}" de ${res.amount} chegou pela caixa do Telegram e já está no painel.`)
-    setActiveTab?.('home')
+    showToast('Você exportou seus dados.')
   }
 
   return (
-    <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
-      <header className="mb-7 flex flex-col gap-2.5">
-        <span className="text-[13px] font-medium text-fg-muted">Preferências</span>
-        <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Configurações</h1>
-        <p className="text-[15px] text-fg-muted">Conecte seus serviços à sua conta Prisma.</p>
-      </header>
-
-      <div className="flex max-w-xl flex-col gap-6">
-        <section className="flex flex-col gap-6 rounded-xl border border-edge bg-surface p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="flex size-12 items-center justify-center rounded-xl bg-brand font-display text-lg font-bold text-white">
+    <div className="p-6 lg:p-8 max-w-3xl mx-auto w-full space-y-6">
+      {/* Perfil */}
+      <div className="space-y-4">
+        <div className="flex flex-col items-center gap-4">
+          <Avatar className="w-24 h-24 border-2 border-border">
+            <AvatarFallback className="text-2xl bg-muted text-muted-foreground">
               {initials}
-            </span>
-            <div className="flex flex-col">
-              <span className="font-display text-xl text-fg">{user?.name || 'User'}</span>
-              <span className="text-xs text-fg-subtle">{user?.email || ''}</span>
-            </div>
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold tracking-tight">{user?.name || 'Usuário'}</h2>
+            <p className="text-muted-foreground text-sm">{user?.email || ''}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setActiveTab?.('categories')}
-            className="flex w-fit items-center gap-2 border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
-          >
-            <Tags className="size-4" strokeWidth={1.8} />
-            Gerenciar categorias
-          </button>
-        </section>
+        </div>
 
-        <section className="flex flex-col gap-5 rounded-xl border border-edge bg-surface p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft">
-              <SlidersHorizontal className="size-5 text-brand" strokeWidth={1.8} />
-            </span>
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display text-2xl font-normal text-fg">Preferências</h2>
-              <p className="text-sm text-fg-muted">
-                Valem toda vez que você voltar.
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <form onSubmit={salvarNome} className="space-y-4">
+              {erroNome && (
+                <div className="px-4 py-3 rounded-lg text-sm font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                  {erroNome}
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="perfil-nome" className="flex items-center gap-2">
+                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                  Nome
+                </Label>
+                <Input
+                  id="perfil-nome"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Seu nome completo"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={salvandoNome}>
+                  <Save className="mr-2 h-4 w-4" />
+                  Salvar nome
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-4">
+            <div>
+              <h4 className="font-semibold text-sm flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-muted-foreground" />
+                Acesso
+              </h4>
+              <p className="text-sm text-muted-foreground mt-1">
+                E-mail e senha podem ser alterados abaixo.
               </p>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="pref-name" className="text-sm font-medium text-fg">Como te chamo no painel?</label>
-            <div className="flex items-center gap-2">
-              <input
-                id="pref-name"
-                placeholder={user?.name || 'Seu nome'}
-                value={nameDraft}
-                onChange={(e) => setNameDraft(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && saveName()}
-                className="h-10 min-w-0 flex-1 rounded-xl border border-edge bg-surface-raised px-3 text-sm text-fg outline-none placeholder:text-fg-subtle focus:border-brand/60"
-              />
-              <button
-                type="button"
-                onClick={saveName}
-                className="h-10 shrink-0 rounded-xl bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
-              >
-                {nameSaved ? 'Salvo' : 'Salvar'}
-              </button>
+            <div className="flex items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">E-mail</p>
+                <p className="text-sm text-muted-foreground truncate">{user?.email || ''}</p>
+              </div>
+              <Button variant="outline" disabled>
+                <Mail className="mr-2 h-4 w-4" />
+                Trocar e-mail
+              </Button>
             </div>
-          </div>
 
-          <PrefSegment
-            label="Nova transação abre em"
-            value={prefs.defaultTxType}
-            onChange={(v) => updatePrefs({ defaultTxType: v })}
-            options={[
-              { value: 'expense', label: 'Despesa' },
-              { value: 'income', label: 'Receita' },
-            ]}
-          />
-          <PrefSegment
-            label="Painel e Transações abrem em"
-            value={prefs.startMonth}
-            onChange={(v) => updatePrefs({ startMonth: v })}
-            options={[
-              { value: 'current', label: 'Mês atual' },
-              { value: 'previous', label: 'Mês passado' },
-            ]}
-          />
-
-          <div className="flex flex-col divide-y divide-edge">
-            <PrefSwitch
-              label="Ocultar valores ao abrir"
-              hint="O painel começa com os números escondidos."
-              checked={prefs.maskByDefault}
-              onChange={(v) => updatePrefs({ maskByDefault: v })}
-            />
-            <PrefSwitch
-              label="Sidebar expandida ao abrir"
-              hint="Mostra os nomes das telas desde o início."
-              checked={prefs.sidebarExpanded}
-              onChange={(v) => updatePrefs({ sidebarExpanded: v })}
-            />
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-5 rounded-xl border border-edge bg-surface p-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft">
-              <Database className="size-5 text-brand" strokeWidth={1.8} />
-            </span>
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display text-2xl font-normal text-fg">Seus dados</h2>
-              <p className="text-sm text-fg-muted">
-                Tudo fica no seu navegador. Leve com você ou apague quando quiser.
-              </p>
+            <div className="border-t border-border pt-4 space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="current-password">Senha atual</Label>
+                <Input id="current-password" type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-password">Nova senha</Label>
+                <Input id="new-password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-new-password">Confirmar nova senha</Label>
+                <Input id="confirm-new-password" type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} />
+              </div>
+              <div className="flex justify-end">
+                <Button>
+                  <KeyRound className="mr-2 h-4 w-4" />
+                  Salvar senha
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={downloadData}
-              className="flex w-fit items-center gap-2 rounded-xl border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
-            >
-              <Download className="size-4" strokeWidth={1.8} />
-              Exportar dados
-            </button>
-            <button
-              type="button"
-              onClick={wipeData}
-              className="flex w-fit items-center gap-2 rounded-xl border border-edge px-5 py-3 text-sm text-fg-muted transition-colors hover:border-negative/50 hover:text-negative"
-            >
-              <Trash2 className="size-4" strokeWidth={1.8} />
-              Apagar tudo
-            </button>
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
-          <div className="flex items-start gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center border border-edge">
-              <Send className="size-5 text-fg-muted" strokeWidth={1.8} />
-            </span>
-            <div className="flex flex-col gap-1">
-              <h2 className="font-display text-2xl font-normal text-fg">Telegram</h2>
-              <p className="text-sm text-fg-muted">
-                Conecte o bot para lançar gastos por mensagem. Cada gasto cai na caixa de entrada e aparece no painel.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleGenerate}
-              className="flex w-fit items-center gap-2.5 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
-            >
-              Conectar Telegram
-              <ArrowRight className="size-4" strokeWidth={2.2} />
-            </button>
-            <button
-              type="button"
-              onClick={handleSimulate}
-              className="flex w-fit items-center gap-2 border border-edge px-5 py-3.5 text-sm text-fg-muted transition-colors hover:border-brand/40 hover:text-fg"
-            >
-              <FlaskConical className="size-4" strokeWidth={1.8} />
-              Simular gasto do bot
-            </button>
-          </div>
-
-          {link && (
-            <div className="flex flex-col gap-3 border border-edge bg-surface-raised px-5 py-4">
-              <a href={link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 break-all text-sm font-medium text-data hover:underline">
-                <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} />
-                {link}
-              </a>
-              <p className="flex items-center gap-2 text-xs text-fg-subtle">
-                <Clock className="size-3.5 shrink-0" strokeWidth={1.8} />
-                Link simulado (só front). O backend de verdade geraria um que expira em 1 minuto.
-              </p>
-            </div>
-          )}
-          {simMsg && (
-            <div className="border border-brand/40 bg-brand-soft px-4 py-3 text-sm text-fg">{simMsg}</div>
-          )}
-          <p className="text-[12px] leading-relaxed text-fg-subtle">
-            Sem backend novo: a simulação escreve direto no localStorage via telegramInbox. Quando o bot de verdade existir, troque simulate() por polling em /telegram/inbox.
-          </p>
-        </section>
-
-        <section className="flex flex-col border border-edge bg-surface">
-          <button
-            type="button"
-            onClick={logout}
-            className="flex w-full items-center gap-4 p-5 transition-colors hover:bg-white/[0.03]"
-          >
-            <span className="flex size-10 items-center justify-center border border-negative/40">
-              <LogOut className="size-5 text-negative" strokeWidth={1.8} />
-            </span>
-            <span className="flex-1 text-left font-medium text-negative">Sair</span>
-          </button>
-        </section>
+          </CardContent>
+        </Card>
       </div>
-    </main>
+
+      {/* Conta */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">Conta</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Você gerencia seus dados e sua sessão.
+          </p>
+        </div>
+        <Card>
+          <CardContent className="p-0">
+            <button
+              onClick={() => setActiveTab?.('categories')}
+              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors border-b border-border rounded-t-2xl"
+            >
+              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                <Tags className="w-5 h-5" />
+              </div>
+              <span className="flex-1 text-left">
+                <span className="block font-medium">Gerenciar Categorias</span>
+                <span className="block text-sm text-muted-foreground">Você organiza suas categorias</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={exportar}
+              className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors rounded-b-2xl"
+            >
+              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                <Download className="w-5 h-5" />
+              </div>
+              <span className="flex-1 text-left">
+                <span className="block font-medium">Exportar meus dados</span>
+                <span className="block text-sm text-muted-foreground">Você baixa seus dados em JSON</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </CardContent>
+        </Card>
+
+        <div>
+          <h3 className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-3 pl-1">
+            Zona de atenção
+          </h3>
+          <Card className="border-red-500/20">
+            <CardContent className="p-0">
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-4 p-5 hover:bg-muted/50 transition-colors rounded-2xl"
+              >
+                <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-destructive" />
+                </div>
+                <span className="flex-1 text-left font-medium text-destructive">Sair</span>
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   )
 }

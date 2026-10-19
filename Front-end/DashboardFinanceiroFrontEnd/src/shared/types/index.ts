@@ -29,4 +29,6 @@ export type Tab = 'home' | 'transactions' | 'categories' | 'goals' | 'profile';
 export interface MonthFilter {
   month: number;
   year: number;
+  /** Quando true, ignora mês/ano e considera todas as transações. */
+  all?: boolean;
 }

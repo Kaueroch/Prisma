@@ -12,7 +12,7 @@ import { symbolicCategoryColor } from '../shared/utils/categoryColor'
 import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
 
 export function CategoriesPage() {
-  const { categories, expenses, addCategory, deleteCategory, updateCategory, loading } = useFinance()
+  const { categories, expenses, addCategory, deleteCategory, updateCategory, loading, categoriesError } = useFinance()
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
   const [isAdding, setIsAdding] = useState(false)
   const [newCatName, setNewCatName] = useState('')
@@ -23,7 +23,7 @@ export function CategoriesPage() {
   const [editName, setEditName] = useState('')
   const [editSymbol, setEditSymbol] = useState('')
   const [editType, setEditType] = useState<CategoryKind>('expense')
-  const newAutoColor = symbolicCategoryColor(newCatName.trim() || '?')
+  const newAutomáticoColor = symbolicCategoryColor(newCatName.trim() || '?')
   const pickSymbol = (id: string) => {
     setNewCatSymbol(id)
     setSymbolTouched(true)
@@ -121,6 +121,11 @@ export function CategoriesPage() {
         </div>
       )}
 
+      {categoriesError && (
+        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {categoriesError} — verifique se o backend (porta 8081) está rodando.
+        </div>
+      )}
       {!loading && (
         <>
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
@@ -132,7 +137,7 @@ export function CategoriesPage() {
             <button
               type="button"
               onClick={() => setIsAdding(true)}
-              className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+              className="flex items-center gap-2 rounded-lg bg-brand px-5 py-3.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
             >
               <Plus className="h-4 w-4" strokeWidth={2.2} />
               Nova categoria
@@ -154,14 +159,14 @@ export function CategoriesPage() {
                     id="new-cat-name"
                     value={newCatName}
                     onChange={(e) => handleNewName(e.target.value)}
-                    placeholder="E.g. Travel"
+                    placeholder="Ex.: Viagem"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-xs text-muted-foreground font-medium">Symbol color</span>
-                  <span className="flex h-9 items-center gap-2 rounded-lg border border-edge bg-white/[0.02] px-3" title="Color is assigned automatically">
-                    <span className="h-5 w-5 rounded-md" style={{ backgroundColor: newAutoColor }} aria-hidden />
-                    <span className="text-xs text-fg-muted">Auto</span>
+                  <span className="text-xs text-muted-foreground font-medium">Cor do símbolo</span>
+                  <span className="flex h-9 items-center gap-2 rounded-lg border border-edge bg-white/[0.02] px-3" title="A cor é atribuída automaticamente">
+                    <span className="h-5 w-5 rounded-md" style={{ backgroundColor: newAutomáticoColor }} aria-hidden />
+                    <span className="text-xs text-fg-muted">Automático</span>
                   </span>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -183,7 +188,7 @@ export function CategoriesPage() {
                 <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancelar</Button>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span id="new-cat-symbol-label" className="text-xs text-muted-foreground font-medium">Symbol</span>
+                  <span id="new-cat-symbol-label" className="text-xs text-muted-foreground font-medium">Símbolo</span>
                   <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5" role="radiogroup" aria-labelledby="new-cat-symbol-label">
                     {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
                       const selected = newCatSymbol === id
@@ -247,13 +252,13 @@ export function CategoriesPage() {
                               ))}
                             </div>
                             <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
-                              <Check className="w-4 h-4 text-emerald-300" />
+                              <Check className="w-4 h-4 text-data" />
                             </Button>
                             <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
-                          <div className="grid grid-cols-6 gap-1 max-w-[280px]" role="radiogroup" aria-label="Symbol">
+                          <div className="grid grid-cols-6 gap-1 max-w-[280px]" role="radiogroup" aria-label="Símbolo">
                             {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
                               const selected = editSymbol === id
                               return (

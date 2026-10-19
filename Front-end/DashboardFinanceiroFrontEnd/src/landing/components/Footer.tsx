@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div className="max-w-xs">
             <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 ">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-black">
                 <Wallet className="h-4 w-4" />
               </span>
               <span className="text-base font-bold tracking-tight">Prisma</span>

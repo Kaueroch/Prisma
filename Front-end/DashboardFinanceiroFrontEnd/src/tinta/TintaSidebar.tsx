@@ -41,7 +41,7 @@ function NavButton({
           ? 'justify-start rounded-xl px-3.5 mx-2 w-[calc(100%-16px)]'
           : 'justify-center rounded-xl mx-auto w-11',
         active
-          ? 'bg-brand text-white'
+          ? 'bg-brand text-black'
           : 'text-fg-subtle hover:bg-white/[0.04] hover:text-fg',
       )}
     >

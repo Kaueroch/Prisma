@@ -62,7 +62,7 @@ export function GoalEditor({ categoryId, expenses }: { categoryId: string; expen
         <button
           type="button"
           onClick={save}
-          className="h-10 shrink-0 rounded-xl bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+          className="h-10 shrink-0 rounded-xl bg-brand px-4 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
         >
           Salvar
         </button>

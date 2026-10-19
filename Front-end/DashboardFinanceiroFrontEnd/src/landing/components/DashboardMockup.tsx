@@ -3,13 +3,13 @@ import type { ReactNode } from 'react'
 
 const stats = [
   { label: 'Total income', value: 'R$ 8.400,00', accent: 'text-data', icon: ArrowDownLeft, chip: 'bg-brand-soft text-data', note: 'On track' },
-  { label: 'Total expenses', value: 'R$ 4.200,00', accent: 'text-negative', icon: ArrowUpRight, chip: 'bg-brand-soft text-negative', note: 'August 2026' },
+  { label: 'Total de despesas', value: 'R$ 4.200,00', accent: 'text-negative', icon: ArrowUpRight, chip: 'bg-brand-soft text-negative', note: 'Agosto 2026' },
   { label: 'Savings (Net)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-surface-raised text-fg', note: 'Month difference' },
 ]
 
 const donut = [
-  { label: 'Food', value: 34, color: '#8fbf9f', amount: 'R$ 1.428,00' },
-  { label: 'Bills', value: 26, color: '#7ea8d8', amount: 'R$ 1.092,00' },
+  { label: 'Alimentação', value: 34, color: '#8fbf9f', amount: 'R$ 1.428,00' },
+  { label: 'Contas', value: 26, color: '#7ea8d8', amount: 'R$ 1.092,00' },
   { label: 'Transport', value: 22, color: '#d8a36c', amount: 'R$ 924,00' },
   { label: 'Leisure', value: 18, color: '#a88cc8', amount: 'R$ 756,00' },
 ]
@@ -22,10 +22,10 @@ const segments = [
 ]
 
 const activity = [
-  { name: 'Freelance design', type: 'income', category: 'Salary', color: '#8fbf9f', amount: '+R$ 2.400,00' },
-  { name: 'Grocery run', type: 'expense', category: 'Food', color: '#8fbf9f', amount: '-R$ 486,90' },
-  { name: 'Fuel', type: 'expense', category: 'Transport', color: '#d8a36c', amount: '-R$ 210,00' },
-  { name: 'Rent', type: 'expense', category: 'Bills', color: '#7ea8d8', amount: '-R$ 1.250,00' },
+  { name: 'Design freelancer', type: 'income', category: 'Salário', color: '#8fbf9f', amount: '+R$ 2.400,00' },
+  { name: 'Compras do mês', type: 'expense', category: 'Alimentação', color: '#8fbf9f', amount: '-R$ 486,90' },
+  { name: 'Combustível', type: 'expense', category: 'Transporte', color: '#d8a36c', amount: '-R$ 210,00' },
+  { name: 'Aluguel', type: 'expense', category: 'Contas', color: '#7ea8d8', amount: '-R$ 1.250,00' },
 ]
 
 function windowFrame(children: ReactNode) {
@@ -54,11 +54,11 @@ export function DashboardMockup() {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2  border border-edge bg-surface p-1">
           <span className="flex h-6 w-6 items-center justify-center  text-fg-muted"><Minus className="h-3.5 w-3.5" /></span>
-          <span className="px-2 text-[11px] font-medium text-fg-muted">August 2026</span>
+          <span className="px-2 text-[11px] font-medium text-fg-muted">Agosto 2026</span>
           <span className="flex h-6 w-6 items-center justify-center  text-fg-muted"><Plus className="h-3.5 w-3.5" /></span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-fg-muted">
-          <span>Balance:</span>
+          <span>Saldo:</span>
           <span className="font-semibold text-data">R$ 4.200,00</span>
         </div>
       </div>
@@ -69,7 +69,7 @@ export function DashboardMockup() {
             <p className="text-[11px] font-medium uppercase tracking-wider text-fg-muted">Current balance</p>
             <p className="mt-1 text-3xl font-bold tracking-tight">R$ 4.200,00</p>
             <div className="mt-3 flex items-center gap-2">
-              <span className="inline-flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[11px] font-medium text-white">
+              <span className="inline-flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[11px] font-medium text-black">
                 <ArrowDownLeft className="h-3 w-3" /> New income
               </span>
               <span className="inline-flex h-7 items-center gap-1  bg-secondary px-3 text-[11px] font-medium text-secondary-foreground">
@@ -119,7 +119,7 @@ export function DashboardMockup() {
                   <span className="text-[11px] text-fg-muted">{t.category}</span>
                 </span>
                 <span className={`text-xs font-semibold ${t.type === 'income' ? 'text-data' : ''}`}>{t.amount}</span>
-                <span className="hidden items-center gap-1 rounded-full border border-emerald-400/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-data lg:flex">
+                <span className="hidden items-center gap-1 rounded-full border border-data/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-data lg:flex">
                   <CheckCircle2 className="h-3 w-3" /> Done
                 </span>
               </div>

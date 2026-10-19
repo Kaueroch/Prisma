@@ -41,3 +41,15 @@ export const isSameMonth = (dateStr: string, month: number, year: number): boole
   }
   return d.getMonth() === month && d.getFullYear() === year;
 };
+
+/** Verifica se uma data pertence ao filtro de mês (respeita a opção "todos"). */
+export const matchesMonthFilter = (dateStr: string, filter: { month: number; year: number; all?: boolean }): boolean => {
+  if (filter.all) return true;
+  return isSameMonth(dateStr, filter.month, filter.year);
+};
+
+/** Rótulo legível do filtro de mês, incluindo "Todos os meses". */
+export const formatMonthFilter = (filter: { month: number; year: number; all?: boolean }): string => {
+  if (filter.all) return 'Todos os meses';
+  return formatMonthYear(filter.month, filter.year);
+};

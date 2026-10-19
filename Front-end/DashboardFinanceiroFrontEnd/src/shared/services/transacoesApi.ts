@@ -55,7 +55,7 @@ export interface NovaTransacaoInput {
 export function toBackendDate(isoDate: string): string {
   const [year, month, day] = isoDate.split('-');
   if (!year || !month || !day) {
-    throw new Error(`Invalid date "${isoDate}". Expected format yyyy-MM-dd.`);
+    throw new Error(`Data inválida "${isoDate}". Formato esperado: aaaa-mm-dd.`);
   }
   return `${day}/${month}/${year}`;
 }

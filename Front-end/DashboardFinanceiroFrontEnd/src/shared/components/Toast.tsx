@@ -66,7 +66,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               {toast.variant === 'error' ? (
                 <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
               ) : (
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-300" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-data" />
               )}
               <span className="font-medium">{toast.message}</span>
             </motion.div>

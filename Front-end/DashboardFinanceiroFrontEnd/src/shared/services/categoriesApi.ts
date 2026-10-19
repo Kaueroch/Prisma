@@ -71,11 +71,11 @@ export const categoriesApi = {
     });
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text || 'Could not load categories');
+      throw new Error(text || 'Não foi possível carregar as categorias');
     }
     const data = await response.json();
     if (!Array.isArray(data)) {
-      throw new Error('Unexpected backend response while loading categories.');
+      throw new Error( 'Resposta inesperada do backend ao carregar categorias.');
     }
     return data as BackendCategoria[];
   },
@@ -92,7 +92,7 @@ export const categoriesApi = {
     });
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text || 'Could not create category');
+      throw new Error(text || 'Não foi possível criar a categoria');
     }
     const data = await response.json();
     return Number(data.id);
@@ -116,7 +116,7 @@ export const categoriesApi = {
     );
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text || 'Could not update category');
+      throw new Error(text || 'Não foi possível atualizar a categoria');
     }
   },
 
@@ -137,7 +137,7 @@ export const categoriesApi = {
     );
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text || 'Could not delete category');
+      throw new Error(text || 'Não foi possível excluir a categoria');
     }
     return (await response.json()) as BackendCategoria;
   },

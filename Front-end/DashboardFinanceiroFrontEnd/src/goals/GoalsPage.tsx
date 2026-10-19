@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, Plus, Target, Trash2 } from 'lucide-react'
 import { useFinance } from '../finance/useFinance'
-import { getGoals, setGoal, type GoalsMap } from '../shared/services/goalsService'
+import { getGoals, setGoal, type GoalsMap, type Goal } from '../shared/services/goalsService'
 import { GoalModal, type GoalModalState } from './GoalModal'
 import { formatBRL, formatMonthYear, isSameMonth } from '../shared/utils/formatters'
 import type { MonthFilter } from '../shared/types'
@@ -30,7 +30,7 @@ export function GoalsPage() {
 
   const rows = useMemo(
     () =>
-      Object.entries(goals)
+      (Object.entries(goals) as [string, Goal][])
         .map(([id, g]) => ({
           id,
           goal: g.value,
@@ -82,7 +82,7 @@ export function GoalsPage() {
             type="button"
             onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '', description: '' })}
             disabled={freeCats.length === 0}
-            className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Plus className="size-4" strokeWidth={2.2} />
             Nova meta
@@ -101,7 +101,7 @@ export function GoalsPage() {
             <button
               type="button"
               onClick={() => setModal({ mode: 'create', categoryId: '', categoryName: '', value: '', description: '' })}
-              className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+              className="mt-1 flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
             >
               <Plus className="size-4" strokeWidth={2.2} />
               Criar primeira meta

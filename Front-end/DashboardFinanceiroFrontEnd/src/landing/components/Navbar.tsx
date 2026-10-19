@@ -11,7 +11,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-edge bg-[#0b0d12]/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-black">
             <Wallet className="h-4 w-4" strokeWidth={2.6} />
           </span>
           <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">prisma</span>
@@ -43,7 +43,7 @@ export function Navbar() {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
           className="flex h-9 w-9 items-center justify-center text-fg-muted outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50 md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

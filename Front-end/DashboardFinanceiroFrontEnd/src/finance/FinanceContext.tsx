@@ -10,6 +10,7 @@ interface FinanceContextType {
   expenses: Expense[];
   categories: CategoryInfo[];
   loading: boolean;
+  categoriesError: string | null;
   addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
   addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<void>;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => Promise<void>;
@@ -29,6 +30,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
   useEffect(() => {
     function onTelegram(e: Event) {
@@ -43,6 +45,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   useEffect(() => {
     const loadData = async () => {
       setExpenses(financeService.getExpenses());
+      setCategoriesError(null);
 
       // Load categories from the backend; fall back to localStorage on failure
       try {
@@ -63,6 +66,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       } catch (err) {
         console.warn('Could not load categories from the backend, using localStorage:', err);
         setCategories(financeService.getCategories());
+        setCategoriesError(err instanceof Error ? err.message : 'Não foi possível carregar as categorias do backend.');
       }
 
       setLoading(false);
@@ -82,8 +86,8 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         categoriaId: newExpense.categoryId,
       });
     } catch (err) {
-      console.error('Could not create transaction in the backend:', err);
-      throw err instanceof Error ? err : new Error('Could not create transaction.');
+      console.error( 'Não foi possível criar a transação no backend:', err);
+      throw err instanceof Error ? err : new Error( 'Não foi possível criar a transação.');
     }
 
     // 2. Only mirror locally after the database confirms the creation,
@@ -164,7 +168,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       });
     } catch (err) {
       console.error(`Could not update category (cd_id: ${id}) in the backend:`, err);
-      throw err instanceof Error ? err : new Error('Could not update category.');
+      throw err instanceof Error ? err : new Error( 'Não foi possível atualizar a categoria.');
     }
 
     setCategories((prev) => {
@@ -194,7 +198,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       await categoriesApi.deletar(numericId);
     } catch (err) {
       console.error(`Could not delete "${nome ?? id}" in the backend (cd_id: ${id}).`, err);
-      throw err instanceof Error ? err : new Error('Could not delete category.');
+      throw err instanceof Error ? err : new Error( 'Não foi possível excluir a categoria.');
     }
 
     setCategories((prev) => {
@@ -212,13 +216,13 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const balance = useMemo(() => totalIncome - totalExpense, [totalIncome, totalExpense]);
 
   const value = useMemo(() => ({
-    expenses, categories, loading,
+    expenses, categories, loading, categoriesError,
     addExpense: handleAddExpense,
     addCategory: handleAddCategory,
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,
     totalIncome, totalExpense, balance
-  }), [expenses, categories, loading, totalIncome, totalExpense, balance]);
+  }), [expenses, categories, loading, categoriesError, totalIncome, totalExpense, balance]);
 
   return (
     <FinanceContext.Provider value={value}>

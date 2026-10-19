@@ -11,8 +11,8 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const categorias = [
-  { name: 'Food', amount: 'R$ 1.428,00', color: '#8fbf9f' },
-  { name: 'Bills', amount: 'R$ 1.092,00', color: '#7ea8d8' },
+  { name: 'Alimentação', amount: 'R$ 1.428,00', color: '#8fbf9f' },
+  { name: 'Contas', amount: 'R$ 1.092,00', color: '#7ea8d8' },
   { name: 'Transport', amount: 'R$ 924,00', color: '#d8a36c' },
   { name: 'Leisure', amount: 'R$ 756,00', color: '#a88cc8' },
 ]
@@ -31,8 +31,8 @@ function GastosVisual() {
       </div>
       <div className="flex-1 space-y-2">
         {[
-          ['Food', '#8fbf9f', '34%'],
-          ['Bills', '#7ea8d8', '26%'],
+          ['Alimentação', '#8fbf9f', '34%'],
+          ['Contas', '#7ea8d8', '26%'],
           ['Transport', '#d8a36c', '22%'],
           ['Leisure', '#a88cc8', '18%'],
         ].map(([label, color, pct]) => (
@@ -62,8 +62,8 @@ function CategoriasVisual() {
 }
 
 const registro = [
-  { name: 'Bakery', amount: 'R$ 18,90', category: 'Food', color: '#8fbf9f' },
-  { name: 'Fuel', amount: 'R$ 210,00', category: 'Transport', color: '#d8a36c' },
+  { name: 'Padaria', amount: 'R$ 18,90', category: 'Alimentação', color: '#8fbf9f' },
+  { name: 'Combustível', amount: 'R$ 210,00', category: 'Transporte', color: '#d8a36c' },
 ]
 
 function RegistroVisual() {
