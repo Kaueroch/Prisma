@@ -3,7 +3,7 @@ import { CategoryId, CategoryInfo } from '../types';
 export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   food: { 
     id: 'food', 
-    name: 'Food', 
+    name: 'Alimentação', 
     color: '#fb923c', 
     bgClass: 'bg-orange-400', 
     textClass: 'text-black',
@@ -11,7 +11,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   },
   transport: { 
     id: 'transport', 
-    name: 'Transport', 
+    name: 'Transporte', 
     color: '#38bdf8', 
     bgClass: 'bg-sky-400', 
     textClass: 'text-black',
@@ -19,7 +19,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   },
   shopping: { 
     id: 'shopping', 
-    name: 'Shopping', 
+    name: 'Compras', 
     color: '#c084fc', 
     bgClass: 'bg-purple-400', 
     textClass: 'text-black',
@@ -27,7 +27,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   },
   bills: { 
     id: 'bills', 
-    name: 'Household bills', 
+    name: 'Contas da casa', 
     color: '#34d399', 
     bgClass: 'bg-data', 
     textClass: 'text-black',
@@ -35,7 +35,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   },
   other: { 
     id: 'other', 
-    name: 'Other', 
+    name: 'Outros', 
     color: '#a1a1aa', 
     bgClass: 'bg-zinc-400', 
     textClass: 'text-black',
@@ -43,7 +43,7 @@ export const CATEGORIES: Record<CategoryId, CategoryInfo> = {
   },
   salary: { 
     id: 'salary', 
-    name: 'Salary', 
+    name: 'Salário', 
     color: '#34d399', 
     bgClass: 'bg-data', 
     textClass: 'text-black',

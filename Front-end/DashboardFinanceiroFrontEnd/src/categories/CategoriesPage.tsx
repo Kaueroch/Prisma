@@ -131,7 +131,7 @@ export function CategoriesPage() {
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-col gap-2.5">
               <span className="text-[13px] font-medium text-fg-muted">Organização</span>
-              <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
+              <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
               <p className="text-[15px] text-fg-muted">Organize suas categorias e acompanhe os gastos.</p>
             </div>
             <button

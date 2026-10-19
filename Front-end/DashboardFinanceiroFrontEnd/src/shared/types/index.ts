@@ -22,6 +22,7 @@ export interface Expense {
   categoryId: CategoryId;
   name: string;
   type: TransactionType;
+  note?: string;
 }
 
 export type Tab = 'home' | 'transactions' | 'categories' | 'goals' | 'profile';

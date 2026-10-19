@@ -43,10 +43,9 @@ html {
   color-scheme: dark;
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(251, 191, 36, 0.25); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(251, 191, 36, 0.4); }
+/* Hide scrollbars globally (scroll still works) */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { width: 0; height: 0; display: none; background: transparent; }
 
 @theme inline {
   --font-heading: var(--font-sans);

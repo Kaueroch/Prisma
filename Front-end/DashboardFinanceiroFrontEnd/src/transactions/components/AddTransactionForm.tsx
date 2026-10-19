@@ -32,6 +32,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
   const [name, setName] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [categoryId, setCategoryId] = useState<CategoryId>('' as CategoryId)
+  const [note, setNote] = useState('')
   const [type, setType] = useState<TransactionType>(initialType)
   const [saving, setSaving] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -97,7 +98,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     setSaving(true)
     setSubmitError(null)
     try {
-      await onAdd({ amount: numericAmount, name, date, categoryId, type })
+      await onAdd({ amount: numericAmount, name, date, categoryId, type, note })
       window.dispatchEvent(new CustomEvent('prisma:celebrate'))
       showToast(
         type === 'income'
@@ -108,6 +109,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
       setName('')
       setDate(new Date().toISOString().split('T')[0])
       setCategoryId((availableCategories[0]?.id as CategoryId) ?? ('' as CategoryId))
+      setNote('')
       onClose()
     } catch (err) {
       const message = extractErrorMessage(err, 'Não foi possível salvar a transação.')
@@ -190,6 +192,15 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
                 required
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Observação (opcional)</Label>
+            <Input
+              placeholder="Ex.: Reunião de negócios"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">

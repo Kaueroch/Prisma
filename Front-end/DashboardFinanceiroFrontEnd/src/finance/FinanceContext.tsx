@@ -84,6 +84,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         descricao: newExpense.name,
         data: newExpense.date,
         categoriaId: newExpense.categoryId,
+        observacao: newExpense.note,
       });
     } catch (err) {
       console.error( 'Não foi possível criar a transação no backend:', err);
@@ -95,6 +96,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     const expense: Expense = {
       ...newExpense,
       id: financeService.nextExpenseId(),
+      note: newExpense.note,
     };
     setExpenses((prev) => {
       const updated = [expense, ...prev];

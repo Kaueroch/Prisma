@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { useAuth } from '../auth/AuthContext'
@@ -24,6 +25,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const { openTransactionForm } = useTransactionForm()
   const { user } = useAuth()
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(initialMonthFilter)
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [mask, setMask] = useState(() => {
     const stored = localStorage.getItem('prisma:mask')
     if (stored !== null) return stored === '1'
@@ -68,7 +70,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         <div className="flex flex-col gap-2.5">
           <span className="text-[13px] font-medium text-fg-muted capitalize">{todayLabel}</span>
           <div className="flex items-center gap-4">
-            <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Olá, {firstName}</h1>
+            <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Olá, {firstName}</h1>
             <button
               type="button"
               onClick={toggleMask}
@@ -81,22 +83,43 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           </div>
           <p className="text-[15px] text-fg-muted">{greeting}</p>
         </div>
-        <div className="flex flex-wrap items-stretch gap-3">
-          <MonthPickerTinta value={selectedMonth} onChange={setSelectedMonth} />
-          <button
-            type="button"
-            onClick={() => openTransactionForm('income')}
-            className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
-          >
-            <Plus className="size-4" strokeWidth={2.2} /> Receita
-          </button>
-          <button
-            type="button"
-            onClick={() => openTransactionForm('expense')}
-            className="flex items-center gap-2 rounded-lg border border-edge bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-brand/40 hover:bg-white/[0.06]"
-          >
-            <Plus className="size-4" strokeWidth={2.2} /> Despesa
-          </button>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-stretch gap-3">
+            <button
+              type="button"
+              onClick={() => openTransactionForm('income')}
+              className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
+            >
+              <Plus className="size-4" strokeWidth={2.2} /> Receita
+            </button>
+            <button
+              type="button"
+              onClick={() => openTransactionForm('expense')}
+              className="flex items-center gap-2 rounded-lg border border-edge bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:border-brand/40 hover:bg-white/[0.06]"
+            >
+              <Plus className="size-4" strokeWidth={2.2} /> Despesa
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(v => !v)}
+              className="flex items-center gap-2 text-sm font-medium text-fg-muted hover:text-fg"
+            >
+              {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              Filtros avançados
+            </button>
+          </div>
+          <AnimatePresence>
+            {showAdvanced && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <MonthPickerTinta value={selectedMonth} onChange={setSelectedMonth} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </header>
 

@@ -40,6 +40,8 @@ export interface CriarTransacaoPayload {
   categoria_id: number;
   /** Logged-in user UUID — backend confere com o dono do token, nunca confia só nele */
   user_id: string | null;
+  /** Observação opcional */
+  observacao?: string | null;
 }
 
 /** Friendly input from the transaction form (date comes as yyyy-MM-dd from <input type="date">) */
@@ -49,6 +51,8 @@ export interface NovaTransacaoInput {
   /** Date as "yyyy-MM-dd" (HTML date input value) */
   data: string;
   categoriaId: string | number;
+  /** Observação opcional */
+  observacao?: string;
 }
 
 /** Convert "yyyy-MM-dd" → "dd/MM/yyyy" as required by Transacao.java */
@@ -122,6 +126,7 @@ export const transacoesApi = {
       data: toBackendDate(input.data),
       categoria_id: Number(input.categoriaId),
       user_id: getUserIdFromToken(getToken()),
+      observacao: input.observacao?.trim() || null,
     };
 
     // Debug: mostra exatamente o que será enviado no POST.

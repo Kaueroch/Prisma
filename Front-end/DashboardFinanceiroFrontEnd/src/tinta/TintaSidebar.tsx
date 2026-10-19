@@ -102,7 +102,7 @@ export function TintaSidebar({
     >
       <div className={cn('flex items-center', expanded ? 'justify-start gap-3 px-4' : 'justify-center')}>
         <div className="group flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand transition-transform duration-200 hover:scale-105" aria-hidden>
-          <TrendingUp className="size-4 text-white" strokeWidth={2.6} />
+          <TrendingUp className="size-4 text-black" strokeWidth={2.6} />
         </div>
         {expanded && (
           <span className="truncate text-base font-bold tracking-tight text-fg">Prisma</span>
@@ -139,8 +139,8 @@ export function TintaSidebar({
           aria-label="Sair"
           onClick={logout}
           className={cn(
-            'flex h-11 w-full items-center gap-3 text-fg-subtle transition-all duration-150 outline-none hover:bg-white/[0.04] hover:text-fg',
-            'focus-visible:ring-2 focus-visible:ring-brand',
+            'flex h-11 w-full items-center gap-3 text-red-400 transition-all duration-150 outline-none hover:bg-red-500/15 hover:text-red-300 shadow-[0_0_10px_rgba(248,113,113,0.25)]',
+            'focus-visible:ring-2 focus-visible:ring-red-500',
             expanded ? 'justify-start rounded-xl px-3.5 mx-2 w-[calc(100%-16px)]' : 'justify-center rounded-xl mx-auto w-11',
           )}
         >

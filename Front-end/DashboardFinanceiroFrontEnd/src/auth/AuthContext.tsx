@@ -122,7 +122,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser({ email, name: data.nome ?? email, token: data.token });
 
       // Reload the page so FinanceContext mounts with cleared localStorage
-      window.location.href = '/';
+      window.location.href = '/painel';
       return null;
     } catch (error) {
       console.error("Sign-in error:", error);
@@ -155,7 +155,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = () => {
     clearStoredSession();
     clearLocalFinanceData();
-    window.location.hash = '#/login';
+    window.location.href = '/#/login';
     window.location.reload();
   };
 

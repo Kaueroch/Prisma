@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, ReceiptText } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { resolveSymbol } from '../shared/components/CategorySymbol'
@@ -15,9 +14,9 @@ import {
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
-import { formatBRL, formatDateBR, formatMonthYear, matchesMonthFilter, formatMonthFilter } from '../shared/utils/formatters'
+import { formatBRL, formatDateBR, matchesMonthFilter, formatMonthFilter } from '../shared/utils/formatters'
 import { initialMonthFilter } from '../shared/services/prefsService'
-import type { CategoryId, MonthFilter } from '../shared/types'
+import type { CategoryId, MonthFilter, Expense } from '../shared/types'
 
 export function TransactionsPage() {
   const { expenses, categories } = useFinance()
@@ -25,20 +24,22 @@ export function TransactionsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
-  const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<MonthFilter>(initialMonthFilter)
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
+  const [expandedTxId, setExpandedTxId] = useState<string | null>(null)
 
   const goToPrevMonth = () => {
     setSelectedMonth(prev => {
-      if (prev.month === 0) return { month: 11, year: prev.year - 1 }
-      return { month: prev.month - 1, year: prev.year }
+      if (prev.month === 0) return { month: 11, year: prev.year - 1, all: false }
+      return { month: prev.month - 1, year: prev.year, all: false }
     })
   }
 
   const goToNextMonth = () => {
     setSelectedMonth(prev => {
-      if (prev.month === 11) return { month: 0, year: prev.year + 1 }
-      return { month: prev.month + 1, year: prev.year }
+      if (prev.month === 11) return { month: 0, year: prev.year + 1, all: false }
+      return { month: prev.month + 1, year: prev.year, all: false }
     })
   }
 
@@ -51,18 +52,15 @@ export function TransactionsPage() {
       return matchSearch && matchCat && matchType && matchMonth
     })
 
-    const groups: Record<string, { total: number; maxExpense: typeof filtered[0] | null; items: typeof filtered }> = {}
+    const groups: Record<string, { total: number; items: typeof filtered }> = {}
 
     for (const expense of filtered) {
       if (!groups[expense.categoryId]) {
-        groups[expense.categoryId] = { total: 0, maxExpense: null, items: [] }
+        groups[expense.categoryId] = { total: 0, items: [] }
       }
       const group = groups[expense.categoryId]
       group.total += expense.amount
       group.items.push(expense)
-      if (!group.maxExpense || expense.amount > group.maxExpense.amount) {
-        group.maxExpense = expense
-      }
     }
 
     Object.values(groups).forEach(g => {
@@ -71,7 +69,7 @@ export function TransactionsPage() {
 
     return Object.entries(groups).map(([id, data]) => ({
       id: id as CategoryId,
-      ...data
+      ...data,
     })).sort((a, b) => b.total - a.total)
   }, [expenses, searchQuery, filterCategory, filterType, selectedMonth])
 
@@ -80,7 +78,7 @@ export function TransactionsPage() {
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
           <span className="text-[13px] font-medium text-fg-muted">Atividade</span>
-          <h1 className="font-display text-5xl leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
+          <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
           <p className="text-[15px] text-fg-muted">Toda a sua movimentação em um só lugar.</p>
         </div>
         <button
@@ -93,67 +91,97 @@ export function TransactionsPage() {
         </button>
       </div>
 
-      <div className="mb-6 flex flex-col md:flex-row gap-3">
-        <div className="flex-1 relative border border-edge bg-surface">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
-          <Input
-            placeholder="Buscar transações..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 rounded-lg border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
-          />
-        </div>
-        <div className="flex gap-4">
-          <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v as CategoryId | 'all')}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              {categories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={filterType} onValueChange={(v) => setFilterType(v as 'all' | 'income' | 'expense')}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="income">Receitas</SelectItem>
-              <SelectItem value="expense">Despesas</SelectItem>
-            </SelectContent>
-          </Select>
-          <div className="flex items-center gap-1 bg-surface p-1 border border-edge">
-            {!selectedMonth.all && (
-              <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            )}
-            <span className="text-xs px-2 min-w-[120px] text-center text-fg-muted capitalize tabular-nums">
-              {formatMonthFilter(selectedMonth)}
-            </span>
-            {!selectedMonth.all && (
-              <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-lg">
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-            <button
-              type="button"
-              onClick={() => setSelectedMonth(prev => prev.all
-                ? { month: new Date().getMonth(), year: new Date().getFullYear(), all: false }
-                : { ...prev, all: true })}
-              className={`rounded-lg border px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                selectedMonth.all
-                  ? 'border-brand bg-brand-soft text-brand'
-                  : 'border-edge bg-transparent text-fg-muted hover:border-brand/40 hover:text-fg'
-              }`}
-            >
-              {selectedMonth.all ? 'Por mês' : 'Todos'}
-            </button>
+      {/* Filtros */}
+      <div className="mb-6 flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
+          <div className="relative h-9 border border-edge bg-surface">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
+            <Input
+              placeholder="Buscar transações..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-full pl-9 rounded-lg border-0 bg-transparent text-fg placeholder:text-fg-subtle focus-visible:ring-0"
+            />
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowAdvanced(v => !v)}
+          className="flex items-center gap-2 text-sm font-medium text-fg-muted hover:text-fg self-start"
+        >
+          {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          Filtros avançados
+        </button>
+
+        <AnimatePresence>
+          {showAdvanced && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="flex flex-col gap-3 overflow-hidden"
+            >
+              <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v as CategoryId | 'all')}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Categoria">
+                    {(value: string) => value === 'all' ? 'Todas as categorias' : (categories.find((c) => c.id === value)?.name || value)}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={filterType} onValueChange={(v) => setFilterType(v as 'all' | 'income' | 'expense')}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Tipo">
+                    {(value: string) => value === 'all' ? 'Todos os tipos' : value === 'income' ? 'Receitas' : 'Despesas'}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os tipos</SelectItem>
+                  <SelectItem value="income">Receitas</SelectItem>
+                  <SelectItem value="expense">Despesas</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="flex flex-col items-stretch gap-2 bg-surface p-2 border border-edge">
+                <div className="flex items-center justify-center gap-1">
+                  {!selectedMonth.all && (
+                    <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <span className="text-xs px-2 min-w-[120px] text-center text-fg-muted capitalize tabular-nums">
+                    {formatMonthFilter(selectedMonth)}
+                  </span>
+                  {!selectedMonth.all && (
+                    <Button variant="ghost" size="icon-sm" onClick={goToNextMonth} className="rounded-lg">
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedMonth(prev => prev.all
+                    ? { month: new Date().getMonth(), year: new Date().getFullYear(), all: false }
+                    : { ...prev, all: true })}
+                  className={`rounded-lg border px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                    selectedMonth.all
+                      ? 'border-brand bg-brand-soft text-brand'
+                      : 'border-edge bg-transparent text-fg-muted hover:border-brand/40 hover:text-fg'
+                  }`}
+                >
+                  {selectedMonth.all ? 'Por mês' : 'Todos'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {categoryGroups.length === 0 ? (
@@ -174,7 +202,7 @@ export function TransactionsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-          {categoryGroups.map(({ id, total, maxExpense, items }) => {
+          {categoryGroups.map(({ id, total, items }) => {
             const catInfo = categories.find(c => c.id === id) || { name: 'Sem categoria', color: '#666', icon: 'other' as const }
             const isExpanded = expandedId === id
             const { Icon: CatIcon } = resolveSymbol('icon' in catInfo ? catInfo.icon : undefined, catInfo.name)
@@ -196,11 +224,10 @@ export function TransactionsPage() {
                       </div>
                       <span className="font-semibold">{catInfo.name}</span>
                     </div>
-                    {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                    )}
+                    <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                      {isExpanded ? 'Ver menos' : 'Ver mais'}
+                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </span>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -208,15 +235,6 @@ export function TransactionsPage() {
                     {formatBRL(total)}
                   </div>
                   <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-                    {maxExpense && (
-                      <p className="truncate">
-                        Maior gasto:{' '}
-                        <span className="font-medium text-foreground/60">
-                          {formatBRL(maxExpense.amount)}
-                        </span>{' '}
-                        ({maxExpense.name})
-                      </p>
-                    )}
                     <p>{items.length} {items.length === 1 ? 'transação' : 'transações'}</p>
                   </div>
                 </CardContent>
@@ -235,13 +253,55 @@ export function TransactionsPage() {
                           <div key={expense.id} className="flex flex-col gap-0.5">
                             <div className="flex items-start justify-between">
                               <span className="text-sm font-medium">{expense.name}</span>
-                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-data' : ''}`}>
+                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-data' : 'text-red-400'}`}>
                                 {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
                               </span>
                             </div>
                             <span className="text-[12px] text-muted-foreground">
                               {formatDateBR(expense.date, { day: '2-digit', month: 'short' })}
                             </span>
+                            {expense.note && (
+                              <span className="text-[12px] text-fg-muted italic">
+                                Obs.: {expense.note}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); setExpandedTxId(expandedTxId === expense.id ? null : expense.id) }}
+                              className="mt-1 self-start text-[11px] font-semibold text-brand hover:underline"
+                            >
+                              Ver detalhes
+                            </button>
+                            <AnimatePresence>
+                              {expandedTxId === expense.id && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="mt-2 rounded-lg border border-edge bg-surface p-3 text-sm"
+                                >
+                                  <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Tipo</span>
+                                    <span className="font-medium">{expense.type === 'income' ? 'Receita' : 'Despesa'}</span>
+                                  </div>
+                                  <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Data</span>
+                                    <span className="font-medium">{formatDateBR(expense.date)}</span>
+                                  </div>
+                                  <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Categoria</span>
+                                    <span className="font-medium">{catInfo.name}</span>
+                                  </div>
+                                  {expense.note && (
+                                    <div className="flex flex-col gap-1 mt-2">
+                                      <span className="text-muted-foreground">Observação</span>
+                                      <span className="font-medium">{expense.note}</span>
+                                    </div>
+                                  )}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
                           </div>
                         ))}
                       </div>
