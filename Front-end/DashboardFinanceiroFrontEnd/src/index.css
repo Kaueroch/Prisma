@@ -6,7 +6,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ===== Prisma tokens — âmbar sobre preto (estilo CRM) ===== */
+/* ===== Prisma tokens — preto e âmbar (identidade) =====
+ * Identidade: canvas/surface/edge + brand âmbar.
+ * Semântica: --color-positive (entrada) e --color-negative (saída).
+ * Categórica: src/shared/utils/palette.ts (fonte única, fora do CSS).
+ */
 @theme {
   --color-surface: #161310;
   --color-surface-raised: #201d19;
@@ -15,12 +19,10 @@
   --color-brand: #fbbf24;
   --color-brand-strong: #f59e0b;
   --color-brand-soft: rgba(251, 191, 36, 0.12);
-  --color-indigo: #8b5cf6;
-  --color-paper: #fbfaf6;
   --color-ink: #0c0a08;
-  --color-data: #38bdf8;
-  --color-data-strong: #0ea5e9;
-  --color-negative: #f87171;
+  /* Semântica de dados: verde = entrada, rosa = saída. */
+  --color-positive: #6fd3a0;
+  --color-negative: #d48a90;
   --color-fg: #fafaf9;
   --color-fg-muted: rgba(250, 250, 249, 0.62);
   --color-fg-subtle: rgba(250, 250, 249, 0.42);
