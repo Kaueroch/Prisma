@@ -11,7 +11,7 @@
 - **Landing page** with fintech identity and links to login and registration.
 - **Authentication** with email and password. Passwords are hashed with BCrypt, sessions use JWT Bearer tokens.
 - **Dashboard** (`home` tab): current balance, income, expenses, net savings, spending-by-category donut, and recent activity.
-- **Transactions** (`transactions` tab): income and expense entries in BRL, colored category cards, search and filters. Stored in the browser (`localStorage`).
+- **Transactions** (`transactions` tab): income and expense entries in BRL, colored category cards, search and filters. Persisted in the backend (`tb_transacoes`), with a `localStorage` cache for offline use.
 - **Categories** (`categories` tab): full CRUD backed by the Spring Boot API. Each category belongs to one user.
 - **Profile** (`profile` tab): local user view and settings entry point.
 
@@ -82,7 +82,7 @@ End-to-end flows verified in code:
 
 1. **Register and login.** `UserController.java:27-37` calls `AutenticacaoRegisterService` and `AutenticacaoLoginService`. `TokenServices.java:19-27` issues a JWT with issuer `Prisma` and subject = user UUID, expiring after `TIME_EXPIRATION_DTO` seconds. The frontend stores it under `prisma_auth_token` and sends it as `Bearer` (`Front-end/.../src/shared/services/categoriesApi.ts:42-59`). Public routes are `#/login` and `#/cadastro` (`Front-end/.../src/App.tsx:21-26`).
 2. **Categories.** `CategoriaController.java:22-43` exposes create, list, delete, and update. The frontend maps `expense/income` to `Despesas/Receita` before sending (`Front-end/.../src/finance/FinanceContext.tsx:89-93`) and falls back to `localStorage` when the API is unreachable (`FinanceContext.tsx:58-61`).
-3. **Transactions.** No transaction controller or service exists in the backend. `Transacao.java:20-40` defines `tb_transacoes` but its constructor does not assign fields. The UI therefore keeps expenses only in `localStorage` via `financeService` (`financeService.ts:8-28`, keys `finance_dashboard_expenses`, `finance_dashboard_expense_seq`).
+3. **Transactions.** `TransacaoController` exposes `POST /api/v1/transacao/criar` (returns the generated `cd_id`) and `GET /api/v1/transacao/listar`. The database is the source of truth; `financeService` (`financeService.ts:8-28`, keys `finance_dashboard_expenses`, `finance_dashboard_categories`) keeps a `localStorage` cache used when the API is unreachable.
 
 ---
 
@@ -98,6 +98,8 @@ Base URL defaults to `http://localhost:8080`. All category routes require `Autho
 | GET | `/api/v1/categoria/listar?userId={uuid}` | query `userId` (UUID from JWT `sub`) | `[{id, nome, tipoCategoria, userId}]` |
 | PUT | `/api/v1/categoria/atualizarLista?id={id}` | query `id` (integer `cd_id`) + `{id, nome, tipoCategoria}` | `200` + `{message}` |
 | DELETE | `/api/v1/categoria/deletar?id={id}` | query `id` (integer `cd_id`) | `201` + `{message}` |
+| POST | `/api/v1/transacao/criar` | `{valor, descricao, data: dd/MM/yyyy, categoria_id, user_id, observacao}` | `201` + `{id}` (the `cd_id`) |
+| GET | `/api/v1/transacao/listar` | — | `[{id, valor, descricao, data, categoria_id, categoria_nome, categoria_tipo, observacao}]` |
 
 Validation enforced by the domain: password 8–16 chars and email regex (`domain/User.java:45-54`), category name 3–15 chars and `tipoCategoria` equal to `Receita` or `Despesas` (`domain/Categoria.java:55-67`).
 
