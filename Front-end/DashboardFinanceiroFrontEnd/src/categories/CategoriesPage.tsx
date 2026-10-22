@@ -11,6 +11,7 @@ import { GoalEditor } from './GoalEditor'
 import { ConfirmDialog } from '../shared/components/ConfirmDialog'
 import { symbolicCategoryColor } from '../shared/utils/categoryColor'
 import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
+import { cn } from '@/lib/utils'
 
 /**
  * Extrai uma mensagem legível de um erro do backend.
@@ -152,7 +153,7 @@ export function CategoriesPage() {
 
       {categoriesError && (
         <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {friendlyError(categoriesError)} — verifique se o backend (porta 8081) está rodando.
+          {friendlyError(categoriesError)} — verifique se o backend (porta 8080) está rodando.
         </div>
       )}
       {!loading && (
@@ -254,64 +255,12 @@ export function CategoriesPage() {
               const isEditing = editingId === cat.id
 
               return (
-                <Card key={cat.id} className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0 group">
-                      <div className="flex items-center gap-4 flex-1">
-                        <CategorySymbol symbol={isEditing ? editSymbol : cat.icon} color={cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
-                        {isEditing ? (
-                          <div className="flex flex-col gap-2.5 flex-1">
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <Input
-                              value={editName}
-                              onChange={e => setEditName(e.target.value)}
-                              className="w-32"
-                              autoFocus
-                            />
-                            <div className="flex bg-muted p-0.5 rounded-lg border border-border">
-                              {(['expense', 'income'] as CategoryKind[]).map((kind) => (
-                                <button
-                                  key={kind}
-                                  type="button"
-                                  onClick={() => setEditType(kind)}
-                                  className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all ${editType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
-                                >
-                                  {kind === 'expense' ? 'Despesa' : 'Receita'}
-                                </button>
-                              ))}
-                            </div>
-                            <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
-                              <Check className="w-4 h-4 text-positive" />
-                            </Button>
-                            <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          <div className="grid grid-cols-6 gap-1 max-w-[280px]" role="radiogroup" aria-label="Símbolo">
-                            {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
-                              const selected = editSymbol === id
-                              return (
-                                <button
-                                  key={id}
-                                  type="button"
-                                  role="radio"
-                                  aria-checked={selected}
-                                  title={label}
-                                  aria-label={label}
-                                  onClick={() => setEditSymbol(id)}
-                                  className={`flex h-8 items-center justify-center rounded-lg border transition-all outline-none focus-visible:ring-2 focus-visible:ring-brand ${
-                                    selected
-                                      ? 'border-brand bg-brand-soft ring-1 ring-brand/40'
-                                      : 'border-edge hover:border-brand/40 hover:bg-white/[0.04]'
-                                  }`}
-                                >
-                                  <Icon className={`size-3.5 ${selected ? 'text-brand' : 'text-fg-muted'}`} strokeWidth={2} aria-hidden />
-                                </button>
-                              )
-                            })}
-                          </div>
-                          </div>
-                        ) : (
+                <div key={cat.id} className="relative">
+                  <Card className={cn('overflow-hidden transition-colors duration-150', isExpanded && 'ring-brand/40')}>
+                    <CardContent className="p-0">
+                      <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0 group">
+                        <div className="flex items-center gap-4 flex-1">
+                          <CategorySymbol symbol={cat.icon} color={cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
                           <div className="flex flex-col">
                             <span className="font-medium text-sm sm:text-base flex items-center gap-2">
                               {cat.name}
@@ -329,28 +278,103 @@ export function CategoriesPage() {
                             </span>
                             <span className="text-muted-foreground text-xs">{data.items.length} {data.items.length === 1 ? 'transação' : 'transações'}</span>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 sm:gap-4 cursor-pointer justify-between sm:justify-end" onClick={() => setExpandedId(isExpanded ? null : cat.id)}>
-                        <div className="flex flex-col items-end">
-                          <p className="text-lg font-semibold">{formatBRL(data.total)}</p>
-                          <span className="text-muted-foreground text-xs">{percent}% do total</span>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        <div className="flex items-center gap-3 sm:gap-4 cursor-pointer justify-between sm:justify-end" onClick={() => setExpandedId(isExpanded ? null : cat.id)}>
+                          <div className="flex flex-col items-end">
+                            <p className="text-lg font-semibold">{formatBRL(data.total)}</p>
+                            <span className="text-muted-foreground text-xs">{percent}% do total</span>
+                          </div>
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </CardContent>
+                  </Card>
 
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="border-t border-border"
-                        >
+                  {/* Edição: painel sobreposto. O card mantém a altura, então os
+                      outros cards não se movem enquanto o usuário escolhe. */}
+                  <AnimatePresence>
+                    {isEditing && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute inset-x-0 top-0 z-30"
+                      >
+                        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:p-6">
+                          <div className="flex items-center gap-4">
+                            <CategorySymbol symbol={editSymbol} color={cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
+                            <div className="flex flex-col gap-2.5 flex-1">
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <Input
+                                  value={editName}
+                                  onChange={e => setEditName(e.target.value)}
+                                  className="w-32"
+                                  autoFocus
+                                />
+                                <div className="flex bg-muted p-0.5 rounded-lg border border-border">
+                                  {(['expense', 'income'] as CategoryKind[]).map((kind) => (
+                                    <button
+                                      key={kind}
+                                      type="button"
+                                      onClick={() => setEditType(kind)}
+                                      className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-colors ${editType === kind ? 'bg-accent' : 'text-muted-foreground hover:text-foreground'}`}
+                                    >
+                                      {kind === 'expense' ? 'Despesa' : 'Receita'}
+                                    </button>
+                                  ))}
+                                </div>
+                                <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
+                                  <Check className="w-4 h-4 text-positive" />
+                                </Button>
+                                <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </div>
+                              <div className="grid grid-cols-6 gap-1 sm:grid-cols-12 max-w-[520px]" role="radiogroup" aria-label="Símbolo">
+                                {CATEGORY_SYMBOLS.map(({ id, label, Icon }) => {
+                                  const selected = editSymbol === id
+                                  return (
+                                    <button
+                                      key={id}
+                                      type="button"
+                                      role="radio"
+                                      aria-checked={selected}
+                                      title={label}
+                                      aria-label={label}
+                                      onClick={() => setEditSymbol(id)}
+                                      className={`flex h-8 items-center justify-center rounded-lg border transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                                        selected
+                                          ? 'border-brand bg-brand-soft ring-1 ring-brand/40'
+                                          : 'border-edge hover:border-brand/40 hover:bg-white/[0.04]'
+                                      }`}
+                                    >
+                                      <Icon className={`size-3.5 ${selected ? 'text-brand' : 'text-fg-muted'}`} strokeWidth={2} aria-hidden />
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Detalhes: painel sobreposto. Expandir não muda a altura do
+                      card, então os outros cards (e seus ícones) não se movem. */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute inset-x-0 top-full z-20 mt-px"
+                      >
+                        <div className="border border-border bg-card">
                           <div className="px-4 pt-4">
                             <GoalEditor categoryId={cat.id} expenses={expenses} />
                           </div>
@@ -369,11 +393,11 @@ export function CategoriesPage() {
                               ))
                             )}
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </CardContent>
-                </Card>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )
             })}
           </div>
