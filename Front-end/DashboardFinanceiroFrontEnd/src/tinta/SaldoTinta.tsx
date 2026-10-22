@@ -24,7 +24,7 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
   }, [total])
 
   return (
-    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-xl border border-edge bg-surface p-6">
+    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-none border border-edge bg-surface p-6">
       <div className="flex items-center justify-between gap-4">
         <span className="text-[13px] font-medium text-fg-muted">Saldo atual</span>
         <span className="text-xs text-fg-subtle">
@@ -52,10 +52,6 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
           <span className="truncate text-[13px] text-fg-subtle">All local activity</span>
         </motion.div>
       )}
-      <div className="flex flex-wrap gap-2">
-        <span className="rounded-full border border-edge bg-brand-soft px-4 py-1.5 text-[13px] font-semibold text-fg">Todas</span>
-        <span className="rounded-full border border-edge bg-white/[0.03] px-4 py-1.5 text-[13px] text-fg-muted">Contas de bots em breve</span>
-      </div>
     </section>
   )
 }

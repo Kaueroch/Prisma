@@ -164,12 +164,8 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         </div>
       </header>
 
-      <OrganizerFlow
-        expenses={filtered}
-        onNavigate={(tab) => setActiveTab?.(tab)}
-      />
-
-      <section className="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-[400px_1fr]">
+      {/* Saldo e histórico: o mesmo grupo dos números (mb-4). */}
+      <section className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-[420px_1fr]">
         <div>
           <SaldoTinta total={balance} count={filtered.length} loading={loading} mask={mask} />
         </div>
@@ -195,6 +191,11 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           ]}
         />
       </div>
+
+      <OrganizerFlow
+        expenses={filtered}
+        onNavigate={(tab) => setActiveTab?.(tab)}
+      />
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
         <div className="flex min-w-0 flex-col gap-6">
