@@ -98,7 +98,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const labels = ['', 'Fraca', 'Razoável', 'Boa', 'Forte', 'Segura']
-    const colors = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-brand', 'bg-brand']
+    const colors = ['', 'bg-destructive', 'bg-negative', 'bg-brand-soft', 'bg-brand', 'bg-brand']
     return { score, label: labels[score], color: colors[score], width: `${(score / 5) * 100}%` }
   }, [password])
 
@@ -373,8 +373,8 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                           exit={{ opacity: 0, height: 0 }}
                           className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-sm font-medium mb-4 overflow-hidden ${
                             error
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-data/10 text-data border border-data/20'
+                              ? 'bg-destructive/10 text-destructive border border-destructive/20'
+                              : 'bg-positive/10 text-positive border border-positive/20'
                           }`}
                         >
                           {error ? <AlertCircle className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
@@ -411,7 +411,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-data/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-positive/40' : 'border-destructive/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -423,9 +423,9 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-data" />
+                                          <CheckCircle className="w-4 h-4 text-positive" />
                                         ) : (
-                                          <XCircle className="w-4 h-4 text-red-500" />
+                                          <XCircle className="w-4 h-4 text-destructive" />
                                         )}
                                       </motion.div>
                                     )}
@@ -497,7 +497,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     value={field.value}
                                     onChange={e => field.setter(e.target.value)}
                                     className={`pl-9 pr-9 transition-[border-color,box-shadow] duration-300 ${
-                                      field.value && (field.valid ? 'border-data/40' : 'border-red-500/40')
+                                      field.value && (field.valid ? 'border-positive/40' : 'border-destructive/40')
                                     }`}
                                   />
                                   <AnimatePresence>
@@ -509,9 +509,9 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                         className="absolute right-3 top-1/2 -translate-y-1/2"
                                       >
                                         {field.valid ? (
-                                          <CheckCircle className="w-4 h-4 text-data" />
+                                          <CheckCircle className="w-4 h-4 text-positive" />
                                         ) : (
-                                          <XCircle className="w-4 h-4 text-red-500" />
+                                          <XCircle className="w-4 h-4 text-destructive" />
                                         )}
                                       </motion.div>
                                     )}
@@ -553,7 +553,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
                                     animate={{ height: 'auto', opacity: 1 }}
                                     className="overflow-hidden"
                                   >
-                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-data' : 'text-red-500'}`}>
+                                    <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${passwordsMatch ? 'text-positive' : 'text-destructive'}`}>
                                       {passwordsMatch ? (
                                         <><CheckCircle className="w-3 h-3" /> Senhas coincidem</>
                                       ) : (
@@ -618,7 +618,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       <Dialog open={!!popupMessage} onOpenChange={(open) => !open && setPopupMessage('')}>
         <DialogContent showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-500">
+            <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertCircle className="w-5 h-5" />
               Não foi possível continuar
             </DialogTitle>

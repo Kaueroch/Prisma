@@ -133,7 +133,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
           <CardContent className="p-5 sm:p-6">
             <form onSubmit={salvarNome} className="space-y-4">
               {erroNome && (
-                <div className="px-4 py-3 rounded-lg text-sm font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                <div className="px-4 py-3 rounded-lg text-sm font-medium bg-destructive/10 text-destructive border border-destructive/20">
                   {erroNome}
                 </div>
               )}
@@ -249,16 +249,16 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
           <h3 className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-3 pl-1">
             Zona de atenção
           </h3>
-          <Card className="border-red-500/40 shadow-[0_0_16px_rgba(248,113,113,0.25)]">
+          <Card className="border-destructive/40">
             <CardContent className="p-0">
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-4 p-5 hover:bg-red-500/10 transition-colors rounded-2xl text-red-400"
+                className="w-full flex items-center gap-4 p-5 hover:bg-destructive/10 transition-colors rounded-2xl text-destructive"
               >
-                <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center shadow-[0_0_12px_rgba(248,113,113,0.4)]">
-                  <LogOut className="w-5 h-5 text-red-400" />
+                <div className="w-10 h-10 rounded-xl bg-destructive/20 flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-destructive" />
                 </div>
-                <span className="flex-1 text-left font-medium text-red-400">Sair</span>
+                <span className="flex-1 text-left font-medium text-destructive">Sair</span>
               </button>
             </CardContent>
           </Card>
