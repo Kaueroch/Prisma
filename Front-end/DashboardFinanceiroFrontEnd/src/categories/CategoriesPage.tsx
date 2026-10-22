@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useFinance } from '../finance/useFinance'
 import type { CategoryId, CategoryKind, CategoryInfo, Expense } from '../shared/types'
-import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X } from 'lucide-react'
+import { Plus, ChevronDown, ChevronUp, Trash2, Edit2, Check, X, Tags } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -247,6 +247,27 @@ export function CategoriesPage() {
             )}
           </AnimatePresence>
 
+          {categories.length === 0 && !categoriesError ? (
+            /* Sem categorias: a tela ficava preta. Agora ela diz o que falta
+               e oferece o caminho para resolver. */
+            <div className="flex flex-col items-center gap-3 border border-edge bg-surface px-6 py-16 text-center">
+              <span className="flex size-12 items-center justify-center rounded-xl bg-brand-soft">
+                <Tags className="size-6 text-brand" strokeWidth={1.8} />
+              </span>
+              <p className="font-display text-lg text-fg">Nenhuma categoria ainda</p>
+              <p className="max-w-[380px] text-sm text-fg-muted">
+                Categorias dão nome e cor aos seus gastos. Crie a primeira e o painel passa a mostrar para onde o dinheiro foi.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsAdding(true)}
+                className="mt-2 flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-brand-strong"
+              >
+                <Plus className="h-4 w-4" strokeWidth={2.2} />
+                Criar primeira categoria
+              </button>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {categories.map((cat) => {
               const data = grouped[cat.id] || { total: 0, items: [] }
@@ -401,6 +422,7 @@ export function CategoriesPage() {
               )
             })}
           </div>
+          )}
         </>
       )}
 
