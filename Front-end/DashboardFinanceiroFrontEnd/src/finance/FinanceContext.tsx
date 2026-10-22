@@ -1,10 +1,10 @@
-import { createContext, useState, useEffect, useMemo, type ReactNode } from 'react';
+import { createContext, useState, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { Expense, CategoryInfo, CategoryKind } from '../shared/types';
 import { financeService } from '../shared/services/financeService';
-import { categoriesApi, getLoggedUserId } from '../shared/services/categoriesApi';
+import { categoriesApi, getLoggedUserId, type BackendCategoria } from '../shared/services/categoriesApi';
 import { symbolicCategoryColor } from '../shared/utils/categoryColor';
 import { symbolicCategorySymbol } from '../shared/components/CategorySymbol';
-import { transacoesApi } from '../shared/services/transacoesApi';
+import { transacoesApi, type BackendTransacao } from '../shared/services/transacoesApi';
 
 interface FinanceContextType {
   expenses: Expense[];
@@ -12,7 +12,7 @@ interface FinanceContextType {
   loading: boolean;
   categoriesError: string | null;
   addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
-  addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<void>;
+  addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<CategoryInfo>;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => Promise<void>;
   deleteCategory: (id: string, nome?: string) => Promise<void>;
   totalIncome: number;
@@ -21,6 +21,86 @@ interface FinanceContextType {
 }
 
 export const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
+
+/** "dd/MM/yyyy" (banco) → "yyyy-MM-dd" (formato interno do front). */
+function toIsoDate(backendDate: string): string {
+  const parts = backendDate.split('/');
+  if (parts.length !== 3) return backendDate;
+  const [day, month, year] = parts;
+  return `${year}-${month}-${day}`;
+}
+
+/** Converte a transação do back-end para o formato interno do front. */
+function toExpense(t: BackendTransacao): Expense {
+  return {
+    // O id é o cd_id do banco — o mesmo que o front usa para referenciar.
+    id: String(t.id),
+    amount: Number(t.valor),
+    name: t.descricao,
+    date: toIsoDate(t.data),
+    categoryId: t.categoria_id != null ? String(t.categoria_id) : '',
+    type: t.categoria_tipo === 'Receita' ? 'income' : 'expense',
+    note: t.observacao ?? undefined,
+  };
+}
+
+/**
+ * Chave de equivalência entre um lançamento do cache local e um do banco.
+ * Mesmo valor, descrição e data = o mesmo lançamento.
+ */
+function sameExpense(a: Expense, b: Expense): boolean {
+  return (
+    a.name.trim() === b.name.trim() &&
+    Math.abs(a.amount - b.amount) < 0.01 &&
+    a.date === b.date
+  );
+}
+
+/**
+ * Envia ao back-end os lançamentos que existem só no cache local.
+ *
+ * Só sobe o que tem categoria válida do banco (cd_id numérico) — lançamento
+ * com categoria local ("food", UUID) não tem como ser gravado, e por isso
+ * continua apenas no cache.
+ */
+async function pushMissingToBackend(
+  cached: Expense[],
+  fromBackend: Expense[],
+  backendCategories: BackendCategoria[] | null,
+): Promise<Expense[]> {
+  if (cached.length === 0) return fromBackend;
+
+  const validCategoryIds = new Set(
+    (backendCategories ?? []).map((c) => String(c.id)),
+  );
+
+  const missing = cached.filter((c) => {
+    if (fromBackend.some((b) => sameExpense(b, c))) return false;
+    return validCategoryIds.has(c.categoryId);
+  });
+
+  if (missing.length === 0) return fromBackend;
+
+  const sent: Expense[] = [];
+  for (const expense of missing) {
+    try {
+      const id = await transacoesApi.criar({
+        valor: expense.amount,
+        descricao: expense.name,
+        data: expense.date,
+        categoriaId: expense.categoryId,
+        observacao: expense.note,
+      });
+      sent.push({ ...expense, id: String(id) });
+    } catch (err) {
+      // Falhou ao sincronizar: mantém no cache e tenta de novo na próxima carga.
+      console.warn('Não foi possível sincronizar um lançamento local:', err);
+      sent.push(expense);
+    }
+  }
+
+  return [...sent, ...fromBackend];
+}
 
 interface FinanceProviderProps {
   children: ReactNode;
@@ -31,6 +111,14 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const [categories, setCategories] = useState<CategoryInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
+  /**
+   * Garante que a carga inicial rode uma única vez.
+   *
+   * Em StrictMode (dev) o effect é montado duas vezes e as duas cargas
+   * assíncronas ficam em paralelo: as duas veriam o mesmo cache e
+   * enviariam o mesmo lançamento local para o banco duas vezes.
+   */
+  const loadedRef = useRef(false);
 
   useEffect(() => {
     function onTelegram(e: Event) {
@@ -43,14 +131,17 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   }, [])
 
   useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
     const loadData = async () => {
-      setExpenses(financeService.getExpenses());
       setCategoriesError(null);
 
       // Load categories from the backend; fall back to localStorage on failure
+      let backendCategories: BackendCategoria[] | null = null;
       try {
         const userId = getLoggedUserId();
-        const backendCategories = await categoriesApi.listar(userId);
+        backendCategories = await categoriesApi.listar(userId);
         const mapped = backendCategories.map((c) => ({
           // Use the cd_id from the database, never a fabricated id here.
           // Color and symbol are symbolic and local-only (backend has no such fields).
@@ -63,10 +154,29 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
           type: (c.tipoCategoria === 'Despesas' ? 'expense' : 'income') as CategoryKind,
         }));
         setCategories(mapped);
+        // Cache local: só para o caso do back-end ficar fora do ar.
+        financeService.saveCategories(mapped);
       } catch (err) {
         console.warn('Could not load categories from the backend, using localStorage:', err);
         setCategories(financeService.getCategories());
         setCategoriesError(err instanceof Error ? err.message : 'Não foi possível carregar as categorias do backend.');
+      }
+
+      // Load transactions from the backend — it is the source of truth.
+      // The localStorage copy is only a cache for when the API is down.
+      const cached = financeService.getExpenses();
+      try {
+        const backendExpenses = await transacoesApi.listar();
+        const mapped = backendExpenses.map(toExpense);
+        // Anything still cached that the backend does not know about is
+        // offered to the backend, so nothing the user already recorded is
+        // lost when the API comes back up.
+        const merged = await pushMissingToBackend(cached, mapped, backendCategories);
+        setExpenses(merged);
+        financeService.saveExpenses(merged);
+      } catch (err) {
+        console.warn('Could not load transactions from the backend, using localStorage:', err);
+        setExpenses(cached);
       }
 
       setLoading(false);
@@ -78,8 +188,9 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     // 1. Persist in the backend first: POST /api/v1/transacao/criar.
     // The payload mapping (valor/descricao/data dd/MM/yyyy/categoria_id direto)
     // follows the TransacaoDTO record contract.
+    let createdId: number;
     try {
-      await transacoesApi.criar({
+      createdId = await transacoesApi.criar({
         valor: newExpense.amount,
         descricao: newExpense.name,
         data: newExpense.date,
@@ -93,9 +204,11 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
     // 2. Only mirror locally after the database confirms the creation,
     // so the UI never lies about state (same pattern as categories).
+    // The id is the cd_id generated by the database — not a local counter —
+    // so the cache and the database always agree.
     const expense: Expense = {
       ...newExpense,
-      id: financeService.nextExpenseId(),
+      id: String(createdId),
       note: newExpense.note,
     };
     setExpenses((prev) => {
@@ -106,7 +219,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   };
 
   // Add a new category by sending it to the backend via API
-  const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>) => {
+  const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>): Promise<CategoryInfo> => {
     try {
       // Get the logged-in user UUID (JWT "sub" claim) to link the category
       const userId = getLoggedUserId();
@@ -130,6 +243,7 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
         financeService.saveCategories(updated);
         return updated;
       });
+      return category;
     } catch (err) {
       console.error('Could not create category in the backend:', err);
       throw err;

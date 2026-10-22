@@ -11,11 +11,7 @@
  */
 
 import { getUserIdFromToken } from '../utils/token';
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
-
-/** localStorage key where the logged-in user JWT is stored */
-const TOKEN_STORAGE_KEY = 'prisma_auth_token';
+import { API_URL, authHeaders, getToken } from './api';
 
 /** Interface for a category returned by the backend */
 export interface BackendCategoria {
@@ -39,23 +35,9 @@ export interface AtualizarCategoriaPayload {
   tipoCategoria: string;
 }
 
-/** Read the stored JWT from localStorage for auth */
-function getToken(): string | null {
-  return localStorage.getItem(TOKEN_STORAGE_KEY);
-}
-
 /** Get the logged-in user ID (UUID) from the stored JWT */
 export function getLoggedUserId(): string | null {
   return getUserIdFromToken(getToken());
-}
-
-/** Build the auth headers for HTTP requests */
-function authHeaders(): Record<string, string> {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
 }
 
 export const categoriesApi = {

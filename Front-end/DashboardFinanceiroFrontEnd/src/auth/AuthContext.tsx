@@ -5,6 +5,7 @@
 
 import React, { createContext, useState, useEffect, useMemo, ReactNode, useContext } from 'react';
 import { isTokenValid } from '../shared/utils/token';
+import { API_URL } from '../shared/services/api';
 
 interface User {
   email: string;
@@ -28,8 +29,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 interface AuthProviderProps {
   children: ReactNode;
 }
-
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
 function clearStoredSession() {
   localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -118,11 +117,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Flag the welcome popup to show after reload
       localStorage.setItem(WELCOME_FLAG_KEY, 'true');
 
-      // Set the user (this already updates the name up in the header)
+      // Set the user (this already updates the name up in the header).
+      // No reload needed: PublicGate detects the user and renders the app.
       setUser({ email, name: data.nome ?? email, token: data.token });
-
-      // Reload the page so FinanceContext mounts with cleared localStorage
-      window.location.href = '/painel';
       return null;
     } catch (error) {
       console.error("Sign-in error:", error);
