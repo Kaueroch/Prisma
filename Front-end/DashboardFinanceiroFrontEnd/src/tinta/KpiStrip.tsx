@@ -59,13 +59,15 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
           <div
             key={label}
             className={cn(
-              'group flex min-h-[132px] flex-1 flex-col justify-between gap-4 px-6 py-5 transition-colors duration-150 hover:bg-white/[0.02]',
+              // min-w-0: sem isso a célula não encolhe abaixo do conteúdo e a
+              // tira estoura a largura da tela entre 640px e 900px.
+              'group flex min-h-[132px] min-w-0 flex-1 flex-col justify-between gap-4 px-6 py-5 transition-colors duration-150 hover:bg-white/[0.02]',
               i < n - 1 && 'border-b border-edge sm:border-b-0 sm:border-r',
             )}
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-[13px] font-medium text-fg-muted">{label}</span>
-              <span className="flex items-center gap-2">
+              <span className="min-w-0 truncate text-[13px] font-medium text-fg-muted">{label}</span>
+              <span className="flex shrink-0 items-center gap-2">
                 {hasDelta && (
                   <span
                     className={cn(
@@ -87,7 +89,9 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
             ) : (
               <span
                 className={cn(
-                  'font-display text-[34px] leading-10 font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap',
+                  // truncate + tamanho responsivo: o número é o item mais largo
+                  // da célula e, em tela estreita, encolhe em vez de vazar.
+                  'font-display text-[26px] leading-8 font-medium tracking-[-0.02em] tabular-nums truncate sm:text-[28px] sm:leading-9 xl:text-[34px] xl:leading-10',
                   toneText[tone],
                 )}
               >

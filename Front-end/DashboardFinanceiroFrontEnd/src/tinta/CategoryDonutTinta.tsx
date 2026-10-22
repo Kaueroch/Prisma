@@ -56,7 +56,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: DonutDatum
     <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
       <div className="flex flex-col gap-1.5">
         <span className="text-[13px] font-medium text-fg-muted">Gastos por categoria</span>
-        <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">
+        <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg break-words">
           Para onde foi o dinheiro
         </h2>
       </div>
@@ -183,7 +183,9 @@ export function CategoryDonutTinta({ data, loading = false }: { data: DonutDatum
               </AnimatePresence>
             </div>
           </div>
-          <ul className="flex w-full flex-1 flex-col">
+          {/* min-w-0: sem isso a legenda trava na soma das colunas fixas
+              (% + valor) e transborda a borda do card em tela estreita. */}
+          <ul className="flex min-w-0 flex-1 flex-col">
             {slices.map((s, i) => {
               const pct = total > 0 ? (s.value / total) * 100 : 0
               const isActive = activeIndex === i
@@ -204,8 +206,8 @@ export function CategoryDonutTinta({ data, loading = false }: { data: DonutDatum
                   <span className={`min-w-0 flex-1 truncate text-sm ${s.muted ? 'text-fg-muted' : 'text-fg'}`}>
                     {s.name}
                   </span>
-                  <span className="w-12 shrink-0 text-right text-xs text-fg-subtle tabular-nums">{pct.toFixed(0)}%</span>
-                  <span className="w-28 shrink-0 text-right font-display text-sm font-medium tabular-nums text-fg">
+                  <span className="w-10 shrink-0 text-right text-xs text-fg-subtle tabular-nums sm:w-12">{pct.toFixed(0)}%</span>
+                  <span className="w-24 shrink-0 text-right font-display text-sm font-medium tabular-nums text-fg sm:w-28">
                     {formatBRL(s.value)}
                   </span>
                 </li>
