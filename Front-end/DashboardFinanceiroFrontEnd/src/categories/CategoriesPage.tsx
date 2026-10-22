@@ -8,8 +8,27 @@ import { Input } from '@/components/ui/input'
 import { motion, AnimatePresence } from 'motion/react'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
 import { GoalEditor } from './GoalEditor'
+import { ConfirmDialog } from '../shared/components/ConfirmDialog'
 import { symbolicCategoryColor } from '../shared/utils/categoryColor'
 import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
+
+/**
+ * Extrai uma mensagem legível de um erro do backend.
+ * O backend às vezes devolve JSON cru (`{"error":"..."}`) — mostrar isso
+ * na tela é ruído; aqui vira uma frase.
+ */
+function friendlyError(raw: string): string {
+  const trimmed = raw.trim()
+  if (!trimmed.startsWith('{')) return trimmed
+  try {
+    const parsed = JSON.parse(trimmed) as Record<string, unknown>
+    const message = parsed.error ?? parsed.message
+    if (typeof message === 'string' && message) return message
+  } catch {
+    // JSON inválido: cai no retorno abaixo.
+  }
+  return 'Não foi possível carregar as categorias.'
+}
 
 export function CategoriesPage() {
   const { categories, expenses, addCategory, deleteCategory, updateCategory, loading, categoriesError } = useFinance()
@@ -23,6 +42,10 @@ export function CategoriesPage() {
   const [editName, setEditName] = useState('')
   const [editSymbol, setEditSymbol] = useState('')
   const [editType, setEditType] = useState<CategoryKind>('expense')
+  /** Aviso modal no lugar de `alert()`. */
+  const [notice, setNotice] = useState<{ title: string; description: string } | null>(null)
+  /** Categoria aguardando confirmação de exclusão. */
+  const [pendingDelete, setPendingDelete] = useState<CategoryInfo | null>(null)
   const newAutomáticoColor = symbolicCategoryColor(newCatName.trim() || '?')
   const pickSymbol = (id: string) => {
     setNewCatSymbol(id)
@@ -52,7 +75,7 @@ export function CategoriesPage() {
   const handleAdd = async () => {
     if (!newCatName.trim()) return
     if (categories.some(c => c.name.toLowerCase() === newCatName.trim().toLowerCase())) {
-      alert('Já existe uma categoria com esse nome.')
+      setNotice({ title: 'Nome já usado', description: 'Já existe uma categoria com esse nome.' })
       return
     }
     try {
@@ -71,35 +94,41 @@ export function CategoriesPage() {
       setIsAdding(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
-      alert(message || 'Não foi possível criar a categoria. Verifique se o backend está rodando.')
+      setNotice({ title: 'Não foi possível criar a categoria', description: message || 'Verifique se o backend está rodando.' })
     }
   }
 
   const handleDelete = async (cat: CategoryInfo) => {
     if ((grouped[cat.id]?.items.length ?? 0) > 0) {
-      alert('Não dá para excluir: essa categoria tem transações vinculadas.')
+      setNotice({ title: 'Categoria com transações', description: 'Não dá para excluir: essa categoria tem transações vinculadas.' })
       return
     }
-    if (!window.confirm(`Excluir a categoria "${cat.name}"?`)) return
+    setPendingDelete(cat)
+  }
 
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
     try {
-      await deleteCategory(cat.id, cat.name)
+      await deleteCategory(pendingDelete.id, pendingDelete.name)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Não foi possível excluir a categoria.')
+      setNotice({ title: 'Não foi possível excluir a categoria', description: err instanceof Error ? err.message : '' })
+    } finally {
+      setPendingDelete(null)
     }
   }
 
   const handleSaveEdit = async (id: string) => {
     if (!editName.trim()) return
     if (categories.some(c => c.id !== id && c.name.toLowerCase() === editName.trim().toLowerCase())) {
-      alert('Já existe outra categoria com esse nome.')
+      setNotice({ title: 'Nome já usado', description: 'Já existe outra categoria com esse nome.' })
       return
     }
     try {
       await updateCategory(id, { name: editName.trim(), icon: editSymbol, type: editType })
       setEditingId(null)
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Não foi possível salvar. Verifique se o backend está rodando.')
+      const message = err instanceof Error ? err.message : ''
+      setNotice({ title: 'Não foi possível salvar', description: message || 'Verifique se o backend está rodando.' })
     }
   }
 
@@ -109,7 +138,7 @@ export function CategoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="border border-edge bg-surface p-6">
-              <div className="flex items-center gap-4 animate-pulse">
+              <div className="flex items-center gap-4 animate-shimmer">
                 <div className="w-12 h-12 bg-surface-raised" />
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-surface-raised w-24" />
@@ -122,8 +151,8 @@ export function CategoriesPage() {
       )}
 
       {categoriesError && (
-        <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          {categoriesError} — verifique se o backend (porta 8081) está rodando.
+        <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {friendlyError(categoriesError)} — verifique se o backend (porta 8081) está rodando.
         </div>
       )}
       {!loading && (
@@ -252,7 +281,7 @@ export function CategoriesPage() {
                               ))}
                             </div>
                             <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
-                              <Check className="w-4 h-4 text-data" />
+                              <Check className="w-4 h-4 text-positive" />
                             </Button>
                             <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
                               <X className="w-4 h-4" />
@@ -293,7 +322,7 @@ export function CategoriesPage() {
                                 <button onClick={(e) => {
                                   e.stopPropagation()
                                   handleDelete(cat)
-                                }} className="p-1 text-red-400/60 hover:text-red-400">
+                                }} className="p-1 text-destructive/60 hover:text-destructive">
                                   <Trash2 className="w-3 h-3" />
                                 </button>
                               </span>
@@ -350,6 +379,25 @@ export function CategoriesPage() {
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        open={notice !== null}
+        title={notice?.title ?? ''}
+        description={notice?.description ?? ''}
+        confirmLabel="Entendi"
+        onConfirm={() => setNotice(null)}
+        onCancel={() => setNotice(null)}
+      />
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Excluir categoria"
+        description={`Excluir a categoria "${pendingDelete?.name ?? ''}"? Essa ação não pode ser desfeita.`}
+        confirmLabel="Excluir"
+        destructive
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   )
 }
