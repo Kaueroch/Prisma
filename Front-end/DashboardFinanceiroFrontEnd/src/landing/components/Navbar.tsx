@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowRight, Menu, Wallet, X } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { cn } from '../utils'
@@ -6,9 +6,23 @@ import { nav } from '../content'
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  // O fundo do header só ganha opacidade depois que a página rola.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-edge bg-[#0b0d12]/85 backdrop-blur-md">
+    <header
+      className={cn(
+        'sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-200',
+        scrolled ? 'border-edge bg-[#0b0d12]/95' : 'border-transparent bg-[#0b0d12]/60',
+      )}
+    >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <a href="#inicio" className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-black">
@@ -22,9 +36,11 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="px-3 py-2 text-sm text-fg-muted transition-colors duration-150 outline-none hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="group relative px-3 py-2 text-sm text-fg-muted outline-none transition-colors duration-150 hover:text-fg focus-visible:ring-2 focus-visible:ring-ring/50"
             >
               {link.label}
+              {/* Sublinhado que cresce a partir da esquerda. */}
+              <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-brand transition-transform duration-200 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
             </a>
           ))}
         </nav>
@@ -33,9 +49,9 @@ export function Navbar() {
           <Button href={nav.loginHref} variant="ghost" size="sm">
             {nav.loginLabel}
           </Button>
-          <Button href={nav.ctaHref} size="sm">
+          <Button href={nav.ctaHref} size="sm" className="group">
             {nav.ctaLabel}
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
           </Button>
         </div>
 

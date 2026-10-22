@@ -17,9 +17,9 @@ export function CTASection() {
           </h2>
           <p className="mx-auto mt-5 max-w-md text-fg-muted leading-relaxed">{finalCta.subtitle}</p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href={finalCta.href} size="lg" className="w-full sm:w-auto">
+            <Button href={finalCta.href} size="lg" className="group w-full sm:w-auto">
               {finalCta.cta}
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1" />
             </Button>
           </div>
         </Reveal>

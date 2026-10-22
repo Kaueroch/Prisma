@@ -1,13 +1,44 @@
+import { useRef, type PointerEvent as ReactPointerEvent } from 'react'
 import { ArrowRight, Check, CirclePlay } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { DashboardMockup } from './DashboardMockup'
 import { Reveal } from './Reveal'
 import { hero, statStrip } from '../content'
-import { motion } from 'motion/react'
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
 
 export function Hero() {
+  const reduce = useReducedMotion()
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Parallax: o mockup acompanha de leve o mouse (desktop).
+  const pointerX = useMotionValue(0)
+  const pointerY = useMotionValue(0)
+  const springX = useSpring(pointerX, { stiffness: 120, damping: 20 })
+  const springY = useSpring(pointerY, { stiffness: 120, damping: 20 })
+  const mockRotateY = useTransform(springX, (v) => v * 6)
+  const mockRotateX = useTransform(springY, (v) => v * -6)
+
+  const handlePointerMove = (e: ReactPointerEvent<HTMLElement>) => {
+    if (reduce) return
+    const rect = sectionRef.current?.getBoundingClientRect()
+    if (!rect) return
+    pointerX.set((e.clientX - rect.left) / rect.width - 0.5)
+    pointerY.set((e.clientY - rect.top) / rect.height - 0.5)
+  }
+
+  const handlePointerLeave = () => {
+    pointerX.set(0)
+    pointerY.set(0)
+  }
+
   return (
-    <section id="inicio" className="relative overflow-hidden">
+    <section
+      id="inicio"
+      ref={sectionRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      className="relative overflow-hidden"
+    >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-brand/[0.05] blur-[130px]" />
         <div className="absolute right-[-10%] top-1/3 h-[420px] w-[420px] rounded-full bg-white/[0.02] blur-[120px]" />
@@ -34,12 +65,12 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button href={hero.ctaHref} size="lg">
+              <Button href={hero.ctaHref} size="lg" className="group">
                 {hero.primaryCta}
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </Button>
-              <Button href="#recursos" variant="outline" size="lg">
-                <CirclePlay className="h-4 w-4" />
+              <Button href="#recursos" variant="outline" size="lg" className="group">
+                <CirclePlay className="h-4 w-4 transition-transform duration-200 ease-out group-hover:scale-110" />
                 {hero.secondaryCta}
               </Button>
             </div>
@@ -58,6 +89,11 @@ export function Hero() {
             initial={{ opacity: 0, y: 32, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+            style={
+              reduce
+                ? undefined
+                : { rotateX: mockRotateX, rotateY: mockRotateY, transformPerspective: 1200 }
+            }
           >
             <DashboardMockup />
           </motion.div>

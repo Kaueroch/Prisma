@@ -2,7 +2,7 @@ import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Minus, Plus, Wallet } from '
 import type { ReactNode } from 'react'
 
 const stats = [
-  { label: 'Total income', value: 'R$ 8.400,00', accent: 'text-data', icon: ArrowDownLeft, chip: 'bg-brand-soft text-data', note: 'On track' },
+  { label: 'Total income', value: 'R$ 8.400,00', accent: 'text-positive', icon: ArrowDownLeft, chip: 'bg-brand-soft text-positive', note: 'On track' },
   { label: 'Total de despesas', value: 'R$ 4.200,00', accent: 'text-negative', icon: ArrowUpRight, chip: 'bg-brand-soft text-negative', note: 'Agosto 2026' },
   { label: 'Savings (Net)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-surface-raised text-fg', note: 'Month difference' },
 ]
@@ -59,7 +59,7 @@ export function DashboardMockup() {
         </div>
         <div className="flex items-center gap-2 text-[11px] text-fg-muted">
           <span>Saldo:</span>
-          <span className="font-semibold text-data">R$ 4.200,00</span>
+          <span className="font-semibold text-positive">R$ 4.200,00</span>
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export function DashboardMockup() {
           <div>
             {activity.map((t, i) => (
               <div key={t.name} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? 'border-t border-edge/60' : ''}`}>
-                <span className={`flex h-7 w-7 shrink-0 items-center justify-center  ${t.type === 'income' ? 'bg-brand-soft text-data' : 'bg-surface-raised text-fg-muted'}`}>
+                <span className={`flex h-7 w-7 shrink-0 items-center justify-center  ${t.type === 'income' ? 'bg-brand-soft text-positive' : 'bg-surface-raised text-fg-muted'}`}>
                   {t.type === 'income' ? <ArrowDownLeft className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-xs font-medium">{t.name}</span>
@@ -118,8 +118,8 @@ export function DashboardMockup() {
                   <span className="h-2 w-2 " style={{ backgroundColor: t.color }} />
                   <span className="text-[11px] text-fg-muted">{t.category}</span>
                 </span>
-                <span className={`text-xs font-semibold ${t.type === 'income' ? 'text-data' : ''}`}>{t.amount}</span>
-                <span className="hidden items-center gap-1 rounded-full border border-data/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-data lg:flex">
+                <span className={`text-xs font-semibold ${t.type === 'income' ? 'text-positive' : ''}`}>{t.amount}</span>
+                <span className="hidden items-center gap-1 rounded-full border border-positive/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-positive lg:flex">
                   <CheckCircle2 className="h-3 w-3" /> Done
                 </span>
               </div>
