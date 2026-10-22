@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Target, Pencil } from 'lucide-react'
 import { getGoals, setGoal, type GoalsMap } from '../shared/services/goalsService'
 import { isSameMonth, formatBRL } from '../shared/utils/formatters'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { AnimatedProgress } from '../shared/motion/AnimatedProgress'
 import type { Expense } from '../shared/types'
 
 /** Meta mensal da categoria: define, acompanha e edita. Persiste em localStorage. */
@@ -103,15 +105,16 @@ export function GoalEditor({ categoryId, expenses }: { categoryId: string; expen
         <p className="truncate text-[13px] text-fg-muted">{goalDescription}</p>
       )}
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-display text-lg font-medium tabular-nums text-fg">{formatBRL(spent)}</span>
+        <span className="font-display text-lg font-medium tabular-nums text-fg">
+          <AnimatedNumber value={spent} format={formatBRL} />
+        </span>
         <span className="text-xs tabular-nums text-fg-muted">de {formatBRL(goal)}</span>
       </div>
-      <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
-        <span
-          className={`block h-full rounded-full transition-all ${pct >= 100 ? 'bg-negative' : 'bg-brand'}`}
-          style={{ width: `${pct}%` }}
-        />
-      </span>
+      <AnimatedProgress
+        value={pct}
+        barClassName={pct >= 100 ? 'bg-negative' : 'bg-brand'}
+        label="Orçamento usado nesta categoria"
+      />
     </div>
   )
 }

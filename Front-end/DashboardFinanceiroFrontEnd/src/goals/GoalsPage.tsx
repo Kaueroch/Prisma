@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, Plus, Target, Trash2 } from 'lucide-react'
 import { useFinance } from '../finance/useFinance'
 import { getGoals, setGoal, type GoalsMap, type Goal } from '../shared/services/goalsService'
 import { GoalModal, type GoalModalState } from './GoalModal'
 import { formatBRL, formatMonthYear, isSameMonth } from '../shared/utils/formatters'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { AnimatedProgress } from '../shared/motion/AnimatedProgress'
+import { ConfirmDialog } from '../shared/components/ConfirmDialog'
 import type { MonthFilter } from '../shared/types'
 
 /** Aba Metas: quanto cada categoria pode gastar no mês. Só front, sem backend. */
@@ -13,6 +16,8 @@ export function GoalsPage() {
   const [month, setMonth] = useState<MonthFilter>({ month: now.getMonth(), year: now.getFullYear() })
   const [goals, setGoalsState] = useState<GoalsMap>(() => getGoals())
   const [modal, setModal] = useState<GoalModalState | null>(null)
+  /** Meta aguardando confirmação de exclusão. */
+  const [pendingRemove, setPendingRemove] = useState<{ id: string; name: string } | null>(null)
 
   const prevMonth = () =>
     setMonth((m) => (m.month === 0 ? { month: 11, year: m.year - 1 } : { month: m.month - 1, year: m.year }))
@@ -49,13 +54,29 @@ export function GoalsPage() {
   const over = rows.filter((r) => r.spent > r.goal).length
   const freeCats = categories.filter((c) => c.type === 'expense' && !(c.id in goals))
 
+  // Celebra a categoria que acabou de estourar a meta (reaproveita o
+  // confete já existente em `shared/components/Celebrate.tsx`).
+  const overIds = useMemo(() => rows.filter((r) => r.spent > r.goal).map((r) => r.id), [rows])
+  const celebratedOver = useRef<Set<string>>(new Set())
+  useEffect(() => {
+    const fresh = overIds.filter((id) => !celebratedOver.current.has(id))
+    if (fresh.length === 0) return
+    fresh.forEach((id) => celebratedOver.current.add(id))
+    window.dispatchEvent(new CustomEvent('prisma:celebrate'))
+  }, [overIds])
+
   const saveModal = (categoryId: string, value: number, description: string) => {
     setGoalsState(setGoal(categoryId, value, description))
   }
 
   const remove = (id: string, name: string) => {
-    if (!window.confirm(`Excluir a meta de "${name}"? As transações ficam salvas.`)) return
-    setGoalsState(setGoal(id, 0))
+    setPendingRemove({ id, name })
+  }
+
+  const confirmRemove = () => {
+    if (!pendingRemove) return
+    setGoalsState(setGoal(pendingRemove.id, 0))
+    setPendingRemove(null)
   }
 
   return (
@@ -114,15 +135,16 @@ export function GoalsPage() {
             <div className="flex items-baseline justify-between gap-2">
               <span className="text-[13px] font-medium text-fg-muted">Resumo do mês</span>
               <span className="font-display text-2xl font-medium tabular-nums text-fg">
-                {formatBRL(spentTotal)} <span className="text-sm font-normal text-fg-muted">de {formatBRL(goalTotal)}</span>
+                <AnimatedNumber value={spentTotal} format={formatBRL} />{' '}
+                <span className="text-sm font-normal text-fg-muted">de {formatBRL(goalTotal)}</span>
               </span>
             </div>
-            <span className="h-2 overflow-hidden rounded-full bg-surface-raised">
-              <span
-                className={`block h-full rounded-full transition-all ${over > 0 ? 'bg-negative' : 'bg-brand'}`}
-                style={{ width: `${totalPct}%` }}
-              />
-            </span>
+            <AnimatedProgress
+              value={totalPct}
+              barClassName={over > 0 ? 'bg-negative' : 'bg-brand'}
+              className="h-2 overflow-hidden rounded-full bg-surface-raised"
+              label="Orçamento total usado no mês"
+            />
             <p className="text-[13px] text-fg-muted">
               {over > 0
                 ? `${over} ${over === 1 ? 'categoria estourou' : 'categorias estouraram'} a meta.`
@@ -160,16 +182,15 @@ export function GoalsPage() {
                   )}
                   <div className="flex items-baseline justify-between gap-2">
                     <span className={`font-display text-xl font-medium tabular-nums ${isOver ? 'text-negative' : 'text-fg'}`}>
-                      {formatBRL(spent)}
+                      <AnimatedNumber value={spent} format={formatBRL} />
                     </span>
                     <span className="text-xs tabular-nums text-fg-muted">de {formatBRL(goal)}</span>
                   </div>
-                  <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
-                    <span
-                      className={`block h-full rounded-full ${isOver ? 'bg-negative' : 'bg-brand'}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </span>
+                  <AnimatedProgress
+                    value={pct}
+                    barClassName={isOver ? 'bg-negative' : 'bg-brand'}
+                    label={`Orçamento usado em ${cat!.name}`}
+                  />
                 </div>
               )
             })}
@@ -182,6 +203,16 @@ export function GoalsPage() {
         categories={categories}
         onClose={() => setModal(null)}
         onSave={saveModal}
+      />
+
+      <ConfirmDialog
+        open={pendingRemove !== null}
+        title="Excluir meta"
+        description={`Excluir a meta de "${pendingRemove?.name ?? ''}"? As transações continuam salvas.`}
+        confirmLabel="Excluir"
+        destructive
+        onConfirm={confirmRemove}
+        onCancel={() => setPendingRemove(null)}
       />
     </main>
   )
