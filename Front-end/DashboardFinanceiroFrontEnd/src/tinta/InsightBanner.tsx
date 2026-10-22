@@ -3,6 +3,9 @@ import { TrendingDown, TrendingUp, Crown, Target, Plus } from 'lucide-react'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { isSameMonth, formatBRL, formatMonthYear } from '../shared/utils/formatters'
 import { getGoals } from '../shared/services/goalsService'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { AnimatedProgress } from '../shared/motion/AnimatedProgress'
+import { Crossfade } from '../shared/motion/Crossfade'
 import type { CategoryInfo, Expense, MonthFilter } from '../shared/types'
 
 interface InsightBannerProps {
@@ -83,11 +86,13 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
     <section aria-label="Destaques do mês" className="mb-7 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-edge bg-edge sm:grid-cols-2">
       <div className="flex items-center gap-3 bg-surface p-5">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft">
-          {delta !== null && delta > 0 ? (
-            <TrendingUp className="size-5 text-negative" strokeWidth={1.9} />
-          ) : (
-            <TrendingDown className="size-5 text-data" strokeWidth={1.9} />
-          )}
+          <Crossfade changeKey={delta !== null && delta > 0 ? 'up' : 'down'} variant="fade" className="flex items-center justify-center">
+            {delta !== null && delta > 0 ? (
+              <TrendingUp className="size-5 text-negative" strokeWidth={1.9} />
+            ) : (
+              <TrendingDown className="size-5 text-positive" strokeWidth={1.9} />
+            )}
+          </Crossfade>
         </span>
         <div className="flex min-w-0 flex-col">
           <span className="truncate font-display text-lg leading-6 text-fg">
@@ -117,14 +122,13 @@ export function InsightBanner({ expenses, categories, month }: InsightBannerProp
           ) : (
             <>
               <span className="font-display text-lg leading-6 text-fg tabular-nums">
-                {formatBRL(data.spent)} <span className="text-sm font-normal text-fg-muted">de {formatBRL(data.goalTotal)}</span>
+                <AnimatedNumber value={data.spent} format={formatBRL} /> <span className="text-sm font-normal text-fg-muted">de {formatBRL(data.goalTotal)}</span>
               </span>
-              <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
-                <span
-                  className={`block h-full rounded-full ${goalPct >= 100 ? 'bg-negative' : 'bg-brand'}`}
-                  style={{ width: `${goalPct}%` }}
-                />
-              </span>
+              <AnimatedProgress
+                value={goalPct ?? 0}
+                barClassName={goalPct >= 100 ? 'bg-negative' : 'bg-brand'}
+                label="Progresso da meta do mês"
+              />
             </>
           )}
         </div>

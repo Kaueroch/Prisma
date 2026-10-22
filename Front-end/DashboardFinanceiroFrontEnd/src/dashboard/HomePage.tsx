@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
@@ -7,6 +7,7 @@ import { useAuth } from '../auth/AuthContext'
 import { isSameMonth, matchesMonthFilter } from '../shared/utils/formatters'
 import { getPrefs, initialMonthFilter } from '../shared/services/prefsService'
 import type { Tab, MonthFilter } from '../shared/types'
+import { DURATION, EASE } from '../shared/motion/tokens'
 import { KpiStrip } from '../tinta/KpiStrip'
 import { InsightBanner } from '../tinta/InsightBanner'
 import { CategoryDonutTinta } from '../tinta/CategoryDonutTinta'
@@ -48,20 +49,46 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const balance = totalIncome - totalExpense
 
   const firstName = getPrefs().displayName.trim().split(' ')[0] || user?.name?.split(' ')[0] || 'por aqui'
+  // Mês anterior, para o delta percentual dos KPIs.
+  const previousMonth = useMemo<MonthFilter>(() => {
+    if (selectedMonth.all) return { month: 0, year: 0, all: false }
+    return selectedMonth.month === 0
+      ? { month: 11, year: selectedMonth.year - 1, all: false }
+      : { month: selectedMonth.month - 1, year: selectedMonth.year, all: false }
+  }, [selectedMonth])
+
+  const previousTotals = useMemo(() => {
+    if (selectedMonth.all) return { income: 0, expense: 0 }
+    const inPrev = expenses.filter((e) => matchesMonthFilter(e.date, previousMonth))
+    return {
+      income: inPrev.filter((e) => e.type === 'income').reduce((s, i) => s + i.amount, 0),
+      expense: inPrev.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0),
+    }
+  }, [expenses, previousMonth, selectedMonth.all])
+
+  const previousBalance = previousTotals.income - previousTotals.expense
+
+  /** Variação percentual vs. mês anterior (null quando não há base). */
+  const percentDelta = (current: number, previous: number): number | null => {
+    if (selectedMonth.all || previous === 0) return null
+    return Math.round(((current - previous) / Math.abs(previous)) * 100)
+  }
+
   const todayLabel = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   const greeting = balance >= 0 || filtered.length === 0
     ? 'Tudo sob controle por aqui.'
     : 'Vamos recuperar esse saldo juntos.'
 
   const chartData = useMemo(() => {
-    const byCat: Record<string, number> = {}
+    const byCat: Record<string, { value: number; color?: string }> = {}
     for (const e of filtered) {
       if (e.type !== 'expense') continue
       const cat = categories.find((c) => c.id === e.categoryId)
       const name = cat?.name || 'Sem categoria'
-      byCat[name] = (byCat[name] ?? 0) + e.amount
+      if (!byCat[name]) byCat[name] = { value: 0, color: cat?.color }
+      byCat[name].value += e.amount
     }
-    return Object.entries(byCat).map(([name, value]) => ({ name, value }))
+    return Object.entries(byCat).map(([name, d]) => ({ name, value: d.value, color: d.color }))
   }, [filtered, categories])
 
   return (
@@ -77,8 +104,15 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
               className="flex size-8 items-center justify-center rounded-lg border border-edge text-fg-muted transition-colors duration-150 hover:border-brand/40 hover:text-fg"
               title={mask ? 'Mostrar valores' : 'Ocultar valores'}
               aria-label={mask ? 'Mostrar valores' : 'Ocultar valores'}
+              aria-pressed={mask}
             >
-              {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
+              <motion.span
+                className="flex items-center justify-center"
+                animate={{ rotate: mask ? 90 : 0 }}
+                transition={{ duration: DURATION.fast, ease: EASE }}
+              >
+                {mask ? <EyeOff className="size-4" strokeWidth={1.8} /> : <Eye className="size-4" strokeWidth={1.8} />}
+              </motion.span>
             </button>
           </div>
           <p className="text-[15px] text-fg-muted">{greeting}</p>
@@ -126,7 +160,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       <InsightBanner expenses={expenses} categories={categories} month={selectedMonth} />
 
       <section className="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-[400px_1fr]">
-        <SaldoTinta total={balance} count={filtered.length} loading={loading} mask={mask} />
+        <div>
+          <SaldoTinta total={balance} count={filtered.length} loading={loading} mask={mask} />
+        </div>
         <BalanceHistoryTinta expenses={filtered} month={selectedMonth.month} year={selectedMonth.year} />
       </section>
 
@@ -135,16 +171,18 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           loading={loading}
           mask={mask}
           items={[
-            { label: 'Receitas', value: totalIncome, icon: ArrowUpRight, tone: 'data' },
-            { label: 'Gastos', value: totalExpense, icon: ArrowDownRight, tone: 'negative' },
-            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral' },
+            { label: 'Receitas', value: totalIncome, icon: ArrowUpRight, tone: 'positive', delta: percentDelta(totalIncome, previousTotals.income) },
+            { label: 'Gastos', value: totalExpense, icon: ArrowDownRight, tone: 'negative', delta: percentDelta(totalExpense, previousTotals.expense) },
+            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral', delta: percentDelta(balance, previousBalance) },
           ]}
         />
       </div>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_420px]">
         <div className="flex min-w-0 flex-col gap-6">
-          <CategoryDonutTinta data={chartData} loading={loading} />
+          <div>
+            <CategoryDonutTinta data={chartData} loading={loading} />
+          </div>
           <IncomeExpenseTinta expenses={expenses} />
         </div>
         <RecentTinta expenses={filtered} categories={categories} />

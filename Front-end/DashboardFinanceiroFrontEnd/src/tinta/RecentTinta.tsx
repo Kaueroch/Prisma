@@ -1,15 +1,19 @@
-import { useMemo } from 'react'
-import { ArrowLeftRight, ArrowUpRight, ShoppingBag, ReceiptText, Plus } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ArrowUpRight, ShoppingBag, ReceiptText, Plus } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
 import { useTransactionForm } from '../finance/TransactionFormContext'
+import { DURATION, EASE } from '../shared/motion/tokens'
 import type { Expense } from '../shared/types'
 import type { CategoryInfo } from '../shared/types'
-
 const ICON = {
   income: ArrowUpRight,
   expense: ShoppingBag,
 } as const
+
+/** Quanto tempo o item recém-adicionado fica destacado. */
+const HIGHLIGHT_MS = 4000
 
 export function RecentTinta({
   expenses,
@@ -34,8 +38,49 @@ export function RecentTinta({
   }, [expenses, limit])
 
   const catById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories])
-  const newestId = groups[0]?.items[0]?.id
   const { openTransactionForm } = useTransactionForm()
+  const reduce = useReducedMotion()
+
+  /**
+   * Destaca apenas o que foi ADICIONADO agora — não o item mais recente.
+   *
+   * O gatilho é o evento `prisma:celebrate`, disparado pelo formulário ao
+   * salvar um lançamento. O item destacado é o de maior id sequencial
+   * (a ordem em que `financeService` numera os lançamentos), e o
+   * destaque se apaga sozinho depois de alguns segundos.
+   *
+   * Um diff de ids não serviria aqui: trocar o filtro de mês troca o
+   * conjunto inteiro de ids e marcaria tudo como novo.
+   */
+  const [celebratedAt, setCelebratedAt] = useState(0)
+
+  useEffect(() => {
+    const onCelebrate = () => setCelebratedAt(Date.now())
+    window.addEventListener('prisma:celebrate', onCelebrate)
+    return () => window.removeEventListener('prisma:celebrate', onCelebrate)
+  }, [])
+
+  // Apaga o destaque depois de alguns segundos.
+  useEffect(() => {
+    if (!celebratedAt) return
+    const timer = setTimeout(() => setCelebratedAt(0), HIGHLIGHT_MS)
+    return () => clearTimeout(timer)
+  }, [celebratedAt])
+
+  /** Id do lançamento mais recente (maior número sequencial). */
+  const newestId = useMemo(() => {
+    let best: { id: string; n: number } | null = null
+    for (const group of groups) {
+      for (const tx of group.items) {
+        const n = Number(tx.id)
+        if (!Number.isFinite(n)) continue
+        if (!best || n > best.n) best = { id: tx.id, n }
+      }
+    }
+    return best?.id ?? groups[0]?.items[0]?.id
+  }, [groups])
+
+  const isRecent = (id: string) => celebratedAt > 0 && id === newestId
 
   return (
     <section className="flex h-full flex-col border border-edge bg-surface">
@@ -74,41 +119,45 @@ export function RecentTinta({
                 <span className="text-[12px] text-fg-muted">{formatDateBR(group.day)}</span>
               </div>
               <ul className="flex flex-col">
-                {group.items.map((tx) => {
-                  const Icon = tx.type === 'income' ? ICON.income : ICON.expense
-                  const isIncome = tx.type === 'income'
-                  const isNew = tx.id === newestId
-                  const cat = catById.get(tx.categoryId)
-                  return (
-                    <li
-                      key={tx.id}
-                      className={cn(
-                        'flex h-[60px] items-center gap-3 px-6 transition-colors duration-150',
-                        isNew
-                          ? '-mt-px border-y border-brand/50 bg-brand-soft'
-                          : 'border-b border-white/8 last:border-b-0 hover:bg-white/[0.03]',
-                      )}
-                    >
-                      <span className={cn('flex size-8 shrink-0 items-center justify-center border', isNew ? 'border-brand/50' : 'border-edge')}>
-                        <Icon className={cn('size-4', isNew ? 'text-brand' : isIncome ? 'text-data' : 'text-fg-muted')} strokeWidth={1.8} />
-                      </span>
-                      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-sm font-semibold text-fg first-letter:uppercase">{tx.name}</span>
-                        <span className="truncate text-[12px] text-fg-subtle">{cat?.name ?? 'Sem categoria'}</span>
-                      </div>
-                      <span className={cn('shrink-0 font-display text-[15px] font-medium tabular-nums whitespace-nowrap', isIncome ? 'text-data' : 'text-fg')}>
-                        {isIncome ? '+' : '−'}
-                        {formatBRL(tx.amount)}
-                      </span>
-                    </li>
-                  )
-                })}
+                <AnimatePresence initial={false}>
+                  {group.items.map((tx) => {
+                    const Icon = tx.type === 'income' ? ICON.income : ICON.expense
+                    const isIncome = tx.type === 'income'
+                    const isNew = isRecent(tx.id)
+                    const cat = catById.get(tx.categoryId)
+                    return (
+                      <motion.li
+                        key={tx.id}
+                        layout={!reduce}
+                        initial={isNew && !reduce ? { opacity: 0, height: 0 } : false}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={reduce ? undefined : { opacity: 0, height: 0 }}
+                        transition={{ duration: DURATION.base, ease: EASE }}
+                        className={cn(
+                          'flex h-[60px] items-center gap-3 overflow-hidden px-6 transition-colors duration-150',
+                          isNew
+                            ? '-mt-px border-y border-brand/50 bg-brand-soft'
+                            : 'border-b border-white/8 last:border-b-0 hover:bg-white/[0.03]',
+                        )}
+                      >
+                        <span className={cn('flex size-8 shrink-0 items-center justify-center border', isNew ? 'border-brand/50' : 'border-edge')}>
+                          <Icon className={cn('size-4', isNew ? 'text-brand' : isIncome ? 'text-positive' : 'text-fg-muted')} strokeWidth={1.8} />
+                        </span>
+                        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                          <span className="truncate text-sm font-semibold text-fg first-letter:uppercase">{tx.name}</span>
+                          <span className="truncate text-[12px] text-fg-subtle">{cat?.name ?? 'Sem categoria'}</span>
+                        </div>
+                        <span className={cn('shrink-0 font-display text-[15px] font-medium tabular-nums whitespace-nowrap', isIncome ? 'text-positive' : 'text-fg')}>
+                          {isIncome ? '+' : '−'}
+                          {formatBRL(tx.amount)}
+                        </span>
+                      </motion.li>
+                    )
+                  })}
+                </AnimatePresence>
               </ul>
             </div>
           ))}
-          <div className="hidden">
-            <ArrowLeftRight className="size-4" />
-          </div>
         </div>
       )}
     </section>

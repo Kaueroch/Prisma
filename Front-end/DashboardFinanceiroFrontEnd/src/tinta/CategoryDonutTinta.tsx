@@ -1,8 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { ChartPie } from 'lucide-react'
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
+import { AnimatePresence, motion } from 'motion/react'
 import { CATEGORY_PALETTE, OTHERS_COLOR, categoryColor } from './chartColors'
 import { formatBRL } from '../shared/utils/formatters'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { DURATION, EASE } from '../shared/motion/tokens'
 
 export interface DonutSlice {
   name: string
@@ -11,15 +14,29 @@ export interface DonutSlice {
   muted?: boolean
 }
 
-function toSlices(data: { name: string; value: number }[]): DonutSlice[] {
+interface DonutDatum {
+  name: string
+  value: number
+  /** Cor da categoria — a mesma usada nas listas e cartões. */
+  color?: string
+}
+
+function toSlices(data: DonutDatum[]): DonutSlice[] {
   const sorted = [...data].sort((a, b) => b.value - a.value)
+  // A cor vem da própria categoria (hash do nome), então a mesma categoria
+  // tem a mesma cor no donut, na lista de transações e no cartão.
+  const withColor = (d: DonutDatum, i: number): DonutSlice => ({
+    ...d,
+    color: d.color ?? categoryColor(i),
+  })
+
   if (sorted.length <= CATEGORY_PALETTE.length + 1) {
-    return sorted.map((d, i) => ({ ...d, color: categoryColor(i) }))
+    return sorted.map(withColor)
   }
   const head = sorted.slice(0, CATEGORY_PALETTE.length)
   const tail = sorted.slice(CATEGORY_PALETTE.length)
   return [
-    ...head.map((d, i) => ({ ...d, color: categoryColor(i) })),
+    ...head.map(withColor),
     {
       name: `Other · ${tail.length}`,
       value: tail.reduce((acc, d) => acc + d.value, 0),
@@ -29,9 +46,11 @@ function toSlices(data: { name: string; value: number }[]): DonutSlice[] {
   ]
 }
 
-export function CategoryDonutTinta({ data, loading = false }: { data: { name: string; value: number }[]; loading?: boolean }) {
+export function CategoryDonutTinta({ data, loading = false }: { data: DonutDatum[]; loading?: boolean }) {
   const slices = useMemo(() => toSlices(data), [data])
   const total = useMemo(() => data.reduce((acc, d) => acc + d.value, 0), [data])
+  /** Índice da fatia em foco — sincroniza o hover entre a fatia e a legenda. */
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   return (
     <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
@@ -43,10 +62,10 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
       </div>
       {loading ? (
         <div className="flex items-center gap-12">
-          <div className="size-[200px] shrink-0 animate-pulse rounded-full bg-surface-raised" />
+          <div className="size-[200px] shrink-0 animate-shimmer rounded-full bg-surface-raised" />
           <div className="flex flex-1 flex-col gap-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-5 animate-pulse bg-surface-raised" />
+              <div key={i} className="h-5 animate-shimmer bg-surface-raised" />
             ))}
           </div>
         </div>
@@ -63,6 +82,7 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
           <div className="relative size-[200px] shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
+                <Tooltip cursor={false} content={() => null} />
                 <Pie
                   data={slices}
                   dataKey="value"
@@ -74,6 +94,58 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
                   paddingAngle={1.5}
                   stroke="none"
                   isAnimationActive
+                  animationDuration={400}
+                  onMouseEnter={(_: unknown, index: number) => setActiveIndex(index)}
+                  onMouseLeave={() => setActiveIndex(null)}
+                  shape={(props: unknown) => {
+                    const p = props as {
+                      cx: number
+                      cy: number
+                      innerRadius: number
+                      outerRadius: number
+                      startAngle: number
+                      endAngle: number
+                      fill: string
+                      index: number
+                    }
+                    const isActive = activeIndex === p.index
+                    const isDimmed = activeIndex !== null && !isActive
+                    return (
+                      <g>
+                        {/* Fatia base — escurece quando outra está em foco. */}
+                        <Sector
+                          cx={p.cx}
+                          cy={p.cy}
+                          innerRadius={p.innerRadius}
+                          outerRadius={p.outerRadius}
+                          startAngle={p.startAngle}
+                          endAngle={p.endAngle}
+                          fill={p.fill}
+                          stroke="none"
+                          style={{
+                            opacity: isDimmed ? 0.35 : 1,
+                            transition: 'opacity 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                          }}
+                        />
+                        {/* Fatia expandida: entra por opacidade, o que dá a
+                            sensação de a fatia "crescer" para fora. */}
+                        <Sector
+                          cx={p.cx}
+                          cy={p.cy}
+                          innerRadius={p.innerRadius}
+                          outerRadius={p.outerRadius + 6}
+                          startAngle={p.startAngle}
+                          endAngle={p.endAngle}
+                          fill={p.fill}
+                          stroke="none"
+                          style={{
+                            opacity: isActive ? 1 : 0,
+                            transition: 'opacity 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                          }}
+                        />
+                      </g>
+                    )
+                  }}
                 >
                   {slices.map((s) => (
                     <Cell key={s.name} fill={s.color} />
@@ -81,22 +153,54 @@ export function CategoryDonutTinta({ data, loading = false }: { data: { name: st
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-              <span className="text-[12px] text-fg-subtle">Total</span>
-              <span className="font-display text-xl font-medium tracking-[-0.02em] tabular-nums text-fg">
-                {formatBRL(total)}
-              </span>
+            {/* Centro: mostra o total ou, em hover, a categoria em foco. */}
+            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-0.5 px-6 text-center">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeIndex === null ? 'total' : `slice-${activeIndex}`}
+                  className="flex flex-col items-center gap-0.5"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: DURATION.fast, ease: EASE }}
+                >
+                  <span className="truncate text-[12px] text-fg-subtle">
+                    {activeIndex === null ? 'Total' : slices[activeIndex]?.name}
+                  </span>
+                  <span className="font-display text-xl font-medium tracking-[-0.02em] tabular-nums text-fg">
+                    {activeIndex === null ? (
+                      <AnimatedNumber value={total} format={formatBRL} />
+                    ) : (
+                      formatBRL(slices[activeIndex]?.value ?? 0)
+                    )}
+                  </span>
+                  {activeIndex !== null && total > 0 && (
+                    <span className="text-[11px] text-fg-subtle tabular-nums">
+                      {(((slices[activeIndex]?.value ?? 0) / total) * 100).toFixed(0)}% do total
+                    </span>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
           <ul className="flex w-full flex-1 flex-col">
             {slices.map((s, i) => {
               const pct = total > 0 ? (s.value / total) * 100 : 0
+              const isActive = activeIndex === i
+              const isDimmed = activeIndex !== null && !isActive
               return (
                 <li
                   key={s.name}
-                  className={`flex h-[30px] items-center gap-3 ${i < slices.length - 1 ? 'border-b border-white/6' : ''}`}
+                  onMouseEnter={() => setActiveIndex(i)}
+                  onMouseLeave={() => setActiveIndex(null)}
+                  className={`flex h-[30px] cursor-default items-center gap-3 transition-opacity duration-150 ${
+                    isDimmed ? 'opacity-45' : 'opacity-100'
+                  } ${i < slices.length - 1 ? 'border-b border-white/6' : ''}`}
                 >
-                  <span className="size-2 shrink-0" style={{ backgroundColor: s.color }} />
+                  <span
+                    className="size-2 shrink-0 transition-transform duration-150"
+                    style={{ backgroundColor: s.color, transform: isActive ? 'scale(1.35)' : 'scale(1)' }}
+                  />
                   <span className={`min-w-0 flex-1 truncate text-sm ${s.muted ? 'text-fg-muted' : 'text-fg'}`}>
                     {s.name}
                   </span>

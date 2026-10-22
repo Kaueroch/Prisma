@@ -1,25 +1,29 @@
 import type { CSSProperties } from 'react'
 import type { LucideIcon } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatBRL } from '../shared/utils/formatters'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
 
-type Tone = 'data' | 'negative' | 'neutral'
+type Tone = 'positive' | 'negative' | 'neutral'
 
 export interface KpiItem {
   label: string
   value: number
   icon: LucideIcon
   tone?: Tone
+  /** Variação percentual vs. mês anterior (null quando não há base de comparação). */
+  delta?: number | null
 }
 
 const toneText: Record<Tone, string> = {
-  data: 'text-data',
+  positive: 'text-positive',
   negative: 'text-negative',
   neutral: 'text-fg',
 }
 
 const toneIcon: Record<Tone, string> = {
-  data: 'text-data',
+  positive: 'text-positive',
   negative: 'text-negative',
   neutral: 'text-fg-muted',
 }
@@ -44,34 +48,55 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
   const n = items.length
   return (
     <section className="relative flex flex-col border border-edge bg-surface/60 sm:flex-row">
-      {items.map(({ label, value, icon: Icon, tone = 'neutral' }, i) => (
-        <div
-          key={label}
-          className={cn(
-            'flex min-h-[132px] flex-1 flex-col justify-between gap-4 px-6 py-5',
-            i < n - 1 && 'border-b border-edge sm:border-b-0 sm:border-r',
-          )}
-        >
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-[13px] font-medium text-fg-muted">{label}</span>
-            <span className="flex size-7 shrink-0 items-center justify-center border border-edge">
-              <Icon className={cn('size-4', toneIcon[tone])} strokeWidth={1.8} />
-            </span>
+      {items.map(({ label, value, icon: Icon, tone = 'neutral', delta }, i) => {
+        const hasDelta = typeof delta === 'number' && Number.isFinite(delta)
+        const deltaUp = hasDelta && (delta as number) > 0
+        const DeltaIcon = deltaUp ? ArrowUpRight : ArrowDownRight
+        // Para gastos, subir é ruim; para receitas e saldo, subir é bom.
+        const deltaTone = tone === 'negative' ? (deltaUp ? 'text-negative' : 'text-positive') : (deltaUp ? 'text-positive' : 'text-negative')
+
+        return (
+          <div
+            key={label}
+            className={cn(
+              'group flex min-h-[132px] flex-1 flex-col justify-between gap-4 px-6 py-5 transition-colors duration-150 hover:bg-white/[0.02]',
+              i < n - 1 && 'border-b border-edge sm:border-b-0 sm:border-r',
+            )}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[13px] font-medium text-fg-muted">{label}</span>
+              <span className="flex items-center gap-2">
+                {hasDelta && (
+                  <span
+                    className={cn(
+                      'flex items-center gap-0.5 text-[12px] font-medium tabular-nums opacity-0 transition-opacity duration-150 group-hover:opacity-100',
+                      deltaTone,
+                    )}
+                  >
+                    <DeltaIcon className="size-3.5" strokeWidth={2} />
+                    {Math.abs(delta as number)}%
+                  </span>
+                )}
+                <span className="flex size-7 shrink-0 items-center justify-center border border-edge">
+                  <Icon className={cn('size-4', toneIcon[tone])} strokeWidth={1.8} />
+                </span>
+              </span>
+            </div>
+            {loading ? (
+              <div className="h-10 w-44 animate-shimmer bg-surface-raised" />
+            ) : (
+              <span
+                className={cn(
+                  'font-display text-[34px] leading-10 font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap',
+                  toneText[tone],
+                )}
+              >
+                <AnimatedNumber value={value} format={formatBRL} mask={mask} />
+              </span>
+            )}
           </div>
-          {loading ? (
-            <div className="h-10 w-44 animate-pulse bg-surface-raised" />
-          ) : (
-            <span
-              className={cn(
-                'font-display text-[34px] leading-10 font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap',
-                toneText[tone],
-              )}
-            >
-              {mask ? '••••••' : formatBRL(value)}
-            </span>
-          )}
-        </div>
-      ))}
+        )
+      })}
       {Array.from({ length: n + 1 }).map((_, i) => (
         <span key={i} className="hidden sm:contents">
           <Cross className="-top-[5px]" style={{ left: `${(i / n) * 100}%` }} />

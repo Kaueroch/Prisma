@@ -1,5 +1,7 @@
+import { motion, useReducedMotion } from 'motion/react'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
-import { formatMonthYear, formatMonthFilter, getCurrentMonth } from '../shared/utils/formatters'
+import { formatMonthYear, getCurrentMonth } from '../shared/utils/formatters'
+import { DURATION, EASE } from '../shared/motion/tokens'
 import type { MonthFilter } from '../shared/types'
 
 type Month = MonthFilter
@@ -13,8 +15,11 @@ export function MonthPickerTinta({
   onChange: (m: Month) => void
 }) {
   const now = getCurrentMonth()
+  const reduce = useReducedMotion()
   const prev = () => onChange(value.month === 0 ? { month: 11, year: value.year - 1, all: false } : { month: value.month - 1, year: value.year, all: false })
   const next = () => onChange(value.month === 11 ? { month: 0, year: value.year + 1, all: false } : { month: value.month + 1, year: value.year, all: false })
+
+  const chevronClass = 'text-fg-muted transition-colors hover:text-brand'
 
   if (value.all) {
     return (
@@ -38,15 +43,37 @@ export function MonthPickerTinta({
     <div className="flex flex-col items-stretch gap-2 border border-edge px-3.5 py-2.5">
       <div className="flex items-center justify-center gap-2.5">
         <Calendar className="size-3.5 text-fg-muted" strokeWidth={1.8} />
-        <button type="button" onClick={prev} aria-label="Mês anterior" className="text-fg-muted hover:text-brand">
+        <motion.button
+          type="button"
+          onClick={prev}
+          aria-label="Mês anterior"
+          className={chevronClass}
+          whileTap={reduce ? undefined : { scale: 0.88 }}
+          transition={{ duration: DURATION.fast, ease: EASE }}
+        >
           <ChevronLeft className="size-3.5" strokeWidth={2.2} />
-        </button>
-        <span className="min-w-[130px] text-center text-[13px] text-fg capitalize tabular-nums">
-          {formatMonthYear(value.month, value.year)}
+        </motion.button>
+        <span className="relative min-w-[130px] overflow-hidden text-center text-[13px] text-fg capitalize tabular-nums">
+          <motion.span
+            key={`${value.year}-${value.month}`}
+            className="inline-block"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
+          >
+            {formatMonthYear(value.month, value.year)}
+          </motion.span>
         </span>
-        <button type="button" onClick={next} aria-label="Próximo mês" className="text-fg-muted hover:text-brand">
+        <motion.button
+          type="button"
+          onClick={next}
+          aria-label="Próximo mês"
+          className={chevronClass}
+          whileTap={reduce ? undefined : { scale: 0.88 }}
+          transition={{ duration: DURATION.fast, ease: EASE }}
+        >
           <ChevronRight className="size-3.5" strokeWidth={2.2} />
-        </button>
+        </motion.button>
       </div>
       <button
         type="button"

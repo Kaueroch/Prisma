@@ -1,8 +1,28 @@
+import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { formatBRL } from '../shared/utils/formatters'
+import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { Crossfade } from '../shared/motion/Crossfade'
 import { cn } from '@/lib/utils'
+import { DURATION, EASE } from '../shared/motion/tokens'
 
 /** Running balance — Prisma version without accounts API (all local transactions). */
 export function SaldoTinta({ total, count, loading = false, mask = false }: { total: number; count: number; loading?: boolean; mask?: boolean }) {
+  const reduce = useReducedMotion()
+  const previousSign = useRef(total < 0 ? -1 : 1)
+  const [flash, setFlash] = useState(false)
+
+  // Pulso de 1 ciclo quando o saldo muda de sinal (entrou abaixo de zero).
+  useEffect(() => {
+    const sign = total < 0 ? -1 : 1
+    if (sign !== previousSign.current) {
+      previousSign.current = sign
+      setFlash(true)
+      const timer = setTimeout(() => setFlash(false), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [total])
+
   return (
     <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-xl border border-edge bg-surface p-6">
       <div className="flex items-center justify-between gap-4">
@@ -13,16 +33,24 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
       </div>
       {loading ? (
         <div className="flex flex-col gap-3">
-          <div className="h-11 w-56 animate-pulse bg-surface-raised" />
-          <div className="h-4 w-44 animate-pulse bg-surface-raised" />
+          <div className="h-11 w-56 animate-shimmer bg-surface-raised" />
+          <div className="h-4 w-44 animate-shimmer bg-surface-raised" />
         </div>
       ) : (
-        <div className="flex flex-col gap-2 animate-[fadeInUp_400ms_ease]">
-          <span className={cn('font-display text-[44px] leading-[48px] font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap', total < 0 ? 'text-negative' : 'text-fg')}>
-            {mask ? '••••••' : formatBRL(total)}
-          </span>
+        <motion.div
+          className="flex flex-col gap-2"
+          animate={flash && !reduce ? { scale: [1, 1.015, 1] } : { scale: 1 }}
+          transition={{ duration: DURATION.slow, ease: EASE }}
+        >
+          <Crossfade
+            changeKey={mask ? 'masked' : 'value'}
+            variant="fade"
+            className={cn('font-display text-[44px] leading-[48px] font-medium tracking-[-0.02em] tabular-nums whitespace-nowrap', total < 0 ? 'text-negative' : 'text-fg')}
+          >
+            <AnimatedNumber value={total} format={formatBRL} mask={mask} />
+          </Crossfade>
           <span className="truncate text-[13px] text-fg-subtle">All local activity</span>
-        </div>
+        </motion.div>
       )}
       <div className="flex flex-wrap gap-2">
         <span className="rounded-full border border-edge bg-brand-soft px-4 py-1.5 text-[13px] font-semibold text-fg">Todas</span>

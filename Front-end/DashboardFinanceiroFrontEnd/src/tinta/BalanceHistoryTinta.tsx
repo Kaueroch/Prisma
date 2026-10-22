@@ -44,7 +44,7 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
           <span className="text-[13px] font-medium text-fg-muted">Evolução</span>
           <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Histórico do saldo</h2>
         </div>
-        <span className={`text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-data'}`}>
+        <span className={`text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-positive'}`}>
           {periodNet < 0 ? '−' : '+'}
           {formatBRL(Math.abs(periodNet))} no mês
         </span>
@@ -72,7 +72,7 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
               tickFormatter={(v: number) => (Math.abs(v) >= 1000 ? `${(v / 1000).toFixed(1).replace('.0', '')}k` : String(v))}
             />
             <Tooltip
-              cursor={{ stroke: CHART.edge }}
+              cursor={{ stroke: CHART.edge, strokeWidth: 1 }}
               contentStyle={{ background: CHART.surface, border: `1px solid ${CHART.edge}`, borderRadius: 0, fontSize: 12 }}
               labelStyle={{ fontFamily: 'Geist Variable, system-ui, sans-serif', color: CHART.axis, marginBottom: 4 }}
               itemStyle={{ color: '#fff' }}
@@ -86,14 +86,25 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
               fill={CHART.brand}
               fillOpacity={0.12}
               strokeWidth={2.5}
+              isAnimationActive
+              animationDuration={400}
               dot={(props: { cx?: number; cy?: number; index?: number }) =>
                 props.index === lastIndex && props.cx != null && props.cy != null ? (
-                  <rect key="last" x={props.cx - 4} y={props.cy - 4} width={8} height={8} fill={CHART.brand} />
+                  <g key="last">
+                    <rect
+                      x={props.cx - 4}
+                      y={props.cy - 4}
+                      width={8}
+                      height={8}
+                      fill={CHART.brand}
+                      className="animate-brand-pulse"
+                    />
+                  </g>
                 ) : (
                   <g key={props.index} />
                 )
               }
-              activeDot={{ r: 0 }}
+              activeDot={{ r: 3, fill: CHART.brand, stroke: CHART.surface, strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -53,7 +53,7 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
         </div>
         <div className="flex gap-4 text-[12px] text-fg-muted">
           <span className="flex items-center gap-1.5">
-            <span className="size-2 bg-data" /> Receitas
+            <span className="size-2 bg-positive" /> Receitas
           </span>
           <span className="flex items-center gap-1.5">
             <span className="size-2 bg-negative" /> Gastos
@@ -72,8 +72,8 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
               labelFormatter={(label) => monthLabel(String(label))}
               formatter={(value, name) => [formatBRL(Number(value)), name === 'income' ? 'Receitas' : 'Gastos']}
             />
-            <Bar dataKey="income" fill={CHART.income} radius={0} />
-            <Bar dataKey="expense" fill={CHART.expense} radius={0} />
+            <Bar dataKey="income" fill={CHART.income} radius={0} isAnimationActive animationDuration={400} activeBar={{ fill: CHART.income }} />
+            <Bar dataKey="expense" fill={CHART.expense} radius={0} isAnimationActive animationDuration={400} activeBar={{ fill: CHART.expense }} />
           </BarChart>
         </ResponsiveContainer>
       </div>
