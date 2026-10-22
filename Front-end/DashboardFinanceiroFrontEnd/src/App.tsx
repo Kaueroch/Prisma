@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Sparkles, LayoutGrid, ArrowLeftRight, Tags, Target, Settings } from 'lucide-react'
+import { DURATION, EASE } from './shared/motion/tokens'
 import { TintaSidebar } from './tinta/TintaSidebar'
 import { AddTransactionForm } from './transactions/components/AddTransactionForm'
 import { HomePage } from './dashboard/HomePage'
@@ -16,6 +17,7 @@ import { LandingPage } from './landing/LandingPage'
 import { FinanceProvider } from './finance/FinanceContext'
 import { TransactionFormProvider, useTransactionForm } from './finance/TransactionFormContext'
 import { ToastProvider } from './shared/components/Toast'
+import { MotionRoot } from './shared/motion/MotionRoot'
 import { Celebrate } from './shared/components/Celebrate'
 import { AuthProvider, useAuth } from './auth/AuthContext'
 import { useFinance } from './finance/useFinance'
@@ -83,7 +85,19 @@ function TransactionFormGate() {
 }
 
 function AuthenticatedApp() {
+  // Providers inside the authenticated area ensure fresh data per user session.
+  return (
+    <FinanceProvider>
+      <TransactionFormProvider>
+        <AuthenticatedAppContent />
+      </TransactionFormProvider>
+    </FinanceProvider>
+  )
+}
+
+function AuthenticatedAppContent() {
   const { user } = useAuth()
+  const reduceMotion = useReducedMotion()
   const [activeTab, setActiveTab] = useState<Tab>(() => (PATH_TABS[window.location.pathname] as Tab) || 'home')
 
   useEffect(() => {
@@ -118,10 +132,10 @@ function AuthenticatedApp() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.16, ease: 'easeOut' }}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.995 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.995 }}
+                transition={{ duration: reduceMotion ? 0 : DURATION.fast, ease: EASE }}
                 className="flex min-h-0 flex-1 flex-col"
               >
                 {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
@@ -145,17 +159,35 @@ function AuthenticatedApp() {
           { icon: Tags, label: 'Categorias', tab: 'categories' },
           { icon: Target, label: 'Metas', tab: 'goals' },
           { icon: Settings, label: 'Config', tab: 'profile' },
-        ].map(({ icon: Icon, label, tab }) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(tab as Tab)}
-            className={`flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] ${activeTab === tab ? 'text-brand' : 'text-fg-subtle'}`}
-          >
-            <Icon className="size-5" />
-            <span>{label}</span>
-          </button>
-        ))}
+        ].map(({ icon: Icon, label, tab }) => {
+          const isActive = activeTab === tab
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab as Tab)}
+              aria-current={isActive ? 'page' : undefined}
+              className="relative flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            >
+              {/* Pill do item ativo: desliza entre as abas. */}
+              {isActive && (
+                <motion.span
+                  layoutId="mobile-nav-active"
+                  className="absolute inset-x-1 inset-y-0 rounded-lg bg-brand-soft"
+                  transition={reduceMotion ? { duration: 0 } : { duration: DURATION.base, ease: EASE }}
+                />
+              )}
+              <motion.span
+                className="relative flex flex-col items-center gap-0.5"
+                whileTap={reduceMotion ? undefined : { scale: 0.9 }}
+                transition={{ duration: DURATION.fast, ease: EASE }}
+              >
+                <Icon className="size-5" />
+                <span className={isActive ? 'text-brand' : 'text-fg-subtle'}>{label}</span>
+              </motion.span>
+            </button>
+          )
+        })}
       </nav>
     </TooltipProvider>
 
@@ -184,13 +216,11 @@ function AuthenticatedApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <FinanceProvider>
-        <TransactionFormProvider>
-          <ToastProvider>
-            <PublicGate />
-          </ToastProvider>
-        </TransactionFormProvider>
-      </FinanceProvider>
+      <ToastProvider>
+        <MotionRoot>
+          <PublicGate />
+        </MotionRoot>
+      </ToastProvider>
     </AuthProvider>
   )
 }

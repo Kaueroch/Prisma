@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeftRight, Tags, Target, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
+import { DURATION, EASE } from '../shared/motion/tokens'
 import type { Tab } from '../shared/types'
 import { useAuth } from '../auth/AuthContext'
 import { getPrefs } from '../shared/services/prefsService'
@@ -27,6 +29,8 @@ function NavButton({
   expanded: boolean
   onClick: () => void
 }) {
+  const reduce = useReducedMotion()
+
   return (
     <button
       type="button"
@@ -35,19 +39,34 @@ function NavButton({
       aria-current={active ? 'page' : undefined}
       onClick={onClick}
       className={cn(
-        'relative flex h-11 w-full items-center gap-3 transition-all duration-150 outline-none',
+        'relative flex h-11 w-full items-center gap-3 outline-none',
         'focus-visible:ring-2 focus-visible:ring-brand',
         expanded
           ? 'justify-start rounded-xl px-3.5 mx-2 w-[calc(100%-16px)]'
           : 'justify-center rounded-xl mx-auto w-11',
-        active
-          ? 'bg-brand text-black'
-          : 'text-fg-subtle hover:bg-white/[0.04] hover:text-fg',
+        active ? 'text-black' : 'text-fg-subtle hover:text-fg',
       )}
     >
-      <Icon className="size-5 shrink-0" strokeWidth={1.9} aria-hidden />
+      {/* Indicador ativo: desliza entre os itens em vez de trocar de fundo. */}
+      {active && (
+        <motion.span
+          layoutId="tinta-sidebar-active"
+          className="absolute inset-0 rounded-xl bg-brand"
+          transition={reduce ? { duration: 0 } : { duration: DURATION.base, ease: EASE }}
+        />
+      )}
+      {!active && (
+        <span className="absolute inset-0 rounded-xl transition-colors duration-150 hover:bg-white/[0.04]" aria-hidden />
+      )}
+      <motion.span
+        className="relative flex items-center"
+        whileHover={reduce ? undefined : { y: -1 }}
+        transition={{ duration: DURATION.fast, ease: EASE }}
+      >
+        <Icon className="size-5 shrink-0" strokeWidth={1.9} aria-hidden />
+      </motion.span>
       {expanded && (
-        <span className="truncate text-sm font-medium">{label}</span>
+        <span className="relative truncate text-sm font-medium">{label}</span>
       )}
     </button>
   )
@@ -139,7 +158,7 @@ export function TintaSidebar({
           aria-label="Sair"
           onClick={logout}
           className={cn(
-            'flex h-11 w-full items-center gap-3 text-red-400 transition-all duration-150 outline-none hover:bg-red-500/15 hover:text-red-300 shadow-[0_0_10px_rgba(248,113,113,0.25)]',
+            'flex h-11 w-full items-center gap-3 text-destructive transition-all duration-150 outline-none hover:bg-destructive/15 hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive',
             'focus-visible:ring-2 focus-visible:ring-red-500',
             expanded ? 'justify-start rounded-xl px-3.5 mx-2 w-[calc(100%-16px)]' : 'justify-center rounded-xl mx-auto w-11',
           )}
