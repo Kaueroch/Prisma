@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { useAuth } from '../auth/AuthContext'
+import { OrganizerFlow } from './components/OrganizerFlow'
 import { isSameMonth, matchesMonthFilter } from '../shared/utils/formatters'
 import { getPrefs, initialMonthFilter } from '../shared/services/prefsService'
 import type { Tab, MonthFilter } from '../shared/types'
@@ -158,6 +159,10 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       </header>
 
       <InsightBanner expenses={expenses} categories={categories} month={selectedMonth} />
+
+      <OrganizerFlow
+        onNavigate={(tab) => setActiveTab?.(tab)}
+      />
 
       <section className="mb-7 grid grid-cols-1 gap-6 xl:grid-cols-[400px_1fr]">
         <div>
