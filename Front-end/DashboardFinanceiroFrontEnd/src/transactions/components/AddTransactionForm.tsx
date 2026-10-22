@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react'
 import { AlertCircle, Check, X, Loader2 } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion, useAnimationControls, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,6 +33,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
   const { categories, addCategory } = useFinance()
   const { showToast, showError } = useToast()
   const reduceMotion = useReducedMotion()
+  const amountScale = useAnimationControls()
   const [amount, setAmount] = useState('')
   const [name, setName] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
@@ -143,6 +144,14 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     setAmount(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numberValue))
   }
 
+  // Tick: o valor dá um pulo a cada dígito digitado. A animação é disparada
+  // por controls em vez de trocar a key do wrapper — remontar o <Input> a
+  // cada tecla tirava o foco do campo no primeiro dígito digitado.
+  useEffect(() => {
+    if (reduceMotion || !amount) return
+    amountScale.start({ scale: [1, 1.02, 1] })
+  }, [amount, reduceMotion, amountScale])
+
   const handleTypeChange = (nextType: TransactionType) => {
     if (nextType === type) return
     setType(nextType)
@@ -236,9 +245,8 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-medium text-muted-foreground">R$</span>
               {/* Tick: o valor dá um pulo a cada dígito digitado. */}
               <motion.div
-                key={amount}
-                initial={reduceMotion ? false : { scale: 1.02 }}
-                animate={{ scale: 1 }}
+                animate={amountScale}
+                initial={reduceMotion ? false : { scale: 1 }}
                 transition={{ duration: DURATION.fast, ease: EASE }}
                 className="relative"
               >
