@@ -175,6 +175,46 @@ html {
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
+/* Pulso discreto do marcador final do gráfico de saldo. */
+@keyframes brand-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.35);
+  }
+}
+
+.animate-brand-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brand-pulse 2.4s ease-in-out infinite;
+}
+
+/* Shimmer dos skeletons — uma varredura em vez de um piscar uniforme. */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(250, 250, 249, 0.06) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
