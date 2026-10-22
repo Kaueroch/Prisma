@@ -43,6 +43,20 @@ function clearLocalFinanceData() {
   localStorage.removeItem(WELCOME_FLAG_KEY);
 }
 
+// Nome do cache de runtime do service worker (ver vite.config.ts → workbox).
+const API_CACHE_NAME = 'api-v1';
+
+// O cache do SW guarda respostas de /api/v1. Limpar no login impede que o
+// próximo usuário do mesmo aparelho leia dados do usuário anterior.
+async function purgeApiCache() {
+  if (typeof caches === 'undefined') return;
+  try {
+    await caches.delete(API_CACHE_NAME);
+  } catch {
+    // Limpeza é best-effort: se falhar, o login continua.
+  }
+}
+
 function readStoredUser(): User | null {
   const stored = localStorage.getItem(AUTH_STORAGE_KEY);
   if (!stored) return null;
@@ -110,6 +124,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Save the backend token
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
 
+      // Nova sessão: descarta o cache de API da sessão anterior.
+      await purgeApiCache();
+
       // Clear all local finance data to start with an empty dashboard
       localStorage.removeItem('finance_dashboard_expenses');
       localStorage.removeItem('finance_dashboard_categories');
@@ -152,6 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = () => {
     clearStoredSession();
     clearLocalFinanceData();
+    void purgeApiCache();
     window.location.href = '/#/login';
     window.location.reload();
   };
