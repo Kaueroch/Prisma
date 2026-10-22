@@ -83,7 +83,9 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
       showError(message)
       return
     }
-    if (!Number.isInteger(Number(categoryId))) {
+    // O cd_id do banco é numérico. `Number('')` e `Number(null)` dão 0 e
+    // passariam como inteiros, então a checagem é sobre o id cru.
+    if (!/^\d+$/.test(String(categoryId))) {
       const message = 'Esta categoria só está salva localmente. Recrie-a em Categorias estando logado para sincronizar e tente novamente.'
       setSubmitError(message)
       showError(message)
