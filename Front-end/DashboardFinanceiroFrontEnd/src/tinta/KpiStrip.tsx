@@ -4,6 +4,7 @@ import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatBRL } from '../shared/utils/formatters'
 import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
+import { AnimatedProgress } from '../shared/motion/AnimatedProgress'
 
 type Tone = 'positive' | 'negative' | 'neutral'
 
@@ -14,6 +15,17 @@ export interface KpiItem {
   tone?: Tone
   /** Variação percentual vs. mês anterior (null quando não há base de comparação). */
   delta?: number | null
+  /**
+   * Substitui o número por uma barra de progresso (uso do progresso de meta).
+   * `emptyText` marca o estado sem meta: mostra o texto no lugar do número.
+   */
+  progress?: {
+    pct: number
+    /** Legenda sob a barra, ex.: "de R$ 2.000,00". */
+    caption: string
+    /** Estado sem meta definida, ex.: "Sem meta ainda". */
+    emptyText?: string
+  }
 }
 
 const toneText: Record<Tone, string> = {
@@ -48,7 +60,7 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
   const n = items.length
   return (
     <section className="relative flex flex-col border border-edge bg-surface/60 sm:flex-row">
-      {items.map(({ label, value, icon: Icon, tone = 'neutral', delta }, i) => {
+      {items.map(({ label, value, icon: Icon, tone = 'neutral', delta, progress }, i) => {
         const hasDelta = typeof delta === 'number' && Number.isFinite(delta)
         const deltaUp = hasDelta && (delta as number) > 0
         const DeltaIcon = deltaUp ? ArrowUpRight : ArrowDownRight
@@ -79,6 +91,9 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
                     {Math.abs(delta as number)}%
                   </span>
                 )}
+                {progress && !progress.emptyText && (
+                  <span className="text-[12px] font-medium tabular-nums text-fg-subtle">{Math.round(progress.pct)}%</span>
+                )}
                 <span className="flex size-7 shrink-0 items-center justify-center border border-edge">
                   <Icon className={cn('size-4', toneIcon[tone])} strokeWidth={1.8} />
                 </span>
@@ -86,17 +101,34 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
             </div>
             {loading ? (
               <div className="h-10 w-44 animate-shimmer bg-surface-raised" />
+            ) : progress?.emptyText ? (
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="font-display text-[19px] leading-7 font-medium text-fg">{progress.emptyText}</span>
+                <span className="truncate text-[12px] text-fg-subtle">{progress.caption}</span>
+              </div>
             ) : (
-              <span
-                className={cn(
-                  // truncate + tamanho responsivo: o número é o item mais largo
-                  // da célula e, em tela estreita, encolhe em vez de vazar.
-                  'font-display text-[26px] leading-8 font-medium tracking-[-0.02em] tabular-nums truncate sm:text-[28px] sm:leading-9 xl:text-[34px] xl:leading-10',
-                  toneText[tone],
+              <div className="flex min-w-0 flex-col gap-2">
+                <span
+                  className={cn(
+                    // truncate + tamanho responsivo: o número é o item mais largo
+                    // da célula e, em tela estreita, encolhe em vez de vazar.
+                    'font-display text-[26px] leading-8 font-medium tracking-[-0.02em] tabular-nums truncate sm:text-[28px] sm:leading-9 xl:text-[34px] xl:leading-10',
+                    toneText[tone],
+                  )}
+                >
+                  <AnimatedNumber value={value} format={formatBRL} mask={mask} />
+                </span>
+                {progress && (
+                  <>
+                    <AnimatedProgress
+                      value={progress.pct}
+                      barClassName={progress.pct >= 100 ? 'bg-negative' : 'bg-brand'}
+                      label={progress.caption}
+                    />
+                    <span className="truncate text-[12px] tabular-nums text-fg-subtle">{progress.caption}</span>
+                  </>
                 )}
-              >
-                <AnimatedNumber value={value} format={formatBRL} mask={mask} />
-              </span>
+              </div>
             )}
           </div>
         )

@@ -1,16 +1,16 @@
 import { useMemo, useState, useEffect } from 'react'
-import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Scale, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Eye, EyeOff, Plus, ChevronDown, ChevronUp, Target } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { useAuth } from '../auth/AuthContext'
 import { OrganizerFlow } from './components/OrganizerFlow'
-import { isSameMonth, matchesMonthFilter } from '../shared/utils/formatters'
+import { isSameMonth, matchesMonthFilter, formatBRL } from '../shared/utils/formatters'
 import { getPrefs, initialMonthFilter } from '../shared/services/prefsService'
+import { getGoals } from '../shared/services/goalsService'
 import type { Tab, MonthFilter } from '../shared/types'
 import { DURATION, EASE } from '../shared/motion/tokens'
 import { KpiStrip } from '../tinta/KpiStrip'
-import { InsightBanner } from '../tinta/InsightBanner'
 import { CategoryDonutTinta } from '../tinta/CategoryDonutTinta'
 import { BalanceHistoryTinta } from '../tinta/BalanceHistoryTinta'
 import { IncomeExpenseTinta } from '../tinta/IncomeExpenseTinta'
@@ -49,6 +49,14 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
   const totalExpense = useMemo(() => filtered.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0), [filtered])
   const balance = totalIncome - totalExpense
 
+  // Metas são locais (goalsService): o progresso é o gasto do período contra
+  // a soma das metas. Reaparece no painel como célula da tira de KPIs.
+  const goalTotal = useMemo(() => {
+    const goals = getGoals()
+    return Object.values(goals).reduce((s, g) => s + g.value, 0)
+  }, [expenses])
+  const goalPct = goalTotal > 0 ? Math.min(100, Math.round((totalExpense / goalTotal) * 100)) : 0
+
   const firstName = getPrefs().displayName.trim().split(' ')[0] || user?.name?.split(' ')[0] || 'por aqui'
   // Mês anterior, para o delta percentual dos KPIs.
   const previousMonth = useMemo<MonthFilter>(() => {
@@ -66,8 +74,6 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       expense: inPrev.filter((e) => e.type === 'expense').reduce((s, i) => s + i.amount, 0),
     }
   }, [expenses, previousMonth, selectedMonth.all])
-
-  const previousBalance = previousTotals.income - previousTotals.expense
 
   /** Variação percentual vs. mês anterior (null quando não há base). */
   const percentDelta = (current: number, previous: number): number | null => {
@@ -158,8 +164,6 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         </div>
       </header>
 
-      <InsightBanner expenses={expenses} categories={categories} month={selectedMonth} />
-
       <OrganizerFlow
         onNavigate={(tab) => setActiveTab?.(tab)}
       />
@@ -178,7 +182,15 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
           items={[
             { label: 'Receitas', value: totalIncome, icon: ArrowUpRight, tone: 'positive', delta: percentDelta(totalIncome, previousTotals.income) },
             { label: 'Gastos', value: totalExpense, icon: ArrowDownRight, tone: 'negative', delta: percentDelta(totalExpense, previousTotals.expense) },
-            { label: 'Saldo do período', value: balance, icon: Scale, tone: balance < 0 ? 'negative' : 'neutral', delta: percentDelta(balance, previousBalance) },
+            {
+              label: 'Metas',
+              value: totalExpense,
+              icon: Target,
+              tone: 'neutral',
+              progress: goalTotal > 0
+                ? { pct: goalPct, caption: `de ${formatBRL(goalTotal)}` }
+                : { pct: 0, caption: 'Defina metas em Categorias', emptyText: 'Sem meta ainda' },
+            },
           ]}
         />
       </div>
