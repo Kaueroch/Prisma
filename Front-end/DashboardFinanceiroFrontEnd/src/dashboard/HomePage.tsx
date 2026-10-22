@@ -165,6 +165,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
       </header>
 
       <OrganizerFlow
+        expenses={filtered}
         onNavigate={(tab) => setActiveTab?.(tab)}
       />
 
