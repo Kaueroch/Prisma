@@ -59,6 +59,24 @@ public class Transacao {
         return user;
     }
 
+    /** cd_id gerado pelo banco — é o id que o front usa para referenciar a transação. */
+    public int getId() {
+        return id;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    /** Data no formato "dd/MM/yyyy" (a coluna é texto, não LocalDate). */
+    public String getData() {
+        return data;
+    }
+
     public String getObservacao() {
         return observacao;
     }
