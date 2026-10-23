@@ -76,7 +76,7 @@ export function exportLocalData(): string {
       dump[key] = raw
     }
   }
-  return JSON.stringify({ app: 'prisma-finance', exportedAt: new Date().toISOString(), data: dump }, null, 2)
+  return JSON.stringify({ app: 'prisma', exportedAt: new Date().toISOString(), data: dump }, null, 2)
 }
 
 export function clearLocalData(): void {
