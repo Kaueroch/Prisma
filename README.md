@@ -73,14 +73,14 @@ sequenceDiagram
   API->>DB: insert tb_users
   UI->>API: POST /api/v1/user/login {email, senha}
   API->>DB: select tb_users by email + BCrypt check
-  API-->>UI: {token JWT (issuer Prisma Finance, sub = user UUID)}
+  API-->>UI: {token JWT (issuer Prisma, sub = user UUID)}
   UI->>API: GET/POST/PUT/DELETE /api/v1/categoria/* (Authorization: Bearer <token>)
   API->>DB: select/insert/update/delete tb_categorias
 ```
 
 End-to-end flows verified in code:
 
-1. **Register and login.** `UserController.java:27-37` calls `AutenticacaoRegisterService` and `AutenticacaoLoginService`. `TokenServices.java:19-27` issues a JWT with issuer `Prisma Finance` and subject = user UUID, expiring after `TIME_EXPIRATION_DTO` seconds. The frontend stores it under `prisma_auth_token` and sends it as `Bearer` (`Front-end/.../src/shared/services/categoriesApi.ts:42-59`). Public routes are `#/login` and `#/cadastro` (`Front-end/.../src/App.tsx:21-26`).
+1. **Register and login.** `UserController.java:27-37` calls `AutenticacaoRegisterService` and `AutenticacaoLoginService`. `TokenServices.java:19-27` issues a JWT with issuer `Prisma` and subject = user UUID, expiring after `TIME_EXPIRATION_DTO` seconds. The frontend stores it under `prisma_auth_token` and sends it as `Bearer` (`Front-end/.../src/shared/services/categoriesApi.ts:42-59`). Public routes are `#/login` and `#/cadastro` (`Front-end/.../src/App.tsx:21-26`).
 2. **Categories.** `CategoriaController.java:22-43` exposes create, list, delete, and update. The frontend maps `expense/income` to `Despesas/Receita` before sending (`Front-end/.../src/finance/FinanceContext.tsx:89-93`) and falls back to `localStorage` when the API is unreachable (`FinanceContext.tsx:58-61`).
 3. **Transactions.** `TransacaoController` exposes `POST /api/v1/transacao/criar` (returns the generated `cd_id`) and `GET /api/v1/transacao/listar`. The database is the source of truth; `financeService` (`financeService.ts:8-28`, keys `finance_dashboard_expenses`, `finance_dashboard_categories`) keeps a `localStorage` cache used when the API is unreachable.
 
