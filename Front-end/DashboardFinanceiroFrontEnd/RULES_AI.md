@@ -1,13 +1,13 @@
-# RULES_AI — Prisma Frontend
+# RULES_AI — Prisma Finance Frontend
 
 Source of truth for AI coding in `Front-end/DashboardFinanceiroFrontEnd`.
-Supersedes `RULES_IA.md` and `Skills.md` where they conflict (those still mention Angular/zinc — outdated).
+`RULES_IA.md` and `Skills.md` are legacy briefs kept only for history — they were written for an Angular/zinc app that no longer exists. Where anything conflicts, this file wins; read this file alone.
 
 ## 1. Stack (do not change)
 - React 19 + TypeScript + Vite 6 (`npm run dev` :3000, `npm run build`, `npm run lint` = `tsc --noEmit`).
 - Tailwind CSS 4 + shadcn/ui (`@/components/ui`), Lucide icons, Recharts, Motion.
 - Fonts only: `Geist Variable` (UI/body) + `Space Grotesk Variable` (display/numbers). No Plus Jakarta, no Space Mono. Numbers use `tabular-nums`, never mono-uppercase labels.
-- All user-facing text in US English. BRL formatting via `shared/utils/formatters.ts`.
+- All user-facing text in **Brazilian Portuguese (pt-BR)** — the product copy is pt-BR end to end (`landing/content.ts`, every screen, empty states, toasts, error messages). Never translate the UI to English. The only English strings are the category-symbol labels in `shared/components/CategorySymbol.tsx` (`Food`, `Groceries`, `Transport`, …) — leave those as they are. BRL formatting via `shared/utils/formatters.ts`.
 
 ## 2. Visual identity — black/amber, never aggressive
 - Canvas `#0c0a08`, surface `#161310`, raised `#201d19`, edge `rgba(251,191,36,0.1)`, brand `#fbbf24` (amber), brand-strong `#f59e0b`, brand-soft `rgba(251,191,36,0.12)`, fg `#fafaf9`, muted 62%, subtle 42%.
@@ -15,9 +15,10 @@ Supersedes `RULES_IA.md` and `Skills.md` where they conflict (those still mentio
 - Tokens live in `src/index.css` `@theme`. Do not hardcode violet/emerald/orange Tailwinds; use `bg-brand text-positive text-negative text-destructive border-edge bg-surface`.
 - Background glows max `0.05` opacity, `white/[0.02]` for secondary blurs. No gradients as decoration, no acid neon.
 - Single source of truth for the categorical palette: `src/shared/utils/palette.ts` (muted jewel set `#8578C8 #8FBF9F #D48A90 #C9A86A #7EA8D8 #A89FD0`). `tinta/chartColors.ts` and `shared/utils/categoryColor.ts` both derive from it. Never pure `#a3e635 #3b82f6 #f97316`.
+- `src/shared/constants/index.ts` (`CATEGORIES`) is **not** the color source, despite looking like one: it still carries legacy `bg-orange-400` / `bg-sky-400` / `bg-purple-400` / `bg-zinc-400` and hex colors (`#fb923c`, `#38bdf8`, `#c084fc`) that break this rule. Only its `.type` field is ever read (`shared/services/financeService.ts:47`). Never read, add, or copy colors from there — use `palette.ts`.
 - Category color is symbolic and automatic (name hash → palette), so the same category keeps the same color in the donut, the transaction list and the category cards. Backend has no color field, so color is display-only and never part of any payload.
 - Category symbol is user-chosen from `shared/components/CategorySymbol.tsx` (12 Lucide options). Stored as `CategoryInfo.icon` (frontend-only, never sent). Render via `CategorySymbol` or `resolveSymbol`, never the raw initial letter.
-- Radius: ledger/strips/cards `rounded-none` or `rounded-xl` max; actions/inputs `rounded-lg`; only modals may use `rounded-xl`. Never `rounded-2xl` for new code.
+- Radius: actions/inputs `rounded-lg`; cards, strips and sections `rounded-xl` max (`rounded-none` for ledger rows). `rounded-2xl` is legacy — it still survives in a few empty states and goal cards (`goals/GoalsPage.tsx`, `tinta/RecentTinta.tsx`, `tinta/CategoryDonutTinta.tsx`, `transactions/TransactionsPage.tsx`, `profile/ProfilePage.tsx`). Do not add new occurrences, and do not mass-rewrite the existing ones during a style task.
 - Borders `border-edge`, no shadows, hover `hover:border-brand/40`, transitions `150-200ms`.
 - Layout: left-aligned, `px-4 sm:px-6 lg:px-10`, `max-w-6xl` landing. No centered hero, no `eyebrow` uppercase, no `font-mono uppercase tracking`, no `·` meta strings, no `→` on links. Labels sentence case 12-13px (`text-fg-muted`/`text-fg-subtle`).
 - Motion: one entrance max (hero/balance). State changes (expand/confirm/save) `~180-200ms`. No particles/typewriter/rotating logos on new screens. Auth particle count stays ≤8.

@@ -1,39 +1,30 @@
-# Project: Prisma - Personal Finance Dashboard
+# RULES_IA — Prisma Finance Frontend (legacy)
 
-## System Role
-You are a Tech Lead and UX/UI specialist focused on developing the frontend of the "Prisma" application. Your goal is to generate clean, modular code that strictly adheres to our Design System.
+> **Documento legado.** Escrito para um app Angular/zinc que não existe mais.
+> A fonte da verdade é [`RULES_AI.md`](./RULES_AI.md) — leia só ela.
+> Este arquivo fica aqui apenas por histórico.
 
-## Tech Stack
-- **Framework:** Angular (Standalone Components only, avoid NgModules).
-- **Styling:** Tailwind CSS (utilities).
-- **Icons:** Lucide Icons (`lucide-angular`).
+## O que mudou (leia antes de usar qualquer coisa abaixo)
 
-## Prisma Design System (Strict Rules)
-Visual identity is critical. Never deviate from the rules below when generating or refactoring components:
+| Regra antiga (errada) | Regra atual |
+|---|---|
+| Angular standalone components | React 19 + TypeScript + Vite 6 |
+| `bg-zinc-950` / `bg-zinc-900` / `border-zinc-800` | `bg-surface` / `bg-raised` / `border-edge` (`src/index.css` `@theme`) |
+| `text-zinc-400` / `text-zinc-500` para texto secundário | `text-fg-muted` (62%) / `text-fg-subtle` (42%) |
+| Verde/roxo/laranja neon para acentos | Preto e âmbar: `bg-brand` `#fbbf24`, `text-positive` `#6fd3a0`, `text-negative` `#d48a90` |
+| Interface em US English | Interface em **português do Brasil** |
+| `rounded-2xl` em cards e modais | `rounded-xl` no máximo (ações/inputs `rounded-lg`) |
 
-### 1. Color Palette (Dark Mode Only)
-- The application has no Light Mode. Never use white backgrounds.
-- **Primary Background (Canvas):** `bg-zinc-950`
-- **Surfaces (Cards, Modals, Sidebars):** `bg-zinc-900`
-- **Borders and Dividers:** `border-zinc-800`
+## Systemic rules (still valid, condensed)
 
-### 2. Typography and Contrast
-- **Language:** All interface text, *placeholders*, and *labels* MUST be in US English.
-- **Primary Text (Headings, Values):** High legibility using `text-white` and bold fonts for emphasis.
-- **Secondary Text (Descriptions, Labels):** Muted contrast using `text-zinc-400` or `text-zinc-500`.
+- Dark mode apenas. Nunca fundo branco.
+- Tokens vivem em `src/index.css` (`@theme`). Não hardcodeie `#a3e635 #3b82f6 #f97316` nem variantes Tailwind de cor.
+- Fonte única da paleta categórica: `src/shared/utils/palette.ts` (joias muted `#8578C8 #8FBF9F #D48A90 #C9A86A #7EA8D8 #A89FD0`).
+- Ícones: Lucide React. Símbolo de categoria vem de `shared/components/CategorySymbol.tsx` (12 opções).
+- Bordas `border-edge`, sem sombras, hover `hover:border-brand/40`, transições `150-200ms`.
+- Sem `alert()` / `window.confirm()`: use `shared/components/ConfirmDialog.tsx` e `shared/components/Toast.tsx`.
+- Entrada única por tela, com `MotionRoot` (`src/App.tsx`) e os primitivos de `src/shared/motion/`.
 
-### 3. Accents and Highlight Colors
-- Use vibrant/neon colors (emerald, purple, orange, blue) **only** for category icons, charts, or primary actions to create contrast against the dark background.
-- **Income:** Vibrant greens (e.g. `text-emerald-400`).
-- **Expenses:** Neutral (`text-white`) or soft colors.
+## Onde encontrar o detalhe
 
-### 4. Components and Interactivity
-- **Borders:** Soft rounding. Use `rounded-2xl` for cards and modals, `rounded-xl` for buttons and inputs.
-- **Form Inputs (Auth/Transactions):** Background `bg-zinc-950` or `bg-zinc-900`, with border `border-zinc-800`. Focus state must be clean (`focus:ring-1 focus:ring-zinc-700 focus:outline-none`), without the default browser *ring*.
-- **Hover States:** Interactions must be subtle, using `hover:bg-zinc-800/50` and smooth transitions (`transition-colors duration-200`). Do not add complex shadows (*drop-shadow*).
-
-## Execution Instructions
-When asked to create a new screen (e.g. Login, Sign-up):
-1. Generate semantic HTML.
-2. Apply Tailwind classes following the Design System above.
-3. Deliver the Angular component TypeScript already prepared with basic logic (e.g. Reactive Forms).
+Tudo acima está resumido aqui; as regras completas, o contrato de API e o checklist de verificação estão em [`RULES_AI.md`](./RULES_AI.md).
