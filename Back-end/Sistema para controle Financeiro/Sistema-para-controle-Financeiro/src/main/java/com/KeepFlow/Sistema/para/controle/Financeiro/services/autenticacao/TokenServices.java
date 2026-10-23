@@ -23,7 +23,7 @@ public class TokenServices {
         // Algorithm that builds the content of the token
             Algorithm algorithm = Algorithm.HMAC256(Secretkey); // Defines the algorithm used to generate the token
             return JWT.create()
-                    .withIssuer("Prisma Finance")
+                    .withIssuer("Prisma")
                     .withSubject(uuid.toString())
                     .withExpiresAt(Instant.now().plusSeconds(Jwtexpiration))
                     .sign(algorithm);
@@ -41,7 +41,7 @@ public class TokenServices {
         try {
             Algorithm algorithm = Algorithm.HMAC256(Secretkey);
             return JWT.require(algorithm)
-                    .withIssuer("Prisma Finance")
+                    .withIssuer("Prisma")
                     .build()
                     .verify(token)
                     .getSubject();
