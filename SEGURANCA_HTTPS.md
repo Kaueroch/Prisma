@@ -1,6 +1,6 @@
 # End-to-End Protection — HTTPS (TLS) in Production
 
-Guide to enabling HTTPS in the Prisma pipeline (Nginx/React + Spring Boot) so the landing page promise — *"data protected end to end, from the frontend to the backend, with encrypted communication on every request"* — is 100% true.
+Guide to enabling HTTPS in the Prisma Finance pipeline (Nginx/React + Spring Boot) so the landing page promise — *"data protected end to end, from the frontend to the backend, with encrypted communication on every request"* — is 100% true.
 
 ---
 
@@ -32,7 +32,7 @@ Guide to enabling HTTPS in the Prisma pipeline (Nginx/React + Spring Boot) so th
 
 ### 0. Prerequisites
 
-- A **domain** pointing to the server (e.g. `prisma.yourdomain.com`) — required for a real certificate (Let's Encrypt). For local tests without a domain, skip to Option B.
+- A **domain** pointing to the server (e.g. `prismafinance.yourdomain.com`) — required for a real certificate (Let's Encrypt). For local tests without a domain, skip to Option B.
 - Ports **80** and **443** open in the firewall.
 
 ---
@@ -47,20 +47,20 @@ sudo apt update
 sudo apt install certbot python3-certbot-nginx
 
 # Issues and installs automatically into nginx (it will ask for the domain)
-sudo certbot --nginx -d prisma.seudominio.com
+sudo certbot --nginx -d prismafinance.seudominio.com
 ```
 
 This creates:
-- `/etc/letsencrypt/live/prisma.seudominio.com/fullchain.pem`
-- `/etc/letsencrypt/live/prisma.seudominio.com/privkey.pem`
+- `/etc/letsencrypt/live/prismafinance.seudominio.com/fullchain.pem`
+- `/etc/letsencrypt/live/prismafinance.seudominio.com/privkey.pem`
 
 ### Option B — Self-signed certificate (dev/tests only, no domain)
 
 ```bash
 mkdir -p certs
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout certs/prisma.key \
-  -out certs/prisma.crt \
+  -keyout certs/prismafinance.key \
+  -out certs/prismafinance.crt \
   -subj "/CN=localhost"
 ```
 
@@ -76,7 +76,7 @@ Replace the `echo 'server { listen 80; ... }'` block in the Dockerfile with a TL
 # Redirect HTTP -> HTTPS
 server {
     listen 80;
-    server_name prisma.seudominio.com localhost;
+    server_name prismafinance.seudominio.com localhost;
     location / {
         return 301 https://$host$request_uri;
     }
@@ -84,7 +84,7 @@ server {
 
 server {
     listen 443 ssl;
-    server_name prisma.seudominio.com;
+    server_name prismafinance.seudominio.com;
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
@@ -142,7 +142,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 **Important:**
 - Remove the `- "8080:8080"` mapping from the backend. It is then used only internally (`backend:8080`) via the nginx proxy.
-- For Option A, instead of copying to `./certs`, you can copy the certbot-generated files into that folder: `sudo cp /etc/letsencrypt/live/prisma.seudominio.com/fullchain.pem certs/` and likewise `privkey.pem`.
+- For Option A, instead of copying to `./certs`, you can copy the certbot-generated files into that folder: `sudo cp /etc/letsencrypt/live/prismafinance.seudominio.com/fullchain.pem certs/` and likewise `privkey.pem`.
 
 ---
 
@@ -152,9 +152,9 @@ On the frontend, the API base must point to the domain itself (HTTPS) using the 
 
 - Create/edit the frontend `.env` (`Front-end/DashboardFinanceiroFrontEnd/.env`):
   ```bash
-  VITE_API_URL=https://prisma.seudominio.com/api
+  VITE_API_URL=https://prismafinance.seudominio.com/api
   ```
-  > Example: the current call to `http://server:8080/...` becomes `https://prisma.seudominio.com/api/...`, which nginx forwards to the internal backend.
+  > Example: the current call to `http://server:8080/...` becomes `https://prismafinance.seudominio.com/api/...`, which nginx forwards to the internal backend.
 - Recreate the containers: `docker compose up -d --build`.
 
 ---
@@ -163,11 +163,11 @@ On the frontend, the API base must point to the domain itself (HTTPS) using the 
 
 ```bash
 docker compose ps                       # frontend published on 443, backend with NO exposed port
-curl -sI https://prisma.seudominio.com  # 200 + TLS handshake
-curl -sI http://prisma.seudominio.com   # 301 -> https://...
+curl -sI https://prismafinance.seudominio.com  # 200 + TLS handshake
+curl -sI http://prismafinance.seudominio.com   # 301 -> https://...
 ```
 
-Test in the browser: open `https://prisma.seudominio.com` → it must show the lock and redirect HTTP. Open `https://server:8080` → it must **fail** (backend port closed).
+Test in the browser: open `https://prismafinance.seudominio.com` → it must show the lock and redirect HTTP. Open `https://server:8080` → it must **fail** (backend port closed).
 
 ---
 

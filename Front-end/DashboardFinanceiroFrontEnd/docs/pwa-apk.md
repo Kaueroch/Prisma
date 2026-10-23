@@ -1,4 +1,4 @@
-# Prisma — Diagnóstico e Plano: PWA + APK
+# Prisma Finance — Diagnóstico e Plano: PWA + APK
 
 > **Documento de referência para outra sessão do OpenCode.**
 > Gerado a partir da inspeção do repositório em `/home/kauezao/Documents/Prisma/Front-end/DashboardFinanceiroFrontEnd`.
@@ -184,8 +184,8 @@ Conteúdo efetivo do bloco `manifest:` em `vite.config.ts`:
 
 ```ts
 manifest: {
-  name: 'Prisma — Painel Financeiro',
-  short_name: 'Prisma',
+  name: 'Prisma Finance — Painel Financeiro',
+  short_name: 'Prisma Finance',
   description: 'Painel financeiro pessoal: entradas, saídas, categorias e metas.',
   lang: 'pt-BR',
   dir: 'ltr',
@@ -236,7 +236,7 @@ Arquivos resultantes em `public/icons/`: `icon-192.png`, `icon-512.png`, `icon-m
     <meta charset="UTF-8" />
     <!-- viewport-fit=cover habilita env(safe-area-inset-*) no iOS (barra de status/home indicator) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Prisma — painel financeiro pessoal: entradas, saídas, categorias e metas." />
+    <meta name="description" content="Prisma Finance — painel financeiro pessoal: entradas, saídas, categorias e metas." />
 
     <!-- PWA -->
     <meta name="theme-color" content="#0c0a08" />
@@ -245,9 +245,9 @@ Arquivos resultantes em `public/icons/`: `icon-192.png`, `icon-512.png`, `icon-m
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Prisma" />
+    <meta name="apple-mobile-web-app-title" content="Prisma Finance" />
 
-    <title>Prisma — Painel Financeiro</title>
+    <title>Prisma Finance — Painel Financeiro</title>
   </head>
   <body>
     <div id="root"></div>
@@ -277,8 +277,8 @@ export default defineConfig(() => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'icons/*.png'],
       manifest: {
-        name: 'Prisma — Painel Financeiro',
-        short_name: 'Prisma',
+        name: 'Prisma Finance — Painel Financeiro',
+        short_name: 'Prisma Finance',
         description: 'Painel financeiro pessoal: entradas, saídas, categorias e metas.',
         lang: 'pt-BR',
         start_url: '/painel',
@@ -460,7 +460,7 @@ RUN npm run build
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration cfg = new CorsConfiguration();
     cfg.setAllowedOrigins(List.of(
-        "https://prisma.seudominio.com",
+        "https://prismafinance.seudominio.com",
         "https://localhost:5173",
         "capacitor://localhost",
         "https://localhost"          // origem do Capacitor/WebView
@@ -486,12 +486,12 @@ Não esquecer de permitir o preflight `OPTIONS` no `SecurityFilterChain`.
 
 ```bash
 npm i -g @bubblewrap/cli
-bubblewrap init --manifest https://prisma.seudominio.com/manifest.webmanifest
+bubblewrap init --manifest https://prismafinance.seudominio.com/manifest.webmanifest
 # edite bubblewrap.config.json: packageId, name, displayVersionCode, icon URLs, splash
 bubblewrap build
 ```
 
-**Digital Asset Links** — servir em `https://prisma.seudominio.com/.well-known/assetlinks.json`:
+**Digital Asset Links** — servir em `https://prismafinance.seudominio.com/.well-known/assetlinks.json`:
 
 ```json
 [
@@ -532,7 +532,7 @@ keytool -list -v -keystore upload-keystore.jks -alias upload | grep SHA256
 npm i -D @capacitor/cli @capacitor/core @capacitor/android
 npm i @capacitor/status-bar @capacitor/keyboard @capacitor/push-notifications
 
-npx cap init "Prisma" "com.prisma.painelfinanceiro" --web-dir=dist
+npx cap init "Prisma Finance" "com.prisma.painelfinanceiro" --web-dir=dist
 npx cap add android
 npx cap sync
 npx cap open android     # abre no Android Studio

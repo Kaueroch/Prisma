@@ -1,6 +1,6 @@
-# Prisma frontend — finance panel (React)
+# Prisma Finance frontend — finance panel (React)
 
-Open source frontend for Prisma: landing page, authentication, and a dark finance panel to track income, expenses, and categories.
+Open source frontend for Prisma Finance: landing page, authentication, and a dark finance panel to track income, expenses, and categories.
 
 This is the `frontend` service from the repo root. The backend contract lives in `Back-end/.../controllers/` and the full stack guide in `../../README.md`.
 

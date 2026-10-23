@@ -1,4 +1,4 @@
-# Roteiro de Vídeo — Demonstração do Prisma
+# Roteiro de Vídeo — Demonstração do Prisma Finance
 
 **Duração sugerida:** 2 a 3 minutos
 **Tom:** direto, amigável, profissional
@@ -8,8 +8,8 @@
 
 ## Cena 1 — Abertura (0:00 – 0:15)
 
-**Tela:** Logo Prisma centralizado, fundo escuro.
-**Narração:** "Seu dinheiro organizado, sem planilhas e sem dor de cabeça. Conheça o Prisma, seu painel financeiro."
+**Tela:** Logo Prisma Finance centralizado, fundo escuro.
+**Narração:** "Seu dinheiro organizado, sem planilhas e sem dor de cabeça. Conheça o Prisma Finance, seu painel financeiro."
 
 ## Cena 2 — Login / Cadastro (0:15 – 0:30)
 
@@ -39,7 +39,7 @@
 ## Cena 6 — Metas / Orçamentos (1:40 – 2:00)
 
 **Tela:** Página de Metas. Mostrar barra de progresso, estouro (vermelho) e dentro do limite.
-**Narração:** "Defina um teto de gastos por categoria. O Prisma mostra o progresso e avisa quando você estoura o orçamento."
+**Narração:** "Defina um teto de gastos por categoria. O Prisma Finance mostra o progresso e avisa quando você estoura o orçamento."
 
 ## Cena 7 — Configurações (2:00 – 2:15)
 
@@ -48,8 +48,8 @@
 
 ## Cena 8 — Encerramento (2:15 – 2:30)
 
-**Tela:** Logo Prisma + chamada para ação.
-**Narração:** "Prisma: seu dinheiro, organizado. Crie sua conta grátis e veja seu primeiro mês organizado em minutos. Link na descrição."
+**Tela:** Logo Prisma Finance + chamada para ação.
+**Narração:** "Prisma Finance: seu dinheiro, organizado. Crie sua conta grátis e veja seu primeiro mês organizado em minutos. Link na descrição."
 
 ---
 

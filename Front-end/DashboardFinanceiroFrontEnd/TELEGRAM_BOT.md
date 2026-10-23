@@ -1,4 +1,4 @@
-# Telegram Bot → Prisma (frontend-only for now, backend later)
+# Telegram Bot → Prisma Finance (frontend-only for now, backend later)
 
 Status: **local simulation working, no Java changes.**
 
@@ -13,7 +13,7 @@ Test: Settings → Simulate a bot expense → back to the Dashboard, see "Coffee
 
 ## Why frontend-only?
 
-You asked not to touch the backend. The Prisma backend currently only has `User + Categoria` (no `TransacaoController`), so the bot has nowhere to write. The simulation proves the UI flow without blocking.
+You asked not to touch the backend. The Prisma Finance backend currently only has `User + Categoria` (no `TransacaoController`), so the bot has nowhere to write. The simulation proves the UI flow without blocking.
 
 ## Real bot path (whenever you want it)
 
@@ -57,7 +57,7 @@ GET  /api/v1/transacao/listar?userId={uuid}&startDate=yyyy-MM-dd&endDate=... (JW
 POST /api/v1/transacao/criar (JWT) -> { id }
 ```
 
-`Transaction` money-flow: `{id, description, amount, date, categoryDescription, operationType}`. Map to Prisma `Expense {id, name, amount, date, categoryId, type}`. Use `BigDecimal` in Java (never `float`) — the frontend already sums with `float`, so the backend guards the cents.
+`Transaction` money-flow: `{id, description, amount, date, categoryDescription, operationType}`. Map to Prisma Finance `Expense {id, name, amount, date, categoryId, type}`. Use `BigDecimal` in Java (never `float`) — the frontend already sums with `float`, so the backend guards the cents.
 
 ### 4. Test without a real Telegram
 
@@ -69,7 +69,7 @@ POST /api/v1/transacao/criar (JWT) -> { id }
    - `telegramInbox.simulate()` → `fetch(${VITE_API_URL}/telegram/inbox)` polling.
    - `ProfilePage.handleGenerate` → real `POST /telegram/link`.
    - `FinanceContext.loadData` → `GET /transactions` instead of `localStorage`.
-3. **Scheduled:** if you want "show up in Prisma as scheduled", add `status: PENDING | APPLIED` + `scheduledFor`. The bot creates `PENDING`, the frontend shows it in an "Inbox" for confirmation before applying (avoids wrong expenses from parsing).
+3. **Scheduled:** if you want "show up in Prisma Finance as scheduled", add `status: PENDING | APPLIED` + `scheduledFor`. The bot creates `PENDING`, the frontend shows it in an "Inbox" for confirmation before applying (avoids wrong expenses from parsing).
 
 ## Contracts (your /api/v1 style, money-flow compatible)
 
@@ -82,4 +82,4 @@ GET  /api/v1/telegram/inbox?userId={uuid} -> [{ id, text, amount, categoryGuess,
 POST /api/v1/telegram/inbox/{id}/apply -> Transaction
 ```
 
-`Transaction` money-flow: `{id, description, amount, date, categoryDescription, operationType}`. Map to Prisma `Expense {id, name, amount, date, categoryId, type}`.
+`Transaction` money-flow: `{id, description, amount, date, categoryDescription, operationType}`. Map to Prisma Finance `Expense {id, name, amount, date, categoryId, type}`.

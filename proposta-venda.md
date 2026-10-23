@@ -1,4 +1,4 @@
-# Proposta de Venda — Prisma (Painel Financeiro)
+# Proposta de Venda — Prisma Finance (Painel Financeiro)
 
 **Para:** [Nome do Cliente]
 **De:** [Seu Nome / Empresa]
@@ -10,7 +10,7 @@
 ## 1. O problema que resolvemos
 
 Planilhas soltas, gastos que somem no fim do mês, sem visão clara de para onde vai o dinheiro.
-O **Prisma** é um painel financeiro pessoal/empresarial em modo escuro, rápido e objetivo,
+O **Prisma Finance** é um painel financeiro pessoal/empresarial em modo escuro, rápido e objetivo,
 que organiza receitas, despesas e categorias em um só lugar — sem burocracia.
 
 ## 2. O que está incluído
@@ -60,4 +60,4 @@ que organiza receitas, despesas e categorias em um só lugar — sem burocracia.
 
 ---
 
-*Prisma — seu dinheiro, organizado.*
+*Prisma Finance — seu dinheiro, organizado.*
