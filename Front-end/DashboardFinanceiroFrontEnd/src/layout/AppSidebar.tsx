@@ -36,7 +36,7 @@ export function AppSidebar({ activeTab, setActiveTab }: AppSidebarProps) {
             P
           </div>
           <span className="text-base font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden">
-            Prisma
+            Prisma Finance
           </span>
         </div>
       </SidebarHeader>

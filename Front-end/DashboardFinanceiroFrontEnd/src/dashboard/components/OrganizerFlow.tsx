@@ -24,7 +24,7 @@ interface OrganizerFlowProps {
 }
 
 /**
- * "Como o Prisma organiza seu dinheiro"
+ * "Como o Prisma Finance organiza seu dinheiro"
  *
  * Um diagrama do modelo do produto alimentado pelos dados reais do usuário.
  * Não é uma lista de tarefas: cada nó explica um conceito e mostra, de
@@ -147,10 +147,10 @@ export function OrganizerFlow({ onNavigate, expenses: scopedExpenses }: Organize
   const readyCount = nodes.filter((n) => n.ready).length
 
   return (
-    <section className="mb-7 border border-edge bg-surface" aria-label="Como o Prisma organiza seu dinheiro">
+    <section className="mb-7 border border-edge bg-surface" aria-label="Como o Prisma Finance organiza seu dinheiro">
       <div className="flex flex-col lg:flex-row">
         <div className="flex items-start justify-between gap-3 border-b border-edge px-5 py-4 lg:w-[230px] lg:shrink-0 lg:border-b-0 lg:border-r">
-          <span className="min-w-0 text-[13px] font-medium text-fg-muted">Como o Prisma organiza seu dinheiro</span>
+          <span className="min-w-0 text-[13px] font-medium text-fg-muted">Como o Prisma Finance organiza seu dinheiro</span>
           <span className="shrink-0 whitespace-nowrap text-[12px] tabular-nums text-fg-subtle">
             {readyCount} de {nodes.length}
           </span>

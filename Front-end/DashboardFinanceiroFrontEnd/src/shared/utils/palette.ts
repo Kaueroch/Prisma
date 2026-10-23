@@ -1,5 +1,5 @@
 /**
- * Prisma palette — preta e âmbar.
+ * Prisma Finance palette — preta e âmbar.
  *
  * Fonte única de verdade das cores de dado. O app tem três grupos:
  *

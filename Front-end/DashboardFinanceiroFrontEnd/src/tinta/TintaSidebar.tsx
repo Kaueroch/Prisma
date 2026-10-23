@@ -124,7 +124,7 @@ export function TintaSidebar({
           <TrendingUp className="size-4 text-black" strokeWidth={2.6} />
         </div>
         {expanded && (
-          <span className="truncate text-base font-bold tracking-tight text-fg">Prisma</span>
+          <span className="truncate text-base font-bold tracking-tight text-fg">Prisma Finance</span>
         )}
       </div>
       <nav id="tinta-sidebar-nav" aria-label="Navegação principal" className="flex w-full flex-1 flex-col gap-1.5">

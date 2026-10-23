@@ -6,7 +6,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ===== Prisma tokens — preto e âmbar (identidade) =====
+/* ===== Prisma Finance tokens — preto e âmbar (identidade) =====
  * Identidade: canvas/surface/edge + brand âmbar.
  * Semântica: --color-positive (entrada) e --color-negative (saída).
  * Categórica: src/shared/utils/palette.ts (fonte única, fora do CSS).

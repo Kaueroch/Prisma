@@ -39,7 +39,7 @@ function windowFrame(children: ReactNode) {
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 text-[12px] text-fg-subtle">
             <span className="h-1 w-1 bg-zinc-600" />
-            app.prisma.com.br/dashboard
+            app.prismafinance.com.br/dashboard
           </div>
         </div>
         {children}

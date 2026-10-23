@@ -233,7 +233,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             title={onBack ? 'Voltar para a página inicial' : undefined}
             className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            Prisma
+            Prisma Finance
           </motion.h1>
 
           <div className="h-14 flex items-center justify-center">
@@ -324,7 +324,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             <div className="w-10 h-10 rounded-xl bg-brand text-black flex items-center justify-center">
               <Wallet className="w-6 h-6" />
             </div>
-            <span className="font-bold text-2xl tracking-tight text-white">Prisma</span>
+            <span className="font-bold text-2xl tracking-tight text-white">Prisma Finance</span>
           </motion.div>
 
           <motion.div

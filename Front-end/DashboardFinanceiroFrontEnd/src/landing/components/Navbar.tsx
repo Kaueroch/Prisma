@@ -28,7 +28,7 @@ export function Navbar() {
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-black">
             <Wallet className="h-4 w-4" strokeWidth={2.6} />
           </span>
-          <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">prisma</span>
+          <span className="font-display text-base font-semibold tracking-[-0.02em] text-fg">Prisma Finance</span>
         </a>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary navigation">

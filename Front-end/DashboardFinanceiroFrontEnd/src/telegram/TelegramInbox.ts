@@ -25,7 +25,7 @@ function writeInbox(items: Record<string, unknown>[]) {
 }
 
 /**
- * Frontend-only: simulate "each Telegram expense shows up in Prisma".
+ * Frontend-only: simulate "each Telegram expense shows up in Prisma Finance".
  * Write to the same FinanceContext localStorage and notify via event,
  * so the dashboard updates with no reload and no new backend.
  */

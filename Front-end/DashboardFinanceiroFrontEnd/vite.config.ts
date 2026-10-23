@@ -15,8 +15,8 @@ export default defineConfig(() => {
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          name: 'Prisma — Painel Financeiro',
-          short_name: 'Prisma',
+          name: 'Prisma Finance — Painel Financeiro',
+          short_name: 'Prisma Finance',
           description: 'Painel financeiro pessoal: entradas, saídas, categorias e metas.',
           lang: 'pt-BR',
           dir: 'ltr',

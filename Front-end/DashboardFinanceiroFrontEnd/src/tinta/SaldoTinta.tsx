@@ -6,7 +6,7 @@ import { Crossfade } from '../shared/motion/Crossfade'
 import { cn } from '@/lib/utils'
 import { DURATION, EASE } from '../shared/motion/tokens'
 
-/** Running balance — Prisma version without accounts API (all local transactions). */
+/** Running balance — Prisma Finance version without accounts API (all local transactions). */
 export function SaldoTinta({ total, count, loading = false, mask = false }: { total: number; count: number; loading?: boolean; mask?: boolean }) {
   const reduce = useReducedMotion()
   const previousSign = useRef(total < 0 ? -1 : 1)
