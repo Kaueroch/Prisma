@@ -22,4 +22,6 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
 	 * coluna (`cd_id`).
 	 */
 	List<Transacao> findAllByUser_IdOrderByIdDesc(UUID userId);
+
+	boolean existsByTransacao_IdAndUser_Id(Integer transacao_id, UUID userId);
 }
