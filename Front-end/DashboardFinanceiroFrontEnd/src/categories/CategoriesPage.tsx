@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { motion, AnimatePresence } from 'motion/react'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
-import { GoalEditor } from './GoalEditor'
 import { ConfirmDialog } from '../shared/components/ConfirmDialog'
-import { symbolicCategoryColor } from '../shared/utils/categoryColor'
+import { symbolicCategoryColor, SYMBOLIC_CATEGORY_PALETTE } from '../shared/utils/categoryColor'
 import { CATEGORY_SYMBOLS, CategorySymbol, symbolicCategorySymbol } from '../shared/components/CategorySymbol'
 import { cn } from '@/lib/utils'
 
@@ -39,10 +38,12 @@ export function CategoriesPage() {
   const [newCatType, setNewCatType] = useState<CategoryKind>('expense')
   const [newCatSymbol, setNewCatSymbol] = useState<string>(() => symbolicCategorySymbol('?'))
   const [symbolTouched, setSymbolTouched] = useState(false)
+  const [newCatColorOverride, setNewCatColorOverride] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editSymbol, setEditSymbol] = useState('')
   const [editType, setEditType] = useState<CategoryKind>('expense')
+  const [editColor, setEditColor] = useState<string | null>(null)
   /** Aviso modal no lugar de `alert()`. */
   const [notice, setNotice] = useState<{ title: string; description: string } | null>(null)
   /** Categoria aguardando confirmação de exclusão. */
@@ -82,7 +83,7 @@ export function CategoriesPage() {
     try {
       await addCategory({
         name: newCatName.trim(),
-        color: symbolicCategoryColor(newCatName.trim()),
+        color: newCatColorOverride ?? symbolicCategoryColor(newCatName.trim()),
         bgClass: 'bg-white/10',
         textClass: 'text-white',
         icon: newCatSymbol,
@@ -92,6 +93,7 @@ export function CategoriesPage() {
       setNewCatType('expense')
       setNewCatSymbol(symbolicCategorySymbol('?'))
       setSymbolTouched(false)
+      setNewCatColorOverride(null)
       setIsAdding(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
@@ -125,8 +127,14 @@ export function CategoriesPage() {
       return
     }
     try {
-      await updateCategory(id, { name: editName.trim(), icon: editSymbol, type: editType })
+      await updateCategory(id, {
+        name: editName.trim(),
+        icon: editSymbol,
+        type: editType,
+        ...(editColor ? { color: editColor } : {}),
+      })
       setEditingId(null)
+      setEditColor(null)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
       setNotice({ title: 'Não foi possível salvar', description: message || 'Verifique se o backend está rodando.' })
@@ -193,11 +201,22 @@ export function CategoriesPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-xs text-muted-foreground font-medium">Cor do símbolo</span>
-                  <span className="flex h-9 items-center gap-2 rounded-lg border border-edge bg-white/[0.02] px-3" title="A cor é atribuída automaticamente">
-                    <span className="h-5 w-5 rounded-md" style={{ backgroundColor: newAutomáticoColor }} aria-hidden />
-                    <span className="text-xs text-fg-muted">Automático</span>
-                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">Cor</span>
+                  <div className="flex h-9 items-center gap-2">
+                    {SYMBOLIC_CATEGORY_PALETTE.map((c) => {
+                      const selected = (newCatColorOverride ?? newAutomáticoColor) === c
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          aria-label={`Cor ${c}`}
+                          onClick={() => setNewCatColorOverride(c)}
+                          className={`size-6 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${selected ? 'ring-2 ring-offset-1 ring-offset-[#161310] ring-brand scale-110' : ''}`}
+                          style={{ backgroundColor: c }}
+                        />
+                      )
+                    })}
+                  </div>
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-muted-foreground font-medium">Tipo</label>
@@ -277,7 +296,7 @@ export function CategoriesPage() {
 
               return (
                 <div key={cat.id} className="relative">
-                  <Card className={cn('overflow-hidden transition-colors duration-150', isExpanded && 'ring-brand/40')}>
+                  <Card className={cn('overflow-hidden transition-colors duration-150', isExpanded && 'rounded-b-none')}>
                     <CardContent className="p-0">
                       <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0 group">
                         <div className="flex items-center gap-4 flex-1">
@@ -286,7 +305,7 @@ export function CategoriesPage() {
                             <span className="font-medium text-sm sm:text-base flex items-center gap-2">
                               {cat.name}
                               <span className="sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 transition-opacity">
-                                <button onClick={(e) => { e.stopPropagation(); setEditName(cat.name); setEditSymbol(cat.icon ?? symbolicCategorySymbol(cat.name)); setEditType(cat.type); setEditingId(cat.id) }} className="p-1 text-muted-foreground hover:text-foreground">
+                                <button onClick={(e) => { e.stopPropagation(); setEditName(cat.name); setEditSymbol(cat.icon ?? symbolicCategorySymbol(cat.name)); setEditType(cat.type); setEditColor(cat.color); setEditingId(cat.id) }} className="p-1 text-muted-foreground hover:text-foreground">
                                   <Edit2 className="w-3 h-3" />
                                 </button>
                                 <button onClick={(e) => {
@@ -326,7 +345,7 @@ export function CategoriesPage() {
                       >
                         <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:p-6">
                           <div className="flex items-center gap-4">
-                            <CategorySymbol symbol={editSymbol} color={cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
+                            <CategorySymbol symbol={editSymbol} color={editColor ?? cat.color} name={cat.name} className="w-12 h-12" iconClassName="size-5" />
                             <div className="flex flex-col gap-2.5 flex-1">
                               <div className="flex items-center gap-3 flex-wrap">
                                 <Input
@@ -347,10 +366,22 @@ export function CategoriesPage() {
                                     </button>
                                   ))}
                                 </div>
+                                <div className="flex items-center gap-1.5">
+                                  {SYMBOLIC_CATEGORY_PALETTE.map((c) => (
+                                    <button
+                                      key={c}
+                                      type="button"
+                                      aria-label={`Cor ${c}`}
+                                      onClick={() => setEditColor(c)}
+                                      className={`size-5 rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${editColor === c ? 'ring-2 ring-offset-1 ring-offset-[#161310] ring-brand scale-110' : ''}`}
+                                      style={{ backgroundColor: c }}
+                                    />
+                                  ))}
+                                </div>
                                 <Button variant="ghost" size="icon-sm" onClick={() => handleSaveEdit(cat.id)}>
                                   <Check className="w-4 h-4 text-positive" />
                                 </Button>
-                                <Button variant="ghost" size="icon-sm" onClick={() => setEditingId(null)}>
+                                <Button variant="ghost" size="icon-sm" onClick={() => { setEditingId(null); setEditColor(null) }}>
                                   <X className="w-4 h-4" />
                                 </Button>
                               </div>
@@ -384,32 +415,29 @@ export function CategoriesPage() {
                     )}
                   </AnimatePresence>
 
-                  {/* Detalhes: painel sobreposto. Expandir não muda a altura do
-                      card, então os outros cards (e seus ícones) não se movem. */}
-                  <AnimatePresence>
+                  <AnimatePresence initial={false}>
                     {isExpanded && (
                       <motion.div
-                        initial={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.18 }}
-                        className="absolute inset-x-0 top-full z-20 mt-px"
+                        className="overflow-hidden"
                       >
-                        <div className="border border-border bg-card">
-                          <div className="px-4 pt-4">
-                            <GoalEditor categoryId={cat.id} expenses={expenses} />
-                          </div>
-                          <div className="flex flex-col p-4 gap-3 max-h-64 overflow-y-auto bg-muted/20">
+                        <div className="border border-t-0 border-border bg-card rounded-b-xl">
+                          <div className="flex flex-col p-4 gap-2 max-h-64 overflow-y-auto">
                             {data.items.length === 0 ? (
                               <div className="text-center text-muted-foreground text-sm py-4">Sem transações registradas.</div>
                             ) : (
-                              data.items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(item => (
-                                <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">
+                              data.items.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(item => (
+                                <div key={item.id} className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-border bg-surface">
                                   <div className="flex flex-col">
-                                    <span className="text-sm font-medium">{item.name}</span>
-                                    <span className="text-xs text-muted-foreground">{formatDateBR(item.date)}</span>
+                                    <span className="text-sm font-medium text-fg">{item.name}</span>
+                                    <span className="text-xs text-fg-muted">{formatDateBR(item.date)}</span>
                                   </div>
-                                  <span className="font-medium text-sm">{formatBRL(item.amount)}</span>
+                                  <span className={`font-semibold text-sm tabular-nums ${item.type === 'income' ? 'text-positive' : 'text-negative'}`}>
+                                    {item.type === 'income' ? '+' : '-'}{formatBRL(item.amount)}
+                                  </span>
                                 </div>
                               ))
                             )}
