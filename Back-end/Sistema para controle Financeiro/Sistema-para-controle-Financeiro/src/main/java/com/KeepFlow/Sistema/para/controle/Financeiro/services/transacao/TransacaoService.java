@@ -10,6 +10,7 @@ import com.KeepFlow.Sistema.para.controle.Financeiro.infra.customExceptions.IdNa
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.CategoriaRepository;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.TransacaoRepository;
 import com.KeepFlow.Sistema.para.controle.Financeiro.repository.UserRepository;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -31,23 +32,12 @@ public class TransacaoService {
 		this.userRepository = _userRepository;
 	}
 
-	/**
-	 * Grava a transação e devolve o {@code cd_id} gerado pelo banco.
-	 *
-	 * O id devolvido é o que o front usa como identificador — antes ele
-	 * inventava um contador local, que não batia com o banco.
-	 */
 	@Transactional
 	public Integer salvarTransacao(BigDecimal valor, String descricao, String data, Integer id, UUID userIdCorpo,
 			UUID userIdToken, String observacao) {
-		// O user_id vem no JSON e É conferido: se divergir do dono do token,
-		// a requisição cai com 403. O dono gravado é sempre o do token.
 		if (userIdCorpo != null && !userIdCorpo.equals(userIdToken)) {
-			throw new AcessoNegado("user_id do corpo diverge do usuário autenticado.");
+			throw new AcessoNegado("Acesso Negado.");
 		}
-		// AUDITORIA: categoria_id nulo (ou não numérico) ia direto para o
-		// findById e estourava um NPE -> 500 "erro interno" sem explicar
-		// nada. Agora é um 400 explicável, como os outros campos.
 		if (id == null) {
 			throw new CampoVazio("Escolha uma categoria válida.");
 		}
@@ -64,17 +54,46 @@ public class TransacaoService {
 		return transacaoBanco.getId();
 	}
 
-	/**
-	 * Lista as transações do dono autenticado.
-	 *
-	 * Sem isso o front só tinha a lista local: o dado existia no banco, mas
-	 * nunca voltava para a tela — recarregar a página apagava tudo.
-	 */
 	@Transactional(readOnly = true)
 	public List<TransacaoResponseDTO> listarTransacoes(UUID userId) {
 		return transacaoRepository.findAllByUser_IdOrderByIdDesc(userId).stream()
 				.map(this::paraResponse)
 				.toList();
+	}
+
+	@Transactional
+	public TransacaoResponseDTO editarTransacao(Integer id, BigDecimal valor, String descricao, String data,
+			Integer categoriaId, UUID userId, String observacao) {
+		Transacao existente = transacaoRepository.findById(id)
+				.orElseThrow(() -> new IdNaoExistente("Transação não encontrada."));
+		if (existente.getUser() == null || !existente.getUser().getId().equals(userId)) {
+			throw new AcessoNegado("Você não tem acesso a esta transação.");
+		}
+		if (categoriaId == null) {
+			throw new CampoVazio("Escolha uma categoria válida.");
+		}
+		Categoria categoriaBanco = categoriaRepository.findById(categoriaId)
+				.orElseThrow(() -> new IdNaoExistente("Categoria não encontrada."));
+		if (categoriaBanco.getUser() == null || !categoriaBanco.getUser().getId().equals(userId)) {
+			throw new AcessoNegado("Você não tem acesso a esta categoria.");
+		}
+		User usuarioBanco = userRepository.getReferenceById(userId);
+		Transacao atualizada = new Transacao(valor, descricao, data, categoriaBanco, usuarioBanco);
+		atualizada.setId(id);
+		if (observacao != null && !observacao.isBlank())
+			atualizada.setObservacao(observacao);
+		transacaoRepository.save(atualizada);
+		return paraResponse(atualizada);
+	}
+
+	@Transactional
+	public void deletarTransacao(Integer id, UUID userId) {
+		Transacao transacao = transacaoRepository.findById(id)
+				.orElseThrow(() -> new IdNaoExistente("Transação não encontrada."));
+		if (transacao.getUser() == null || !transacao.getUser().getId().equals(userId)) {
+			throw new AcessoNegado("Você não tem acesso a esta transação.");
+		}
+		transacaoRepository.delete(transacao);
 	}
 
 	private TransacaoResponseDTO paraResponse(Transacao t) {
@@ -88,19 +107,5 @@ public class TransacaoService {
 				categoria == null ? null : categoria.getNome(),
 				categoria == null ? null : categoria.getTipoCategoria(),
 				t.getObservacao());
-	}
-
-	public void excluirTransacao(Integer transacao_id) {
-		if (!transacaoRepository.existsById(transacao_id)) {
-			throw new IdNaoExistente("Usuario não existe no BD");
-		}
-		transacaoRepository.deleteById(transacao_id);
-	}
-
-	public void editarTransacao(Integer transacao_id, UUID user_id) {
-		if (!transacaoRepository.existsByTransacao_IdAndUser_Id(transacao_id, user_id)) {
-			throw new IdNaoExistente("Transacao não existe no BD");
-		}
-		transacaoRepository.deleteById(transacao_id);
 	}
 }

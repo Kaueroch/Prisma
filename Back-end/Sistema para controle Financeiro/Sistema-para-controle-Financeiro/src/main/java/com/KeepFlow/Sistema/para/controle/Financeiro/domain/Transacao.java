@@ -59,7 +59,6 @@ public class Transacao {
         return user;
     }
 
-    /** cd_id gerado pelo banco — é o id que o front usa para referenciar a transação. */
     public int getId() {
         return id;
     }
@@ -72,7 +71,6 @@ public class Transacao {
         return descricao;
     }
 
-    /** Data no formato "dd/MM/yyyy" (a coluna é texto, não LocalDate). */
     public String getData() {
         return data;
     }
@@ -83,6 +81,10 @@ public class Transacao {
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     private void validaCampoData(String data) {
@@ -96,8 +98,6 @@ public class Transacao {
      try {
          return LocalDate.parse(data,parser);
      } catch (DateTimeParseException e) {
-         // AUDITORIA: data fora do padrão estourava DateTimeParseException
-         // sem tratamento -> 500 com stacktrace. Agora é 400 explicável.
          throw new CampoVazio("Informe a data no formato DD/MM/AAAA.");
      }
     }
@@ -107,9 +107,6 @@ public class Transacao {
      }
   }
   private void validaCampoValor(BigDecimal  valor) {
-    // AUDITORIA: a checagem antiga era `valor.compareTo(valor) < 0` —
-    // compara o valor com ele mesmo, sempre 0, nunca rejeita nada.
-    // Negativos e zero passavam direto para o banco.
     if(valor == null || valor.compareTo(BigDecimal.ZERO) <= 0){
     	throw new ValorNegativo("Please enter the correct value.");
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.KeepFlow.Sistema.para.controle.Financeiro.domain.User;
@@ -28,10 +29,6 @@ public class TransacaoController {
 		this.transacaoService = _transacaoService;
 	}
 
-	/**
-	 * Usuário do token — nunca do corpo da requisição.
-	 * O `user_id` do JSON é conferido contra esse valor (403 se divergir).
-	 */
 	private UUID usuarioAutenticado() {
 		return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
 	}
@@ -41,34 +38,28 @@ public class TransacaoController {
 		Integer id = transacaoService.salvarTransacao(
 				dto.valor(), dto.descricao(), dto.data(), dto.categoria_id(),
 				dto.user_id(), usuarioAutenticado(), dto.observacao());
-		// Devolve o cd_id gerado pelo banco — é o que o front usa como id
-		// da transação (antes ele inventava um contador local).
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new TransacaoResponseDTO(id, dto.valor(), dto.descricao(), dto.data(),
 						dto.categoria_id(), null, null, dto.observacao()));
 	}
 
-	/**
-	 * Lista as transações do usuário autenticado.
-	 * Sem esse endpoint o front só tinha os dados locais e perdia tudo
-	 * ao recarregar a página.
-	 */
 	@GetMapping("/listar")
 	public ResponseEntity<List<TransacaoResponseDTO>> listarTransacoes() {
 		return ResponseEntity.ok(transacaoService.listarTransacoes(usuarioAutenticado()));
 	}
 
-	@PostMapping("/editar")
-	public ResponseEntity<String> editarTransacao(@RequestBody TransacaoDTO dto) {
-		transacaoService.editarTransacao(dto.transacao_id(), dto.user_id());
-
-		return ResponseEntity.ok().body("Transacao foi editada.");
+	@PostMapping("/atualizar")
+	public ResponseEntity<TransacaoResponseDTO> atualizarTransacao(@RequestBody TransacaoDTO dto) {
+		TransacaoResponseDTO updated = transacaoService.editarTransacao(
+				dto.id(), dto.valor(), dto.descricao(), dto.data(),
+				dto.categoria_id(), usuarioAutenticado(), dto.observacao());
+		return ResponseEntity.ok(updated);
 	}
 
-	@DeleteMapping("/excluir")
-	public ResponseEntity<String> excluirTransacao(@RequestBody TransacaoDTO dto) {
-		transacaoService.excluirTransacao(dto.transacao_id());
-		return ResponseEntity.ok().body("Transacao foi excluida.");
+	@DeleteMapping("/deletar")
+	public ResponseEntity<Void> deletarTransacao(@RequestParam Integer id) {
+		transacaoService.deletarTransacao(id, usuarioAutenticado());
+		return ResponseEntity.noContent().build();
 	}
 
 }

@@ -17,11 +17,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    /**
-     * AUDITORIA: login respondia "Email not found" vs "Incorrect password",
-     * permitindo enumerar quais emails têm conta. Agora as duas falhas
-     * retornam o mesmo 401 genérico.
-     */
     @ExceptionHandler({EmailNaoEncontrado.class, SenhaIncorreta.class})
     public ResponseEntity<String> handleCredenciaisInvalidas(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos.");
@@ -37,8 +32,6 @@ public class GlobalExceptionHandler {
 	     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
      }
 
-    // AUDITORIA: estas exceções existiam mas não tinham handler — caíam no
-    // genérico e voltavam como 500, escondendo erro de validação do cliente.
     @ExceptionHandler(EmailInvalido.class)
     public ResponseEntity<String> handleEmailInvalido(EmailInvalido ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
@@ -79,11 +72,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Requisição inválida.");
     }
 
-    /**
-     * AUDITORIA: o handler genérico devolvia {@code ex.getMessage()} com 500,
-     * vazando detalhes internos (SQL, paths, stack). Agora loga dentro e
-     * responde mensagem genérica.
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
         log.error("Erro interno não tratado", ex);
