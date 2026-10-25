@@ -26,10 +26,13 @@ interface AddTransactionFormProps {
   isOpen: boolean
   onClose: () => void
   onAdd: (expense: Omit<Expense, 'id'>) => void | Promise<void>
+  onEdit?: (updates: Omit<Expense, 'id'>) => void | Promise<void>
+  initialData?: Expense
   initialType?: TransactionType
 }
 
-export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expense' }: AddTransactionFormProps) {
+export function AddTransactionForm({ isOpen, onClose, onAdd, onEdit, initialData, initialType = 'expense' }: AddTransactionFormProps) {
+  const isEditing = initialData !== undefined
   const { categories, addCategory } = useFinance()
   const { showToast, showError } = useToast()
   const reduceMotion = useReducedMotion()
@@ -54,14 +57,28 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
 
   useEffect(() => {
     if (isOpen) {
-      setType(initialType)
       setSubmitError(null)
       setCreatingCategory(false)
       setNewCatName('')
       setNewCatSymbol(symbolicCategorySymbol('?'))
       setSymbolTouched(false)
+      if (initialData) {
+        setType(initialData.type)
+        setAmount(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(initialData.amount))
+        setName(initialData.name)
+        setDate(initialData.date)
+        setCategoryId(initialData.categoryId)
+        setNote(initialData.note ?? '')
+      } else {
+        setType(initialType)
+        setAmount('')
+        setName('')
+        setDate(new Date().toISOString().split('T')[0])
+        setNote('')
+      }
     }
-  }, [isOpen, initialType])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   // Keep a valid selection: if the current id is not in the visible list
   // (ex.: hardcoded default vs backend cd_id, or list just loaded),
@@ -115,13 +132,18 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     setSaving(true)
     setSubmitError(null)
     try {
-      await onAdd({ amount: numericAmount, name, date, categoryId, type, note })
-      window.dispatchEvent(new CustomEvent('prisma:celebrate'))
-      showToast(
-        type === 'income'
-          ? `Receita "${name}" registrada: ${formatBRL(numericAmount)}`
-          : `"${name}" registrado: ${formatBRL(numericAmount)}`,
-      )
+      if (isEditing && onEdit) {
+        await onEdit({ amount: numericAmount, name, date, categoryId, type, note })
+        showToast(`Transação "${name}" atualizada.`)
+      } else {
+        await onAdd({ amount: numericAmount, name, date, categoryId, type, note })
+        window.dispatchEvent(new CustomEvent('prisma:celebrate'))
+        showToast(
+          type === 'income'
+            ? `Receita "${name}" registrada: ${formatBRL(numericAmount)}`
+            : `"${name}" registrado: ${formatBRL(numericAmount)}`,
+        )
+      }
       setAmount('')
       setName('')
       setDate(new Date().toISOString().split('T')[0])
@@ -209,8 +231,8 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nova transação</DialogTitle>
-          <DialogDescription>Registre uma receita ou uma despesa.</DialogDescription>
+          <DialogTitle>{isEditing ? 'Editar transação' : 'Nova transação'}</DialogTitle>
+          <DialogDescription>{isEditing ? 'Altere os campos e salve.' : 'Registre uma receita ou uma despesa.'}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="relative flex bg-muted p-1 rounded-lg border border-border">
@@ -435,6 +457,8 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, initialType = 'expe
                   <Loader2 className="size-4 animate-spin" />
                   Salvando...
                 </>
+              ) : isEditing ? (
+                'Salvar alterações'
               ) : (
                 'Salvar transação'
               )}

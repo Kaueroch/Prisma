@@ -71,11 +71,11 @@ export function toBackendDate(isoDate: string): string {
   return `${day}/${month}/${year}`;
 }
 
-function defaultErrorForStatus(status: number): string {
+function defaultErrorForStatus(status: number, action = 'criar'): string {
   if (status === 401 || status === 403) return 'Sessão expirada. Entre novamente.';
-  if (status === 404) return 'Endpoint não encontrado (POST /api/v1/transacao/criar).';
-  if (status >= 500) return 'O backend não conseguiu criar a transação. Verifique os logs do backend.';
-  return 'Não foi possível criar a transação. Confira os campos e tente de novo.';
+  if (status === 404) return `Endpoint não encontrado (/api/v1/transacao/${action}).`;
+  if (status >= 500) return `O backend não conseguiu ${action} a transação. Verifique os logs do backend.`;
+  return `Não foi possível ${action} a transação. Confira os campos e tente de novo.`;
 }
 
 export const transacoesApi = {
@@ -143,5 +143,64 @@ export const transacoesApi = {
       throw new Error('O backend não devolvou o id da transação criada.');
     }
     return data.id;
+  },
+
+  /**
+   * Edita uma transação existente pelo cd_id.
+   * Calls: PUT /api/v1/transacao/atualizar?id={transacaoId}
+   */
+  async atualizar(transacaoId: number, input: NovaTransacaoInput): Promise<void> {
+    if (!Number.isInteger(transacaoId)) {
+      throw new Error('ID de transação inválido.');
+    }
+    const payload = {
+      id: transacaoId,
+      valor: input.valor,
+      descricao: input.descricao,
+      data: toBackendDate(input.data),
+      categoria_id: Number(input.categoriaId),
+      user_id: getUserIdFromToken(getToken()),
+      observacao: input.observacao?.trim() || null,
+    };
+
+    let response: Response;
+    try {
+      response = await fetch(
+        `${API_URL}/api/v1/transacao/atualizar`,
+        { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) },
+      );
+    } catch {
+      throw new Error(`Não foi possível alcançar o backend em ${API_URL}. Ele está rodando?`);
+    }
+
+    if (!response.ok) {
+      const backendMessage = await readErrorBody(response);
+      throw new Error(backendMessage || defaultErrorForStatus(response.status, 'atualizar'));
+    }
+  },
+
+  /**
+   * Exclui a transação pelo cd_id.
+   * Calls: DELETE /api/v1/transacao/deletar?id={transacaoId}
+   */
+  async deletar(transacaoId: number): Promise<void> {
+    if (!Number.isInteger(transacaoId)) {
+      throw new Error('ID de transação inválido.');
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(
+        `${API_URL}/api/v1/transacao/deletar?id=${encodeURIComponent(String(transacaoId))}`,
+        { method: 'DELETE', headers: authHeaders() },
+      );
+    } catch {
+      throw new Error(`Não foi possível alcançar o backend em ${API_URL}. Ele está rodando?`);
+    }
+
+    if (!response.ok) {
+      const backendMessage = await readErrorBody(response);
+      throw new Error(backendMessage || defaultErrorForStatus(response.status, 'excluir'));
+    }
   },
 };

@@ -12,6 +12,8 @@ interface FinanceContextType {
   loading: boolean;
   categoriesError: string | null;
   addExpense: (expense: Omit<Expense, 'id'>) => Promise<void>;
+  updateExpense: (id: string, updates: Omit<Expense, 'id'>) => Promise<void>;
+  deleteExpense: (id: string) => Promise<void>;
   addCategory: (category: Omit<CategoryInfo, 'id'>) => Promise<CategoryInfo>;
   updateCategory: (id: string, category: Partial<CategoryInfo>) => Promise<void>;
   deleteCategory: (id: string, nome?: string) => Promise<void>;
@@ -102,6 +104,23 @@ async function pushMissingToBackend(
   return [...sent, ...fromBackend];
 }
 
+const CAT_COLORS_KEY = 'prisma_cat_colors_v1'
+
+function loadCatColors(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(CAT_COLORS_KEY)
+    return raw ? (JSON.parse(raw) as Record<string, string>) : {}
+  } catch { return {} }
+}
+
+function saveCatColor(id: string, color: string) {
+  try {
+    const map = loadCatColors()
+    map[id] = color
+    localStorage.setItem(CAT_COLORS_KEY, JSON.stringify(map))
+  } catch {}
+}
+
 interface FinanceProviderProps {
   children: ReactNode;
 }
@@ -142,12 +161,13 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       try {
         const userId = getLoggedUserId();
         backendCategories = await categoriesApi.listar(userId);
+        const colorOverrides = loadCatColors()
         const mapped = backendCategories.map((c) => ({
           // Use the cd_id from the database, never a fabricated id here.
           // Color and symbol are symbolic and local-only (backend has no such fields).
           id: String(c.id),
           name: c.nome,
-          color: symbolicCategoryColor(c.nome),
+          color: colorOverrides[String(c.id)] ?? symbolicCategoryColor(c.nome),
           bgClass: 'bg-white/10',
           textClass: 'text-white',
           icon: symbolicCategorySymbol(c.nome),
@@ -218,6 +238,70 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
     });
   };
 
+  // Edita a transação: chama PUT no backend e só atualiza o estado local
+  // após a confirmação. IDs não-numéricos (locais) atualizam só o localStorage.
+  const handleUpdateExpense = async (id: string, updates: Omit<Expense, 'id'>): Promise<void> => {
+    const numericId = Number(id);
+    const isBackendId = Number.isInteger(numericId);
+
+    if (!isBackendId) {
+      setExpenses((prev) => {
+        const updated = prev.map(e => e.id === id ? { ...e, ...updates } : e);
+        financeService.saveExpenses(updated);
+        return updated;
+      });
+      return;
+    }
+
+    try {
+      await transacoesApi.atualizar(numericId, {
+        valor: updates.amount,
+        descricao: updates.name,
+        data: updates.date,
+        categoriaId: updates.categoryId,
+        observacao: updates.note,
+      });
+    } catch (err) {
+      console.error(`Não foi possível atualizar a transação (cd_id: ${id}) no backend.`, err);
+      throw err instanceof Error ? err : new Error('Não foi possível atualizar a transação.');
+    }
+
+    setExpenses((prev) => {
+      const updated = prev.map(e => e.id === id ? { ...e, ...updates } : e);
+      financeService.saveExpenses(updated);
+      return updated;
+    });
+  };
+
+  // Exclui a transação: chama DELETE no backend e só remove do estado local
+  // após a confirmação. IDs não-numéricos (locais) são removidos diretamente.
+  const handleDeleteExpense = async (id: string): Promise<void> => {
+    const numericId = Number(id);
+    const isBackendId = Number.isInteger(numericId);
+
+    if (!isBackendId) {
+      setExpenses((prev) => {
+        const updated = prev.filter(e => e.id !== id);
+        financeService.saveExpenses(updated);
+        return updated;
+      });
+      return;
+    }
+
+    try {
+      await transacoesApi.deletar(numericId);
+    } catch (err) {
+      console.error(`Não foi possível excluir a transação (cd_id: ${id}) no backend.`, err);
+      throw err instanceof Error ? err : new Error('Não foi possível excluir a transação.');
+    }
+
+    setExpenses((prev) => {
+      const updated = prev.filter(e => e.id !== id);
+      financeService.saveExpenses(updated);
+      return updated;
+    });
+  };
+
   // Add a new category by sending it to the backend via API
   const handleAddCategory = async (newCategory: Omit<CategoryInfo, 'id'>): Promise<CategoryInfo> => {
     try {
@@ -232,6 +316,10 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
 
       // The database returns its generated cd_id, which is the id used in later requests
       const categoriaId = await categoriesApi.criar({ nome: newCategory.name, tipoCategoria, userId });
+
+      if (newCategory.color !== symbolicCategoryColor(newCategory.name)) {
+        saveCatColor(String(categoriaId), newCategory.color)
+      }
 
       const category: CategoryInfo = {
         ...newCategory,
@@ -287,6 +375,13 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
       throw err instanceof Error ? err : new Error( 'Não foi possível atualizar a categoria.');
     }
 
+    if (updates.color) {
+      const existing = categories.find(c => c.id === id)
+      if (updates.color !== symbolicCategoryColor(updates.name ?? existing?.name ?? '')) {
+        saveCatColor(id, updates.color)
+      }
+    }
+
     setCategories((prev) => {
       const updated = prev.map(c => c.id === id ? { ...c, ...updates } : c);
       financeService.saveCategories(updated);
@@ -334,6 +429,8 @@ export function FinanceProvider({ children }: FinanceProviderProps) {
   const value = useMemo(() => ({
     expenses, categories, loading, categoriesError,
     addExpense: handleAddExpense,
+    updateExpense: handleUpdateExpense,
+    deleteExpense: handleDeleteExpense,
     addCategory: handleAddCategory,
     updateCategory: handleUpdateCategory,
     deleteCategory: handleDeleteCategory,

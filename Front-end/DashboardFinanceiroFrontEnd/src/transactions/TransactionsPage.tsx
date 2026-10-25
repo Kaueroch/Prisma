@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react'
-import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, ReceiptText } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Plus, ReceiptText, Trash2, Pencil } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { resolveSymbol } from '../shared/components/CategorySymbol'
+import { ConfirmDialog } from '../shared/components/ConfirmDialog'
 import {
   Select,
   SelectContent,
@@ -16,11 +17,11 @@ import { useFinance } from '../finance/useFinance'
 import { useTransactionForm } from '../finance/TransactionFormContext'
 import { formatBRL, formatDateBR, matchesMonthFilter, formatMonthFilter } from '../shared/utils/formatters'
 import { initialMonthFilter } from '../shared/services/prefsService'
-import type { CategoryId, MonthFilter, Expense } from '../shared/types'
+import type { CategoryId, MonthFilter } from '../shared/types'
 
 export function TransactionsPage() {
-  const { expenses, categories } = useFinance()
-  const { openTransactionForm } = useTransactionForm()
+  const { expenses, categories, deleteExpense } = useFinance()
+  const { openTransactionForm, openEditForm } = useTransactionForm()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterCategory, setFilterCategory] = useState<CategoryId | 'all'>('all')
   const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all')
@@ -28,6 +29,7 @@ export function TransactionsPage() {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [expandedId, setExpandedId] = useState<CategoryId | null>(null)
   const [expandedTxId, setExpandedTxId] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null)
 
   const goToPrevMonth = () => {
     setSelectedMonth(prev => {
@@ -75,6 +77,19 @@ export function TransactionsPage() {
 
   return (
     <div className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Excluir transação"
+        description={deleteTarget ? `Tem certeza que deseja excluir "${deleteTarget.name}"? Essa ação não pode ser desfeita.` : ''}
+        confirmLabel="Excluir"
+        destructive
+        onConfirm={async () => {
+          if (!deleteTarget) return
+          await deleteExpense(deleteTarget.id)
+          setDeleteTarget(null)
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
           <span className="text-[13px] font-medium text-fg-muted">Atividade</span>
@@ -251,11 +266,29 @@ export function TransactionsPage() {
                       <div className="p-4 flex flex-col gap-3 max-h-72 overflow-y-auto bg-muted/20">
                         {items.map(expense => (
                           <div key={expense.id} className="flex flex-col gap-0.5">
-                            <div className="flex items-start justify-between">
+                            <div className="flex items-start justify-between gap-2">
                               <span className="text-sm font-medium">{expense.name}</span>
-                              <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-positive' : 'text-negative'}`}>
-                                {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
-                              </span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`text-sm font-medium ${expense.type === 'income' ? 'text-positive' : 'text-negative'}`}>
+                                  {expense.type === 'income' ? '+' : '-'}{formatBRL(expense.amount)}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); openEditForm(expense) }}
+                                  className="flex items-center justify-center rounded-lg p-1 text-fg-subtle transition-colors hover:bg-brand-soft hover:text-brand"
+                                  aria-label={`Editar transação ${expense.name}`}
+                                >
+                                  <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setDeleteTarget({ id: expense.id, name: expense.name }) }}
+                                  className="flex items-center justify-center rounded-lg p-1 text-fg-subtle transition-colors hover:bg-destructive/10 hover:text-destructive"
+                                  aria-label={`Excluir transação ${expense.name}`}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                                </button>
+                              </div>
                             </div>
                             <span className="text-[12px] text-muted-foreground">
                               {formatDateBR(expense.date, { day: '2-digit', month: 'short' })}

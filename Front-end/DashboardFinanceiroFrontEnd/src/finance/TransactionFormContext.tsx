@@ -1,11 +1,13 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import type { TransactionType } from '../shared/types'
+import type { Expense, TransactionType } from '../shared/types'
 import { getPrefs } from '../shared/services/prefsService'
 
 interface TransactionFormContextType {
   isOpen: boolean
   initialType: TransactionType
+  editingExpense: Expense | undefined
   openTransactionForm: (initialType?: TransactionType) => void
+  openEditForm: (expense: Expense) => void
   closeTransactionForm: () => void
 }
 
@@ -22,22 +24,33 @@ export function useTransactionForm() {
 export function TransactionFormProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [initialType, setInitialType] = useState<TransactionType>('expense')
+  const [editingExpense, setEditingExpense] = useState<Expense | undefined>(undefined)
 
   const openTransactionForm = useCallback((transactionType?: TransactionType) => {
+    setEditingExpense(undefined)
     setInitialType(transactionType ?? getPrefs().defaultTxType)
+    setIsOpen(true)
+  }, [])
+
+  const openEditForm = useCallback((expense: Expense) => {
+    setEditingExpense(expense)
+    setInitialType(expense.type)
     setIsOpen(true)
   }, [])
 
   const closeTransactionForm = useCallback(() => {
     setIsOpen(false)
+    setEditingExpense(undefined)
   }, [])
 
   const value = useMemo(() => ({
     isOpen,
     initialType,
+    editingExpense,
     openTransactionForm,
+    openEditForm,
     closeTransactionForm,
-  }), [isOpen, initialType, openTransactionForm, closeTransactionForm])
+  }), [isOpen, initialType, editingExpense, openTransactionForm, openEditForm, closeTransactionForm])
 
   return (
     <TransactionFormContext.Provider value={value}>
