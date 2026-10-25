@@ -3,14 +3,13 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { Sparkles, LayoutGrid, ArrowLeftRight, Tags, Target, Settings } from 'lucide-react'
+import { Sparkles, LayoutGrid, ArrowLeftRight, Tags, Settings } from 'lucide-react'
 import { DURATION, EASE } from './shared/motion/tokens'
 import { TintaSidebar } from './tinta/TintaSidebar'
 import { AddTransactionForm } from './transactions/components/AddTransactionForm'
 import { HomePage } from './dashboard/HomePage'
 import { TransactionsPage } from './transactions/TransactionsPage'
 import { CategoriesPage } from './categories/CategoriesPage'
-import { GoalsPage } from './goals/GoalsPage'
 import { ProfilePage } from './profile/ProfilePage'
 import { AuthPage } from './auth/AuthPage'
 import { LandingPage } from './landing/LandingPage'
@@ -27,7 +26,6 @@ const TAB_PATHS: Record<Tab, string> = {
   home: '/painel',
   transactions: '/transacoes',
   categories: '/categorias',
-  goals: '/metas',
   profile: '/configuracoes',
 }
 const PATH_TABS: Record<string, Tab> = Object.fromEntries(
@@ -72,13 +70,15 @@ function PublicGate() {
 }
 
 function TransactionFormGate() {
-  const { isOpen, initialType, closeTransactionForm } = useTransactionForm()
-  const { addExpense } = useFinance()
+  const { isOpen, initialType, editingExpense, closeTransactionForm } = useTransactionForm()
+  const { addExpense, updateExpense } = useFinance()
   return (
     <AddTransactionForm
       isOpen={isOpen}
       onClose={closeTransactionForm}
       onAdd={addExpense}
+      onEdit={editingExpense ? (updates) => updateExpense(editingExpense.id, updates) : undefined}
+      initialData={editingExpense}
       initialType={initialType}
     />
   )
@@ -141,8 +141,7 @@ function AuthenticatedAppContent() {
                 {activeTab === 'home' && <HomePage setActiveTab={setActiveTab} />}
                 {activeTab === 'transactions' && <TransactionsPage />}
                 {activeTab === 'categories' && <CategoriesPage />}
-                {activeTab === 'goals' && <GoalsPage />}
-                {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
+{activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} />}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -157,7 +156,6 @@ function AuthenticatedAppContent() {
           { icon: LayoutGrid, label: 'Painel', tab: 'home' },
           { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },
           { icon: Tags, label: 'Categorias', tab: 'categories' },
-          { icon: Target, label: 'Metas', tab: 'goals' },
           { icon: Settings, label: 'Config', tab: 'profile' },
         ].map(({ icon: Icon, label, tab }) => {
           const isActive = activeTab === tab

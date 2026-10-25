@@ -35,7 +35,6 @@ const tabLabels: Record<Tab, string> = {
   home: 'Painel',
   transactions: 'Transações',
   categories: 'Categorias',
-  goals: 'Metas',
   profile: 'Configurações',
 }
 

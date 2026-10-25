@@ -6,19 +6,17 @@ import {
   CircleDot,
   Plus,
   Receipt,
-  Target,
 } from 'lucide-react'
 import { useFinance } from '../../finance/useFinance'
 import { useTransactionForm } from '../../finance/TransactionFormContext'
 import { formatBRL } from '../../shared/utils/formatters'
-import { getGoals } from '../../shared/services/goalsService'
 import { DURATION, EASE } from '../../shared/motion/tokens'
 import { cn } from '@/lib/utils'
 import type { Expense, TransactionType } from '../../shared/types'
 
 interface OrganizerFlowProps {
-  /** Navega para outra aba (ex.: Categorias, Metas). */
-  onNavigate?: (tab: 'categories' | 'goals') => void
+  /** Navega para outra aba (ex.: Categorias). */
+  onNavigate?: (tab: 'categories') => void
   /** Lançamentos do período selecionado — os números exibidos seguem o filtro. */
   expenses?: Expense[]
 }
@@ -61,9 +59,6 @@ export function OrganizerFlow({ onNavigate, expenses: scopedExpenses }: Organize
       categoriesUsed: spentByCategory,
     }
   }, [scoped, allExpenses, categories])
-
-  // As metas são locais (goalsService), então contam direto do storage.
-  const goalsCount = useMemo(() => Object.keys(getGoals()).length, [allExpenses, categories])
 
   const nodes = useMemo(() => [
     {
@@ -120,25 +115,7 @@ export function OrganizerFlow({ onNavigate, expenses: scopedExpenses }: Organize
         run: () => undefined,
       },
     },
-    {
-      key: 'metas',
-      step: '04',
-      icon: Target,
-      title: 'Metas',
-      concept: 'Teto por categoria',
-      explanation:
-        'Uma meta é o quanto você pode gastar numa categoria antes de passar do ponto. Ela transforma o gráfico em uma decisão.',
-      ready: goalsCount > 0,
-      detail:
-        goalsCount > 0
-          ? `${goalsCount} ${goalsCount === 1 ? 'meta definida' : 'metas definidas'}`
-          : 'Nenhuma meta definida',
-      action: {
-        label: 'Definir meta',
-        run: () => onNavigate?.('goals'),
-      },
-    },
-  ], [stats, goalsCount, onNavigate, openTransactionForm])
+  ], [stats, onNavigate, openTransactionForm])
 
   // Todos prontos: não há mais o que explicar.
   if (nodes.every((n) => n.ready)) return null

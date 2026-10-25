@@ -25,7 +25,7 @@ export interface Expense {
   note?: string;
 }
 
-export type Tab = 'home' | 'transactions' | 'categories' | 'goals' | 'profile';
+export type Tab = 'home' | 'transactions' | 'categories' | 'profile';
 
 export interface MonthFilter {
   month: number;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeftRight, Tags, Target, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Tags, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { DURATION, EASE } from '../shared/motion/tokens'
@@ -13,7 +13,6 @@ const NAV: { icon: LucideIcon; label: string; tab: Tab }[] = [
   { icon: LayoutGrid, label: 'Painel', tab: 'home' },
   { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },
   { icon: Tags, label: 'Categorias', tab: 'categories' },
-  { icon: Target, label: 'Metas', tab: 'goals' },
 ]
 
 function NavButton({
