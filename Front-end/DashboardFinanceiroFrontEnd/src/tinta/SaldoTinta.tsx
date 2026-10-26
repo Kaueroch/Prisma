@@ -49,7 +49,7 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
           >
             <AnimatedNumber value={total} format={formatBRL} mask={mask} />
           </Crossfade>
-          <span className="truncate text-[13px] text-fg-subtle">All local activity</span>
+          <span className="truncate text-[13px] text-fg-subtle">Receitas menos gastos no período</span>
         </motion.div>
       )}
     </section>

@@ -72,7 +72,9 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     return Math.round(((current - previous) / Math.abs(previous)) * 100)
   }
 
-  const todayLabel = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
+  const rawToday = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
+  // Só a primeira letra em maiúscula: "Domingo, 25 de outubro".
+  const todayLabel = rawToday.charAt(0).toUpperCase() + rawToday.slice(1)
   const greeting = balance >= 0 || filtered.length === 0
     ? 'Tudo sob controle por aqui.'
     : 'Vamos recuperar esse saldo juntos.'
@@ -93,7 +95,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
     <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
       <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
-          <span className="text-[13px] font-medium text-fg-muted capitalize">{todayLabel}</span>
+          <span className="text-[13px] font-medium text-fg-muted">{todayLabel}</span>
           <div className="flex items-center gap-4">
             <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Olá, {firstName}</h1>
             <button

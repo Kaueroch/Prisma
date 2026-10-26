@@ -1,31 +1,29 @@
-import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Minus, Plus, Wallet } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Eye, Plus } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { symbolicCategoryColor } from '../../shared/utils/categoryColor'
 
-const stats = [
-  { label: 'Total income', value: 'R$ 8.400,00', accent: 'text-positive', icon: ArrowDownLeft, chip: 'bg-brand-soft text-positive', note: 'On track' },
-  { label: 'Total de despesas', value: 'R$ 4.200,00', accent: 'text-negative', icon: ArrowUpRight, chip: 'bg-brand-soft text-negative', note: 'Agosto 2026' },
-  { label: 'Savings (Net)', value: 'R$ 4.200,00', accent: '', icon: Wallet, chip: 'bg-surface-raised text-fg', note: 'Month difference' },
-]
+// Prévia estática do painel: mesmos títulos e blocos da HomePage atual.
+const CIRCUMFERENCE = 2 * Math.PI * 40
 
-const donut = [
-  { label: 'Alimentação', value: 34, color: '#8fbf9f', amount: 'R$ 1.428,00' },
-  { label: 'Contas', value: 26, color: '#7ea8d8', amount: 'R$ 1.092,00' },
-  { label: 'Transport', value: 22, color: '#d8a36c', amount: 'R$ 924,00' },
-  { label: 'Leisure', value: 18, color: '#a88cc8', amount: 'R$ 756,00' },
-]
+const gastos = [
+  { name: 'Moradia', amount: 'R$ 1.889,30', value: 58 },
+  { name: 'Alimentação', amount: 'R$ 747,70', value: 23 },
+  { name: 'Transporte', amount: 'R$ 242,40', value: 7 },
+  { name: 'Lazer', amount: 'R$ 235,80', value: 7 },
+  { name: 'Saúde', amount: 'R$ 145,00', value: 5 },
+].map((g) => ({ ...g, color: symbolicCategoryColor(g.name) }))
 
-const segments = [
-  { dash: 72.6, offset: 0, color: '#8fbf9f' },
-  { dash: 47, offset: -72.6, color: '#d8a36c' },
-  { dash: 55.5, offset: -119.6, color: '#7ea8d8' },
-  { dash: 38.5, offset: -175.1, color: '#a88cc8' },
-]
+const segments = gastos.reduce<{ dash: number; offset: number; color: string }[]>((acc, g) => {
+  const offset = acc.length ? acc[acc.length - 1].offset - acc[acc.length - 1].dash : 0
+  acc.push({ dash: (g.value / 100) * CIRCUMFERENCE, offset, color: g.color })
+  return acc
+}, [])
 
-const activity = [
-  { name: 'Design freelancer', type: 'income', category: 'Salário', color: '#8fbf9f', amount: '+R$ 2.400,00' },
-  { name: 'Compras do mês', type: 'expense', category: 'Alimentação', color: '#8fbf9f', amount: '-R$ 486,90' },
-  { name: 'Combustível', type: 'expense', category: 'Transporte', color: '#d8a36c', amount: '-R$ 210,00' },
-  { name: 'Aluguel', type: 'expense', category: 'Contas', color: '#7ea8d8', amount: '-R$ 1.250,00' },
+const recentes = [
+  { name: 'Restaurante', category: 'Alimentação', type: 'expense', amount: '-R$ 86,50' },
+  { name: 'Padaria', category: 'Alimentação', type: 'expense', amount: '-R$ 48,90' },
+  { name: 'Site institucional', category: 'Freelance', type: 'income', amount: '+R$ 1.350,00' },
+  { name: 'Combustível', category: 'Transporte', type: 'expense', amount: '-R$ 210,00' },
 ]
 
 function windowFrame(children: ReactNode) {
@@ -39,7 +37,7 @@ function windowFrame(children: ReactNode) {
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 text-[12px] text-fg-subtle">
             <span className="h-1 w-1 bg-zinc-600" />
-            app.prismafinance.com.br/dashboard
+            app.prismafinance.com.br/painel
           </div>
         </div>
         {children}
@@ -50,113 +48,105 @@ function windowFrame(children: ReactNode) {
 
 export function DashboardMockup() {
   return windowFrame(
-    <div className="space-y-4 p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2  border border-edge bg-surface p-1">
-          <span className="flex h-6 w-6 items-center justify-center  text-fg-muted"><Minus className="h-3.5 w-3.5" /></span>
-          <span className="px-2 text-[11px] font-medium text-fg-muted">Agosto 2026</span>
-          <span className="flex h-6 w-6 items-center justify-center  text-fg-muted"><Plus className="h-3.5 w-3.5" /></span>
+    <div className="space-y-3 bg-canvas p-4 sm:p-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-medium text-fg-muted">Domingo, 25 de outubro</p>
+          <div className="mt-1 flex items-center gap-2">
+            <p className="font-display text-2xl tracking-[-0.02em] text-fg">Olá, Ana</p>
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg border border-edge text-fg-muted">
+              <Eye className="h-3 w-3" />
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-fg-muted">
-          <span>Saldo:</span>
-          <span className="font-semibold text-positive">R$ 4.200,00</span>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-7 items-center gap-1 rounded-lg bg-brand px-3 text-[11px] font-medium text-black">
+            <Plus className="h-3 w-3" /> Receita
+          </span>
+          <span className="inline-flex h-7 items-center gap-1 rounded-lg border border-edge bg-surface px-3 text-[11px] font-medium text-fg">
+            <Plus className="h-3 w-3" /> Despesa
+          </span>
         </div>
       </div>
 
-      <div className=" border border-edge bg-surface p-5">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-fg-muted">Current balance</p>
-            <p className="mt-1 text-3xl font-bold tracking-tight">R$ 4.200,00</p>
-            <div className="mt-3 flex items-center gap-2">
-              <span className="inline-flex h-7 items-center gap-1 rounded-full bg-brand px-3 text-[11px] font-medium text-black">
-                <ArrowDownLeft className="h-3 w-3" /> New income
-              </span>
-              <span className="inline-flex h-7 items-center gap-1  bg-secondary px-3 text-[11px] font-medium text-secondary-foreground">
-                <ArrowUpRight className="h-3 w-3" /> New expense
-              </span>
-            </div>
-          </div>
-          <div className="flex h-14 w-14 items-center justify-center  border border-edge bg-surface">
-            <Wallet className="h-6 w-6 text-zinc-300" />
-          </div>
+      <div className="border border-edge bg-surface p-4">
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="font-medium text-fg-muted">Saldo atual</span>
+          <span className="text-fg-subtle">13 transações</span>
         </div>
+        <p className="mt-4 font-display text-3xl font-medium tracking-[-0.02em] tabular-nums">R$ 3.289,80</p>
+        <p className="mt-1 text-[11px] text-fg-subtle">Receitas menos gastos no período</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {stats.map((s, i) => (
-          <div
-            key={s.label}
-            className={` border border-edge bg-surface p-4 ${i === 2 ? 'col-span-2' : ''}`}
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center  bg-surface-raised">
-                <s.icon className={s.accent || 'text-fg'} />
-              </span>
-              <span className="text-[11px] font-medium text-fg-muted leading-tight">{s.label}</span>
-            </div>
-            <p className="mt-3 text-lg font-bold tracking-tight">{s.value}</p>
-            <p className="mt-0.5 text-[11px] font-medium text-fg-muted">{s.note}</p>
+        <div className="border border-edge bg-surface p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium text-fg-muted">Receitas</span>
+            <ArrowUpRight className="h-3.5 w-3.5 text-positive" />
           </div>
-        ))}
+          <p className="mt-2 text-lg font-semibold tracking-tight text-positive tabular-nums">R$ 6.550,00</p>
+        </div>
+        <div className="border border-edge bg-surface p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium text-fg-muted">Gastos</span>
+            <ArrowDownRight className="h-3.5 w-3.5 text-negative" />
+          </div>
+          <p className="mt-2 text-lg font-semibold tracking-tight text-negative tabular-nums">R$ 3.260,20</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-        <div className=" border border-edge bg-surface md:col-span-3">
-          <div className="flex items-center justify-between border-b border-edge px-4 py-3">
-            <span className="text-sm font-semibold">Recent activity</span>
-            <span className="text-[11px] text-fg-muted">View all</span>
-          </div>
-          <div>
-            {activity.map((t, i) => (
-              <div key={t.name} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? 'border-t border-edge/60' : ''}`}>
-                <span className={`flex h-7 w-7 shrink-0 items-center justify-center  ${t.type === 'income' ? 'bg-brand-soft text-positive' : 'bg-surface-raised text-fg-muted'}`}>
-                  {t.type === 'income' ? <ArrowDownLeft className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}
-                </span>
-                <span className="min-w-0 flex-1 truncate text-xs font-medium">{t.name}</span>
-                <span className="hidden items-center gap-1.5 sm:flex">
-                  <span className="h-2 w-2 " style={{ backgroundColor: t.color }} />
-                  <span className="text-[11px] text-fg-muted">{t.category}</span>
-                </span>
-                <span className={`text-xs font-semibold ${t.type === 'income' ? 'text-positive' : ''}`}>{t.amount}</span>
-                <span className="hidden items-center gap-1 rounded-full border border-positive/20 bg-brand-soft px-2 py-0.5 text-[10px] font-medium text-positive lg:flex">
-                  <CheckCircle2 className="h-3 w-3" /> Done
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className=" border border-edge bg-surface p-4 md:col-span-2">
-          <p className="text-sm font-semibold">Spending by category</p>
-          <div className="mt-2 flex items-center justify-center">
-            <div className="relative h-[132px] w-[132px]">
+        <div className="border border-edge bg-surface p-4 md:col-span-2">
+          <p className="text-[11px] font-medium text-fg-muted">Gastos por categoria</p>
+          <p className="text-sm text-fg">Para onde foi o dinheiro</p>
+          <div className="mt-3 flex items-center justify-center">
+            <div className="relative h-[128px] w-[128px]">
               <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
-                {segments.map((s, i) => (
+                {segments.map((s) => (
                   <circle
-                    key={i}
+                    key={s.color + s.offset}
                     cx="70"
                     cy="70"
-                    r="34"
+                    r="40"
                     fill="none"
                     stroke={s.color}
-                    strokeWidth="12"
-                    strokeDasharray={`${s.dash} 213.6`}
+                    strokeWidth="10"
+                    strokeDasharray={`${s.dash} ${CIRCUMFERENCE}`}
                     strokeDashoffset={s.offset}
                   />
                 ))}
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Wallet className="h-5 w-5 text-zinc-300" />
+                <span className="text-[9px] text-fg-subtle">Total</span>
+                <span className="text-[10px] font-semibold tabular-nums">R$ 3.260,20</span>
               </div>
             </div>
           </div>
-          <div className="mt-2 space-y-1.5">
-            {donut.map((d) => (
-              <div key={d.label} className="flex items-center gap-2 text-[11px]">
-                <span className="h-2 w-2 " style={{ backgroundColor: d.color }} />
-                <span className="text-fg-muted">{d.label}</span>
-                <span className="ml-auto font-medium">{d.value}%</span>
+          <div className="mt-3 space-y-1.5">
+            {gastos.slice(0, 4).map((g) => (
+              <div key={g.name} className="flex items-center gap-2 text-[11px]">
+                <span className="h-2 w-2" style={{ backgroundColor: g.color }} />
+                <span className="text-fg-muted">{g.name}</span>
+                <span className="ml-auto font-medium tabular-nums">{g.value}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border border-edge bg-surface md:col-span-3">
+          <div className="border-b border-edge px-4 py-3">
+            <p className="text-[11px] font-medium text-fg-muted">Movimento</p>
+            <p className="text-sm text-fg">Transações recentes</p>
+          </div>
+          <div>
+            {recentes.map((t, i) => (
+              <div key={t.name} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? 'border-t border-edge/60' : ''}`}>
+                <span className="h-2 w-2 shrink-0" style={{ backgroundColor: symbolicCategoryColor(t.category) }} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-medium">{t.name}</span>
+                  <span className="block truncate text-[10px] text-fg-subtle">{t.category}</span>
+                </span>
+                <span className={`text-xs font-semibold tabular-nums ${t.type === 'income' ? 'text-positive' : 'text-fg'}`}>{t.amount}</span>
               </div>
             ))}
           </div>

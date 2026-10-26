@@ -13,8 +13,8 @@ const iconMap: Record<string, LucideIcon> = {
 const categorias = [
   { name: 'Alimentação', amount: 'R$ 1.428,00', color: '#8fbf9f' },
   { name: 'Contas', amount: 'R$ 1.092,00', color: '#7ea8d8' },
-  { name: 'Transport', amount: 'R$ 924,00', color: '#d8a36c' },
-  { name: 'Leisure', amount: 'R$ 756,00', color: '#a88cc8' },
+  { name: 'Transporte', amount: 'R$ 924,00', color: '#d8a36c' },
+  { name: 'Lazer', amount: 'R$ 756,00', color: '#a88cc8' },
 ]
 
 function GastosVisual() {
@@ -56,8 +56,8 @@ function GastosVisual() {
         {[
           ['Alimentação', '#8fbf9f', '34%'],
           ['Contas', '#7ea8d8', '26%'],
-          ['Transport', '#d8a36c', '22%'],
-          ['Leisure', '#a88cc8', '18%'],
+          ['Transporte', '#d8a36c', '22%'],
+          ['Lazer', '#a88cc8', '18%'],
         ].map(([label, color, pct], i) => (
           <motion.div
             key={label as string}
@@ -101,7 +101,7 @@ function RegistroVisual() {
     <div className="mt-6  border border-edge bg-surface p-4">
       <div className="mb-3 flex items-center gap-2">
         <span className="flex flex-1 items-center gap-1.5  border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted">
-          <Plus className="h-3 w-3" /> New expense
+          <Plus className="h-3 w-3" /> Nova despesa
         </span>
         <span className="bg-brand-soft px-2.5 py-2 text-[11px] font-medium text-fg">-R$ 0,00</span>
       </div>

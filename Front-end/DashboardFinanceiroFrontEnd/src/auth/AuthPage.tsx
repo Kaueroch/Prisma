@@ -50,7 +50,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   )
 
   const typewriterDone = useRef(false)
-  const fullSubtitle = "Seu painel financeiro completo. Organize receitas, despesas, orçamentos e metas em um só lugar."
+  const fullSubtitle = "Seu painel financeiro completo. Organize receitas, despesas e categorias em um só lugar."
 
   useEffect(() => {
     if (typewriterDone.current) return

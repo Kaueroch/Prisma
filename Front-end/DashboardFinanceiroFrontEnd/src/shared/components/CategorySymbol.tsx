@@ -27,18 +27,18 @@ export interface CategorySymbolOption {
 }
 
 export const CATEGORY_SYMBOLS: CategorySymbolOption[] = [
-  { id: 'food', label: 'Food', Icon: UtensilsCrossed },
-  { id: 'groceries', label: 'Groceries', Icon: ShoppingCart },
-  { id: 'transport', label: 'Transport', Icon: Car },
-  { id: 'home', label: 'Home', Icon: House },
-  { id: 'bills', label: 'Bills', Icon: Receipt },
-  { id: 'health', label: 'Health', Icon: HeartPulse },
-  { id: 'leisure', label: 'Leisure', Icon: Gamepad2 },
-  { id: 'travel', label: 'Travel', Icon: Plane },
-  { id: 'shopping', label: 'Shopping', Icon: ShoppingBag },
-  { id: 'education', label: 'Education', Icon: GraduationCap },
-  { id: 'work', label: 'Work', Icon: Briefcase },
-  { id: 'other', label: 'Other', Icon: Tag },
+  { id: 'food', label: 'Comida', Icon: UtensilsCrossed },
+  { id: 'groceries', label: 'Mercado', Icon: ShoppingCart },
+  { id: 'transport', label: 'Transporte', Icon: Car },
+  { id: 'home', label: 'Casa', Icon: House },
+  { id: 'bills', label: 'Contas', Icon: Receipt },
+  { id: 'health', label: 'Saúde', Icon: HeartPulse },
+  { id: 'leisure', label: 'Lazer', Icon: Gamepad2 },
+  { id: 'travel', label: 'Viagem', Icon: Plane },
+  { id: 'shopping', label: 'Compras', Icon: ShoppingBag },
+  { id: 'education', label: 'Educação', Icon: GraduationCap },
+  { id: 'work', label: 'Trabalho', Icon: Briefcase },
+  { id: 'other', label: 'Outros', Icon: Tag },
 ]
 
 const byId = new Map(CATEGORY_SYMBOLS.map((s) => [s.id, s]))

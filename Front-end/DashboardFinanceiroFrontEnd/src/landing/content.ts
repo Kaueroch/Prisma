@@ -81,7 +81,7 @@ export const howItWorks = {
     {
       title: 'Acompanhe tudo no painel',
       description:
-        'Saldo atual, economia líquida, gastos por categoria e atividade recente aparecem na sua primeira visita.',
+        'Saldo atual, histórico do saldo, gastos por categoria e transações recentes aparecem na sua primeira visita.',
     },
   ],
 }
@@ -95,7 +95,7 @@ export const pricing = {
     price: 'R$ 0',
     priceSuffix: 'para sempre, por enquanto',
     features: [
-      'Painel com saldo, receitas e economia',
+      'Painel com saldo, receitas e gastos',
       'Transações ilimitadas com categorias coloridas',
       'Categorias personalizadas com suas cores',
     ],
