@@ -1,116 +1,161 @@
-# Prisma Finance — personal finance panel
+# Prisma Finance
 
-> Open source tool to track income, expenses, and categories in a fast, dark, straight-to-the-point panel.
+> Dashboard financeiro pessoal — dark, rápido e direto ao ponto. Controle receitas, despesas e categorias num painel unificado.
 
-![Prisma Finance dashboard](./01-dashboard.png)
+![React](https://img.shields.io/badge/React-19-20232a?logo=react&logoColor=61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-6db33f?logo=springboot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169e1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-instalável-5a0fc8?logo=pwa&logoColor=white)
+
+![Painel do Prisma Finance](./docs/screenshots/dashboard.png)
+
+**Sumário:** [Telas](#telas) · [Funcionalidades](#funcionalidades) · [Stack](#stack) · [Arquitetura](#arquitetura) · [API](#api) · [Como rodar](#como-rodar) · [Variáveis de ambiente](#variáveis-de-ambiente)
 
 ---
 
-## What it does
+## Telas
 
-- **Landing page** with fintech identity and links to login and registration.
-- **Authentication** with email and password. Passwords are hashed with BCrypt, sessions use JWT Bearer tokens.
-- **Dashboard** (`home` tab): current balance, income, expenses, net savings, spending-by-category donut, and recent activity.
-- **Transactions** (`transactions` tab): income and expense entries in BRL, colored category cards, search and filters. Persisted in the backend (`tb_transacoes`), with a `localStorage` cache for offline use.
-- **Categories** (`categories` tab): full CRUD backed by the Spring Boot API. Each category belongs to one user.
-- **Profile** (`profile` tab): local user view and settings entry point.
+> Capturas feitas em outubro de 2026 com dados de exemplo.
 
-The panel runs in dark mode. All amounts are rendered in BRL.
+### Painel
+Saldo atual, histórico do saldo no mês, totais de receitas e gastos, donut de gastos por categoria e transações recentes. O botão de olho esconde os valores.
 
-## Screens
+![Painel](./docs/screenshots/dashboard.png)
 
-| | |
-|---|---|
-| Transactions ![Transactions](./02-transactions.png) | Settings ![Settings](./04-settings.png) |
+### Transações
+Entradas e saídas agrupadas por categoria, com busca, filtros avançados e lista expansível em cada card ("Ver mais").
 
-> Screenshots reflect the current dark theme. A file `03-budgets.png` also exists in this folder but no budgets screen was found in the code, so it is not referenced here.
+![Transações](./docs/screenshots/transacoes.png)
+
+### Categorias
+Receitas e despesas com cor e símbolo próprios, total acumulado, participação no total e as transações de cada categoria direto no card.
+
+![Categorias](./docs/screenshots/categorias.png)
+
+### Configurações
+Edição de nome, troca de e-mail e senha, exportação de dados e saída da conta.
+
+![Configurações](./docs/screenshots/configuracoes.png)
+
+### Landing page e login
+
+| Landing | Login |
+|---------|-------|
+| ![Landing page](./docs/screenshots/landing.png) | ![Login](./docs/screenshots/login.png) |
+
+### No celular
+Layout responsivo com navegação inferior. Pode ser instalado como app (PWA).
+
+<p>
+  <img src="./docs/screenshots/dashboard-mobile.png" alt="Painel no celular" width="280">
+  &nbsp;&nbsp;
+  <img src="./docs/screenshots/transacoes-mobile.png" alt="Transações no celular" width="280">
+</p>
+
+---
+
+## Funcionalidades
+
+- **Autenticação** — cadastro e login com e-mail e senha. Senhas hasheadas com BCrypt; sessões stateless via JWT Bearer.
+- **Dashboard** — saldo atual, receitas, despesas e donut de gastos por categoria.
+- **Transações** — CRUD completo sincronizado com o backend. Cache offline em `localStorage`.
+- **Categorias** — CRUD com validação de propriedade por usuário. Cores customizáveis salvas localmente.
+- **Perfil** — visualização de conta, exportação de dados e logout.
+- **PWA** — service worker e app shell offline via `vite-plugin-pwa`.
 
 ---
 
 ## Stack
 
-| Layer | Technology |
-|-------|------------|
+| Camada | Tecnologia |
+|--------|------------|
 | Frontend | React 19 + TypeScript + Vite 6 |
-| Styling | Tailwind CSS 4 + shadcn/ui |
-| Icons | Lucide React |
-| Charts | Recharts |
-| Animations | Motion (Framer Motion) |
-| Fonts | Geist Variable, Plus Jakarta Sans, Space Grotesk, Space Mono |
-| Backend | Java 17 + Spring Boot 4.1.0 + Spring Security + `com.auth0:java-jwt:4.4.0` |
-| Database | PostgreSQL 15 (`tb_users`, `tb_categorias`, `tb_transacoes`) |
-| Infra | Docker + Docker Compose, Nginx (static SPA) |
-
-Manifests: `Back-end/Sistema para controle Financeiro/Sistema-para-controle-Financeiro/pom.xml`, `Front-end/DashboardFinanceiroFrontEnd/package.json`, `docker-compose.yml`.
+| Estilização | Tailwind CSS 4 + shadcn/ui |
+| Ícones | Lucide React |
+| Gráficos | Recharts |
+| Animações | Motion (Framer Motion) |
+| Backend | Java 17 + Spring Boot 4.1.0 + Spring Security |
+| Autenticação | `com.auth0:java-jwt 4.4.0` (issuer `Prisma`, subject = UUID do usuário) |
+| Banco de dados | PostgreSQL 15 |
+| Infra | Docker + Docker Compose + Nginx (SPA) |
 
 ---
 
-## Architecture
+## Arquitetura
 
 ```mermaid
 flowchart LR
-  Browser -->|":80 in prod, :3000 in dev"| Frontend["Frontend\nReact SPA (Nginx / Vite)"]
-  Frontend -->|"`VITE_API_URL` + /api/v1/*\nBearer JWT"| Backend["Backend\nSpring Boot :8080"]
-  Backend --> DB[("PostgreSQL\n:5432 (host :5433)")]
+  Browser -->|":80 prod · :3000 dev"| UI["React SPA\n(Nginx / Vite)"]
+  UI -->|"VITE_API_URL/api/v1/*\nAuthorization: Bearer JWT"| API["Spring Boot\n:8080"]
+  API --> DB[("PostgreSQL\n:5432")]
 ```
 
-Services in `docker-compose.yml`:
+### Serviços Docker
 
-| Service | Image / build | Ports |
-|---------|---------------|-------|
+| Serviço | Build / Imagem | Portas |
+|---------|----------------|--------|
 | `db` | `postgres:15-alpine` | `5433:5432` |
-| `backend` | `./Back-end/Sistema para controle Financeiro/Sistema-para-controle-Financeiro/Dockerfile` | `8080:8080` |
-| `frontend` | `./Front-end/DashboardFinanceiroFrontEnd/Dockerfile` (Node 20 build, Nginx serve) | `80:80` |
+| `backend` | `Back-end/.../Dockerfile` | `8080:8080` |
+| `frontend` | `Front-end/.../Dockerfile` (Node 20 → Nginx) | `80:80` |
 
-Request flow:
+### Fluxo de autenticação
 
 ```mermaid
 sequenceDiagram
   participant UI as React
   participant API as Spring Boot
-  participant DB as Postgres
-  UI->>API: POST /api/v1/user/registrar {nome, email, senha}
-  API->>DB: insert tb_users
+  participant DB as PostgreSQL
   UI->>API: POST /api/v1/user/login {email, senha}
-  API->>DB: select tb_users by email + BCrypt check
-  API-->>UI: {token JWT (issuer Prisma, sub = user UUID)}
-  UI->>API: GET/POST/PUT/DELETE /api/v1/categoria/* (Authorization: Bearer <token>)
-  API->>DB: select/insert/update/delete tb_categorias
+  API->>DB: SELECT + BCrypt check
+  API-->>UI: {token JWT}
+  Note over UI: localStorage: prisma_auth_token
+  UI->>API: GET /api/v1/transacao/listar (Bearer)
+  API-->>UI: [{id, valor, descricao, data, ...}]
 ```
 
-End-to-end flows verified in code:
-
-1. **Register and login.** `UserController.java:27-37` calls `AutenticacaoRegisterService` and `AutenticacaoLoginService`. `TokenServices.java:19-27` issues a JWT with issuer `Prisma` and subject = user UUID, expiring after `TIME_EXPIRATION_DTO` seconds. The frontend stores it under `prisma_auth_token` and sends it as `Bearer` (`Front-end/.../src/shared/services/categoriesApi.ts:42-59`). Public routes are `#/login` and `#/cadastro` (`Front-end/.../src/App.tsx:21-26`).
-2. **Categories.** `CategoriaController.java:22-43` exposes create, list, delete, and update. The frontend maps `expense/income` to `Despesas/Receita` before sending (`Front-end/.../src/finance/FinanceContext.tsx:89-93`) and falls back to `localStorage` when the API is unreachable (`FinanceContext.tsx:58-61`).
-3. **Transactions.** `TransacaoController` exposes `POST /api/v1/transacao/criar` (returns the generated `cd_id`) and `GET /api/v1/transacao/listar`. The database is the source of truth; `financeService` (`financeService.ts:8-28`, keys `finance_dashboard_expenses`, `finance_dashboard_categories`) keeps a `localStorage` cache used when the API is unreachable.
-
 ---
 
-## API reference
+## API
 
-Base URL defaults to `http://localhost:8080`. All category routes require `Authorization: Bearer <JWT>`; only register and login are public (`infra/security/WebSecurityConfig.java:28-39`).
+Base URL: `http://localhost:8080` (variável `VITE_API_URL` no frontend).
+Todas as rotas exceto `/registrar` e `/login` exigem `Authorization: Bearer <JWT>`.
 
-| Method | Path | Body / query | Returns |
-|--------|------|--------------|---------|
-| POST | `/api/v1/user/registrar` | `{nome, email, senha}` | `201` + `{message}` |
-| POST | `/api/v1/user/login` | `{email, senha}` | `200` + `{token, ...}` |
-| POST | `/api/v1/categoria/criarCategoria` | `{nome, tipoCategoria, userId}` | `201` + `{message}` |
-| GET | `/api/v1/categoria/listar?userId={uuid}` | query `userId` (UUID from JWT `sub`) | `[{id, nome, tipoCategoria, userId}]` |
-| PUT | `/api/v1/categoria/atualizarLista?id={id}` | query `id` (integer `cd_id`) + `{id, nome, tipoCategoria}` | `200` + `{message}` |
-| DELETE | `/api/v1/categoria/deletar?id={id}` | query `id` (integer `cd_id`) | `201` + `{message}` |
-| POST | `/api/v1/transacao/criar` | `{valor, descricao, data: dd/MM/yyyy, categoria_id, user_id, observacao}` | `201` + `{id}` (the `cd_id`) |
+### Usuários
+
+| Método | Rota | Corpo | Resposta |
+|--------|------|-------|----------|
+| POST | `/api/v1/user/registrar` | `{nome, email, senha}` | `201` |
+| POST | `/api/v1/user/login` | `{email, senha}` | `200 {token}` |
+
+### Categorias
+
+| Método | Rota | Corpo / Query | Resposta |
+|--------|------|---------------|----------|
+| POST | `/api/v1/categoria/criarCategoria` | `{nome, tipoCategoria, userId}` | `201` |
+| GET | `/api/v1/categoria/listar?userId={uuid}` | — | `[{id, nome, tipoCategoria}]` |
+| PUT | `/api/v1/categoria/atualizarLista?id={id}` | `{id, nome, tipoCategoria}` | `200` |
+| DELETE | `/api/v1/categoria/deletar?id={id}` | — | `201` |
+
+### Transações
+
+| Método | Rota | Corpo / Query | Resposta |
+|--------|------|---------------|----------|
+| POST | `/api/v1/transacao/criar` | `{valor, descricao, data (dd/MM/yyyy), categoria_id, user_id?, observacao?}` | `201 {id}` |
 | GET | `/api/v1/transacao/listar` | — | `[{id, valor, descricao, data, categoria_id, categoria_nome, categoria_tipo, observacao}]` |
-
-Validation enforced by the domain: password 8–16 chars and email regex (`domain/User.java:45-54`), category name 3–15 chars and `tipoCategoria` equal to `Receita` or `Despesas` (`domain/Categoria.java:55-67`).
+| POST | `/api/v1/transacao/atualizar` | `{id, valor, descricao, data, categoria_id, observacao?}` | `200 {transacao}` |
+| DELETE | `/api/v1/transacao/deletar?id={id}` | — | `204` |
 
 ---
 
-## Data model
+## Modelo de dados
 
 ```mermaid
 erDiagram
-  tb_users ||--o{ tb_categorias : "has"
-  tb_categorias ||--o{ tb_transacoes : "has"
+  tb_users ||--o{ tb_categorias : "possui"
+  tb_users ||--o{ tb_transacoes : "possui"
+  tb_categorias ||--o{ tb_transacoes : "classifica"
   tb_users {
     uuid cd_id PK
     string nm_nome
@@ -128,158 +173,115 @@ erDiagram
     decimal vl_valor
     string ds_descricao
     string dt_dataGasto
+    string ds_observacao
     int categoria_id FK
+    uuid user_id FK
   }
 ```
 
-Tables are created with `spring.jpa.hibernate.ddl-auto=update` (`docker-compose.yml:30` and `application.properties:14`). Entity definitions: `domain/User.java:13-28`, `domain/Categoria.java:11-25`, `domain/Transacao.java:19-34`.
+Schema gerenciado automaticamente pelo Hibernate (`ddl-auto=update`).
 
 ---
 
-## Frontend map
+## Como rodar
 
-Entry: `Front-end/DashboardFinanceiroFrontEnd/src/main.tsx` renders `src/App.tsx`.
-
-- Public: `/` renders `landing/LandingPage.tsx`; `#/login` and `#/cadastro` render `auth/AuthPage.tsx` (`App.tsx:28-51`).
-- Authenticated tabs (`App.tsx:66-86`, type `Tab` in `shared/types`): `home` renders `dashboard/HomePage.tsx`, `transactions` renders `transactions/TransactionsPage.tsx`, `categories` renders `categories/CategoriesPage.tsx`, `profile` renders `profile/ProfilePage.tsx`. Shell is `layout/` + `tinta/TintaSidebar.tsx`.
-- State: `finance/FinanceContext.tsx` holds `expenses`, `categories`, `totalIncome`, `totalExpense`, `balance`. Expenses are local-only; categories sync with the API above.
-- HTTP layer: `shared/services/categoriesApi.ts:61-143` (`listar`, `criar`, `atualizar`, `deletar`). Token helpers: `shared/utils/token.ts`, `shared/services/financeService.ts`.
-- Extra folders present in `src/`: `tinta/` (dashboard widgets), `telegram/` (dispatches `prisma:telegram-expense` events consumed in `FinanceContext.tsx:30-38`), `shared/components/`, `shared/constants/`, `shared/utils/formatters.ts`.
-
-See `Front-end/DashboardFinanceiroFrontEnd/README.md` for frontend-only setup, scripts, and folder details.
-
----
-
-## Run
-
-### Option 1 — Docker (recommended)
+### Opção 1 — Docker (recomendado)
 
 ```bash
-# 1. Clone the repository
-git clone <your-repo>
+# 1. Clone o repositório
+git clone <seu-fork>
 cd Prisma
 
-# 2. Configure backend variables
+# 2. Configure as variáveis de ambiente
 cp .env.example .env
-
-# 3. Configure frontend variables
 cp Front-end/DashboardFinanceiroFrontEnd/.env.example Front-end/DashboardFinanceiroFrontEnd/.env
 
-# 4. Start database, backend, and frontend
+# 3. Suba tudo
 docker compose up --build -d
 ```
 
-Access after `docker compose up`:
-
-| Service | URL |
+| Serviço | URL |
 |---------|-----|
-| Frontend (prod, Nginx) | http://localhost |
-| Frontend (dev server) | http://localhost:3000 |
-| API (Spring Boot) | http://localhost:8080 |
-| Database (PostgreSQL) | localhost:5433 |
+| Frontend | http://localhost |
+| API | http://localhost:8080 |
+| Banco (externo) | `localhost:5433` |
 
-### Option 2 — Local development (no Docker)
+### Opção 2 — Desenvolvimento local
 
 ```bash
-# Backend — from the backend folder
+# Backend (na pasta do projeto Spring Boot)
 ./mvnw spring-boot:run
 
-# Frontend — from Front-end/DashboardFinanceiroFrontEnd
+# Frontend (em Front-end/DashboardFinanceiroFrontEnd)
 npm install
-npm run dev
+npm run dev   # http://localhost:3000
 ```
 
-Open `http://localhost:3000`. The landing page is at `/`; login is at `/#/login`; registration is at `/#/cadastro`. The frontend reads the API base from `VITE_API_URL` (default `http://localhost:8080`).
+Rotas do frontend: `/` → landing · `/#/login` → login · `/#/cadastro` → cadastro.
 
 ---
 
-## Environment variables
+## Variáveis de ambiente
 
-### Root `.env` — backend
-
-Read by `src/main/resources/application.properties:10-20` (plus `SPRING_DATASOURCE_*` overrides in `docker-compose.yml:26-31`).
+### Backend — `.env` (raiz do repositório)
 
 ```bash
 KEY_POSTGRES_PORT=5432
 KEY_POSTGRES_DATABASE_NAME=prisma
-KEY_POSTGRES_USER=YOUR_USER
-KEY_POSTGRES_PASSWORD=YOUR_PASSWORD
-JWT_SECRET=YOUR_SECURE_JWT_SECRET
+KEY_POSTGRES_USER=SEU_USUARIO
+KEY_POSTGRES_PASSWORD=SUA_SENHA
+JWT_SECRET=SEU_SECRET_JWT
 TIME_EXPIRATION_DTO=7200
 CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost"
 ```
 
-> Note: `docker-compose.yml` currently hardcodes `POSTGRES_USER: postgres`, `POSTGRES_PASSWORD: postgres`, and `POSTGRES_DB: prisma_db`, and overrides the datasource URL, username, and password. The `KEY_*` values above apply to local `./mvnw` runs; the compose database uses the hardcoded values.
+> Em produção via Docker Compose o banco usa credenciais hardcoded (`postgres/postgres`). Os valores `KEY_*` acima se aplicam ao `./mvnw spring-boot:run` local.
 
-### Frontend `.env` — `Front-end/DashboardFinanceiroFrontEnd/.env`
+### Frontend — `Front-end/DashboardFinanceiroFrontEnd/.env`
 
 ```bash
 VITE_API_URL="http://localhost:8080"
 ```
 
-The example file also documents `GEMINI_API_KEY` and `APP_URL`; only `VITE_API_URL` is consumed by the category and auth calls verified above.
-
 ---
 
-## Security
-
-- Passwords hashed with `BCryptPasswordEncoder` (`infra/security/Security.java:12-13`).
-- Stateless sessions: CSRF disabled, `SessionCreationPolicy.STATELESS`, JWT checked by `SecurityFilter` before `UsernamePasswordAuthenticationFilter` (`infra/security/WebSecurityConfig.java:21-43`, `infra/security/SecurityFilter.java:51-52`).
-- CORS: `infra/cors/Cors.java:16-24` registers `/**` with `allowedOrigins("http://localhost:3000")`. The `CORS_ALLOWED_ORIGINS` variable is injected but not used in the mapping, so non-`localhost:3000` origins are not allowed by the running code.
-- To serve over HTTPS in production (certificates, Nginx TLS, redirect, renewal), follow [SEGURANCA_HTTPS.md](./SEGURANCA_HTTPS.md).
-
----
-
-## Project structure
+## Estrutura do projeto
 
 ```text
 Prisma/
-├── 01-dashboard.png / 02-transactions.png / 03-budgets.png / 04-settings.png
-├── docker-compose.yml                  # db + backend + frontend
-├── .env.example                        # backend keys (see above)
-├── SEGURANCA_HTTPS.md                  # TLS guide for production
+├── docs/screenshots/          # Capturas de tela usadas neste README
+├── docker-compose.yml
+├── .env.example
 ├── Back-end/Sistema para controle Financeiro/Sistema-para-controle-Financeiro/
-│   └── src/main/java/com/KeepFlow/Sistema/para/controle/Financeiro/
-│       ├── controllers/UserController.java / CategoriaController.java
-│       ├── services/autenticacao/ (login, register, TokenServices)
-│       ├── services/categorias/CategoriaService.java
-│       ├── domain/User.java / Categoria.java / Transacao.java
-│       ├── repository/UserRepository.java / CategoriaRepository.java
-│       └── infra/security/ + infra/cors/ + infra/customExceptions/
+│   └── src/main/java/com/KeepFlow/.../
+│       ├── controllers/          # UserController, CategoriaController, TransacaoController
+│       ├── services/
+│       │   ├── autenticacao/     # login, register, TokenServices
+│       │   ├── categorias/       # CategoriaService
+│       │   └── transacao/        # TransacaoService
+│       ├── domain/               # User, Categoria, Transacao (JPA entities)
+│       ├── repository/           # Spring Data interfaces
+│       └── infra/                # security/, cors/, customExceptions/
 └── Front-end/DashboardFinanceiroFrontEnd/
-    ├── src/App.tsx / main.tsx
-    ├── src/landing/ / auth/ / dashboard/ / transactions/ / categories/
-    ├── src/finance/ / shared/ / layout/ / tinta/ / profile/ / telegram/
-    ├── Dockerfile                      # Node 20 build + Nginx SPA fallback
-    └── README.md                       # frontend-only guide
+    ├── src/
+    │   ├── App.tsx / main.tsx / index.css
+    │   ├── landing/ auth/ dashboard/ transactions/ categories/ profile/
+    │   ├── finance/              # FinanceContext, TransactionFormContext
+    │   ├── shared/               # components, types, services, utils, constants
+    │   ├── layout/               # SiteHeader, AppSidebar
+    │   └── tinta/                # Widgets do dashboard (KpiStrip, DonutChart, etc.)
+    └── README.md                 # Guia exclusivo do frontend
 ```
 
 ---
 
-## Verification
+## Segurança
 
-```bash
-# Frontend type check (from Front-end/DashboardFinanceiroFrontEnd)
-npm run lint        # tsc --noEmit
-
-# Production build
-npm run build       # vite build -> dist/ (consumes VITE_API_URL)
-
-# Full stack
-docker compose up --build -d
-docker compose ps
-```
+- Senhas com `BCryptPasswordEncoder`.
+- Sessões stateless — CSRF desabilitado, JWT validado pelo `SecurityFilter` antes de cada requisição autenticada.
+- Todas as operações de categoria e transação validam que o recurso pertence ao usuário autenticado (via `SecurityContextHolder`).
+- CORS configurado em `infra/cors/Cors.java` (atualmente fixo em `http://localhost:3000` para desenvolvimento).
 
 ---
 
-## Open questions
-
-- `03-budgets.png` exists in the repo root but no budgets UI, route, or table was found in the code.
-- `tb_transacoes` exists as a JPA entity but has no controller, service, or repository, and its constructor stores nothing, so transaction persistence is browser-only today.
-- `docker-compose.yml` hardcodes the database credentials while `.env.example` defines `KEY_*` variants; local and compose runs use different credentials.
-- `infra/cors/Cors.java` injects `CORS_ALLOWED_ORIGINS` but the mapping hardcodes `http://localhost:3000`.
-- `GEMINI_API_KEY`, `APP_URL`, `telegram/`, and `tinta/` exist in the frontend but are outside the finance flows verified above.
-
----
-
-*Prisma Finance © 2026. Open source project — run with Docker.*
+*Prisma Finance · 2026 · open source*

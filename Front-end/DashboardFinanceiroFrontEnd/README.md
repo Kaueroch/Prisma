@@ -13,17 +13,18 @@ Fintech landing with **login** and **register** links (JWT + BCrypt on the backe
 ### Overview (dashboard)
 
 Current balance, income, expenses, net savings, and spending-by-category donut.
-![Overview](../../01-dashboard.png)
+![Overview](../../docs/screenshots/dashboard.png)
 
 ### Transactions
 
 Full list with colored categories, search, and filters.
-![Transactions](../../02-transactions.png)
+![Transactions](../../docs/screenshots/transacoes.png)
+![Categories](../../docs/screenshots/categorias.png)
 
 ### Categories and settings
 
 Manage categories with custom colors (expenses and income) and edit your profile.
-![Settings](../../04-settings.png)
+![Settings](../../docs/screenshots/configuracoes.png)
 
 ## Stack
 
@@ -164,4 +165,3 @@ The `.env.example` file also lists `GEMINI_API_KEY` and `APP_URL`; only `VITE_AP
 
 - `telegram/` and `tinta/` have no dedicated docs; behavior above is what the imports and event wiring show.
 - Transactions persist only in `localStorage`; there is no `TransacaoController` on the backend to sync them.
-- `../../03-budgets.png` exists at the repo root but no budgets route or component was found in `src/`.
