@@ -4,7 +4,8 @@ import { Button } from '../ui/Button'
 import { DashboardMockup } from './DashboardMockup'
 import { Reveal } from './Reveal'
 import { hero, statStrip } from '../content'
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
+import { useReducedMotion } from '../../shared/motion/useReducedMotion'
 
 export function Hero() {
   const reduce = useReducedMotion()
@@ -40,9 +41,10 @@ export function Hero() {
       className="relative overflow-hidden"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute -top-32 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full bg-brand/[0.05] blur-[130px]" />
-        <div className="absolute right-[-10%] top-1/3 h-[420px] w-[420px] rounded-full bg-white/[0.02] blur-[120px]" />
-        <div className="absolute bottom-[-20%] left-[-10%] h-[460px] w-[460px] rounded-full bg-white/[0.02] blur-[120px]" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(900px 420px at 50% -120px, rgba(255,255,255,0.08), transparent 70%)' }}
+        />
       </div>
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pt-16 pb-14 sm:px-6 sm:pt-24 sm:pb-20">
@@ -54,10 +56,10 @@ export function Hero() {
           >
             <span className="eyebrow">{hero.badge}</span>
 
-            <h1 className="mt-6 font-display text-5xl font-normal leading-[52px] tracking-[-0.02em] text-fg sm:text-6xl">
+            <h1 className="mt-6 text-gradient font-display text-5xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-7xl">
               {hero.titleTop}
               <br />
-              <span className="text-fg-muted">{hero.titleAccent}</span>
+              <span>{hero.titleAccent}</span>
             </h1>
 
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-fg-muted">
@@ -100,7 +102,7 @@ export function Hero() {
         </div>
 
         <Reveal delay={0.2} className="mt-16">
-          <dl className="grid grid-cols-2 gap-px overflow-hidden border border-edge bg-edge md:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-px overflow-hidden border border-edge bg-edge md:grid-cols-4 rounded-xl card-glow">
             {statStrip.map((s) => (
               <div key={s.label} className="flex flex-col gap-1 bg-surface px-6 py-5">
                 <dt className="order-2 text-[13px] text-fg-subtle">{s.label}</dt>

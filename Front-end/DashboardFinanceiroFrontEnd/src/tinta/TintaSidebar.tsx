@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeftRight, Tags, Settings, LogOut, TrendingUp, LayoutGrid, ChevronsLeft, ChevronsRight, type LucideIcon } from 'lucide-react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../shared/motion/useReducedMotion'
 import { cn } from '@/lib/utils'
 import { DURATION, EASE } from '../shared/motion/tokens'
 import type { Tab } from '../shared/types'
@@ -43,14 +44,14 @@ function NavButton({
         expanded
           ? 'justify-start rounded-xl px-3.5 mx-2 w-[calc(100%-16px)]'
           : 'justify-center rounded-xl mx-auto w-11',
-        active ? 'text-black' : 'text-fg-subtle hover:text-fg',
+        active ? 'text-fg' : 'text-fg-subtle hover:text-fg',
       )}
     >
       {/* Indicador ativo: desliza entre os itens em vez de trocar de fundo. */}
       {active && (
         <motion.span
           layoutId="tinta-sidebar-active"
-          className="absolute inset-0 rounded-xl bg-brand"
+          className="absolute inset-0 rounded-xl border border-edge bg-white/[0.08]"
           transition={reduce ? { duration: 0 } : { duration: DURATION.base, ease: EASE }}
         />
       )}
@@ -114,7 +115,7 @@ export function TintaSidebar({
     <aside
       aria-label="Menu lateral"
       className={cn(
-        'flex shrink-0 flex-col items-stretch gap-7 border-r border-edge bg-[#0d100e] py-5 transition-[width] duration-200 ease-out',
+        'flex shrink-0 flex-col items-stretch gap-7 border-r border-edge bg-ink py-5 transition-[width] duration-200 ease-out',
         expanded ? 'w-[232px]' : 'w-[76px] items-center',
       )}
     >

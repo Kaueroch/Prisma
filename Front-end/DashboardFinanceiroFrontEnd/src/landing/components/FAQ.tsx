@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useReducedMotion } from '../../shared/motion/useReducedMotion'
 import { Reveal } from './Reveal'
 import { faq } from '../content'
 import { cn } from '../utils'
@@ -10,11 +11,11 @@ export function FAQ() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="faq" className="border-t border-edge bg-[#0b0d12]">
+    <section id="faq" className="border-t border-edge bg-surface">
       <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="text-center">
           <p className="eyebrow">{faq.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-normal tracking-[-0.02em] text-fg sm:text-4xl">{faq.kicker}</h2>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-gradient sm:text-4xl">{faq.kicker}</h2>
         </Reveal>
 
         <div className="mt-12 space-y-3">
@@ -24,7 +25,7 @@ return (
               <div key={item.question}>
                 <Reveal delay={i * 0.04}>
                   <div className={cn(
-                    ' border transition-colors duration-200',
+                    'overflow-hidden rounded-xl border transition-colors duration-200',
                     isOpen ? 'border-edge bg-surface' : 'border-edge bg-transparent hover:bg-surface',
                   )}>
                     <button

@@ -38,11 +38,11 @@ export function BalanceHistoryTinta({ expenses, month, year }: { expenses: Expen
   const lastIndex = filled.length - 1
 
   return (
-    <section className="flex h-full min-h-[300px] flex-col gap-4 border border-edge bg-surface p-6">
+    <section className="flex h-full min-h-[300px] flex-col gap-4 border border-edge bg-surface p-6 rounded-xl card-glow">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
           <span className="text-[13px] font-medium text-fg-muted">Evolução</span>
-          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Histórico do saldo</h2>
+          <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-fg">Histórico do saldo</h2>
         </div>
         <span className={`text-xs tabular-nums ${periodNet < 0 ? 'text-negative' : 'text-positive'}`}>
           {periodNet < 0 ? '−' : '+'}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useReducedMotion } from './shared/motion/useReducedMotion'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
@@ -125,7 +126,7 @@ function AuthenticatedAppContent() {
   return (
     <>
       <TooltipProvider>
-      <div className="flex h-[100dvh] pt-[var(--safe-area-top)] bg-[#0c0a08] text-fg overflow-hidden">
+      <div className="flex h-[100dvh] pt-[var(--safe-area-top)] bg-ink text-fg overflow-hidden">
         <div className="hidden md:flex"><TintaSidebar active={activeTab} onNavigate={setActiveTab} /></div>
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div className="flex-1 relative z-10 overflow-hidden flex flex-col pb-[calc(4rem+var(--safe-area-bottom))] md:pb-0">
@@ -151,7 +152,7 @@ function AuthenticatedAppContent() {
       </div>
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-edge bg-[#0c0a08]/95 backdrop-blur px-2 pt-2 pb-[calc(0.5rem+var(--safe-area-bottom))]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-edge bg-ink/95 backdrop-blur px-2 pt-2 pb-[calc(0.5rem+var(--safe-area-bottom))]">
         {[
           { icon: LayoutGrid, label: 'Painel', tab: 'home' },
           { icon: ArrowLeftRight, label: 'Transações', tab: 'transactions' },

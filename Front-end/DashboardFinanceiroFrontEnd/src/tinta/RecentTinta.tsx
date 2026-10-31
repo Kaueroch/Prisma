@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ArrowUpRight, ShoppingBag, ReceiptText, Plus } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useReducedMotion } from '../shared/motion/useReducedMotion'
 import { cn } from '@/lib/utils'
 import { formatBRL, formatDateBR } from '../shared/utils/formatters'
 import { useTransactionForm } from '../finance/TransactionFormContext'
@@ -83,11 +84,11 @@ export function RecentTinta({
   const isRecent = (id: string) => celebratedAt > 0 && id === newestId
 
   return (
-    <section className="flex h-full flex-col border border-edge bg-surface">
+    <section className="flex h-full flex-col border border-edge bg-surface rounded-xl card-glow overflow-hidden">
       <div className="flex items-end justify-between gap-4 px-6 pt-6 pb-4">
         <div className="flex flex-col gap-1.5">
           <span className="text-[13px] font-medium text-fg-muted">Movimento</span>
-          <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg">Transações recentes</h2>
+          <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-fg">Transações recentes</h2>
         </div>
         {expenses.length > 0 && (
           <span className="text-[12px] text-fg-subtle tabular-nums">

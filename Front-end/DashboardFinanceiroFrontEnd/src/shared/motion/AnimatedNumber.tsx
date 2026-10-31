@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { animate, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react'
+import { animate, useMotionValue, useMotionValueEvent } from 'motion/react'
+import { useReducedMotion } from './useReducedMotion'
 import { DURATION, EASE } from './tokens'
 
 interface AnimatedNumberProps {

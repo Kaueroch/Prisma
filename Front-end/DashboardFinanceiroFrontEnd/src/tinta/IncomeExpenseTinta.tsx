@@ -33,10 +33,10 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
 
   if (data.every((d) => d.income === 0 && d.expense === 0)) {
     return (
-      <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
+      <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6 rounded-xl card-glow">
         <span className="text-[13px] font-medium text-fg-muted">Comparativo</span>
-        <h2 className="font-display text-2xl font-normal text-fg">Receitas e gastos</h2>
-        <div className="flex min-h-56 flex-1 flex-col items-center justify-center gap-2 border border-dashed border-edge px-6 text-center">
+        <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-fg">Receitas e gastos</h2>
+        <div className="flex min-h-56 flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-edge px-6 text-center">
           <p className="text-sm text-fg-muted">Sem movimento nos últimos 6 meses.</p>
           <p className="text-xs text-fg-subtle">Registre uma transação para ver o comparativo.</p>
         </div>
@@ -45,11 +45,11 @@ export function IncomeExpenseTinta({ expenses }: { expenses: Expense[] }) {
   }
 
   return (
-    <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6">
+    <section className="flex h-full flex-col gap-5 border border-edge bg-surface p-6 rounded-xl card-glow">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
           <span className="text-[13px] font-medium text-fg-muted">Comparativo</span>
-          <h2 className="font-display text-2xl font-normal text-fg">Receitas e gastos</h2>
+          <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-fg">Receitas e gastos</h2>
         </div>
         <div className="flex gap-4 text-[12px] text-fg-muted">
           <span className="flex items-center gap-1.5">

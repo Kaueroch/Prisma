@@ -7,6 +7,11 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   // force restart
   return {
+    // Pré-empacota o React explicitamente. Também muda o código de versão das
+    // dependências, o que força o navegador a largar arquivos antigos do cache.
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-dom/client'],
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -24,8 +29,8 @@ export default defineConfig(() => {
           scope: '/',
           display: 'standalone',
           orientation: 'portrait',
-          background_color: '#0c0a08',
-          theme_color: '#0c0a08',
+          background_color: '#000000',
+          theme_color: '#000000',
           categories: ['finance', 'productivity'],
           icons: [
             {src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any'},

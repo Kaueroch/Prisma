@@ -8,7 +8,7 @@ import { Footer } from './components/Footer'
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0b0d12] text-fg">
+    <div className="min-h-screen bg-ink text-fg">
       <Navbar />
       <main className="bg-page-grid">
         <Hero />

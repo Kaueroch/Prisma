@@ -1,6 +1,7 @@
 import { PieChart, Tags, Plus, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../../shared/motion/useReducedMotion'
 import { Reveal } from './Reveal'
 import { features } from '../content'
 
@@ -30,7 +31,7 @@ function GastosVisual() {
   ]
 
   return (
-    <div className="mt-6 flex items-center gap-6  border border-edge bg-surface p-4">
+    <div className="mt-6 flex items-center gap-6 border border-edge bg-surface p-4 rounded-lg">
       <div className="relative h-20 w-20 shrink-0">
         <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
           {segments.map((s, i) => (
@@ -79,7 +80,7 @@ function GastosVisual() {
 
 function CategoriasVisual() {
   return (
-    <div className="mt-6 space-y-3  border border-edge bg-surface p-4">
+    <div className="mt-6 space-y-3 border border-edge bg-surface p-4 rounded-lg">
       {categorias.map((c) => (
         <div key={c.name} className="flex items-center gap-3">
           <span className="h-8 w-8 " style={{ backgroundColor: c.color }} />
@@ -98,16 +99,16 @@ const registro = [
 
 function RegistroVisual() {
   return (
-    <div className="mt-6  border border-edge bg-surface p-4">
+    <div className="mt-6 border border-edge bg-surface p-4 rounded-lg">
       <div className="mb-3 flex items-center gap-2">
-        <span className="flex flex-1 items-center gap-1.5  border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted">
+        <span className="flex flex-1 items-center gap-1.5 border border-edge bg-surface px-3 py-2 text-[11px] text-fg-muted rounded-lg">
           <Plus className="h-3 w-3" /> Nova despesa
         </span>
         <span className="bg-brand-soft px-2.5 py-2 text-[11px] font-medium text-fg">-R$ 0,00</span>
       </div>
       <div className="space-y-2">
         {registro.map((r) => (
-          <div key={r.name} className="flex items-center gap-2  bg-muted/40 px-3 py-2 border border-edge/60">
+          <div key={r.name} className="flex items-center gap-2 bg-muted/40 px-3 py-2 border border-edge/60 rounded-lg">
             <span className="h-2 w-2 " style={{ backgroundColor: r.color }} />
             <span className="text-[11px] font-medium">{r.name}</span>
             <span className="ml-auto text-[11px] text-fg-muted">{r.category}</span>
@@ -125,7 +126,7 @@ export function Features() {
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="max-w-2xl">
           <p className="eyebrow">{features.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-normal tracking-[-0.02em] text-fg sm:text-4xl">{features.kicker}</h2>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-gradient sm:text-4xl">{features.kicker}</h2>
           <p className="mt-4 text-fg-muted leading-relaxed">{features.subtitle}</p>
         </Reveal>
 
@@ -152,7 +153,7 @@ function FeatureCard({ item, excerpt }: { item: typeof features.items[number]; e
     <motion.article
       whileHover={reduce ? undefined : { y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group flex h-full flex-col border border-edge bg-surface p-6 transition-colors duration-200 hover:border-brand/40"
+      className="group flex h-full flex-col border border-edge bg-surface p-6 transition-colors duration-200 hover:border-brand/40 rounded-xl card-glow"
     >
       <div className="flex items-center gap-2.5">
         <span className="flex h-9 w-9 items-center justify-center bg-muted transition-colors duration-200 group-hover:bg-brand-soft">

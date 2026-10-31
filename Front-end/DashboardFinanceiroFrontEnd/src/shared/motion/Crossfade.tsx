@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useReducedMotion } from './useReducedMotion'
 import { DURATION, EASE } from './tokens'
 
 type CrossfadeVariant = 'slide' | 'fade'

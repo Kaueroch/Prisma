@@ -30,12 +30,12 @@ function windowFrame(children: ReactNode) {
   return (
     <div className="relative">
       <div className="absolute -inset-4 bg-brand/[0.06] blur-2xl" aria-hidden />
-      <div className="relative border border-edge bg-surface overflow-hidden">
-        <div className="flex items-center gap-2 border-b border-edge px-4 py-3 bg-[#0b0d12]">
+      <div className="relative border border-edge bg-surface overflow-hidden rounded-xl card-glow">
+        <div className="flex items-center gap-2 border-b border-edge px-4 py-3 bg-surface">
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <span className="h-2.5 w-2.5 bg-zinc-700" />
           <span className="h-2.5 w-2.5 bg-zinc-700" />
-          <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 text-[12px] text-fg-subtle">
+          <div className="mx-auto flex items-center gap-2 border border-edge bg-surface px-3 py-1 text-[12px] text-fg-subtle rounded-lg">
             <span className="h-1 w-1 bg-zinc-600" />
             app.prismafinance.com.br/painel
           </div>
@@ -69,7 +69,7 @@ export function DashboardMockup() {
         </div>
       </div>
 
-      <div className="border border-edge bg-surface p-4">
+      <div className="border border-edge bg-surface p-4 rounded-lg">
         <div className="flex items-center justify-between text-[11px]">
           <span className="font-medium text-fg-muted">Saldo atual</span>
           <span className="text-fg-subtle">13 transações</span>
@@ -79,14 +79,14 @@ export function DashboardMockup() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="border border-edge bg-surface p-4">
+        <div className="border border-edge bg-surface p-4 rounded-lg">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-medium text-fg-muted">Receitas</span>
             <ArrowUpRight className="h-3.5 w-3.5 text-positive" />
           </div>
           <p className="mt-2 text-lg font-semibold tracking-tight text-positive tabular-nums">R$ 6.550,00</p>
         </div>
-        <div className="border border-edge bg-surface p-4">
+        <div className="border border-edge bg-surface p-4 rounded-lg">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-medium text-fg-muted">Gastos</span>
             <ArrowDownRight className="h-3.5 w-3.5 text-negative" />
@@ -96,7 +96,7 @@ export function DashboardMockup() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-        <div className="border border-edge bg-surface p-4 md:col-span-2">
+        <div className="border border-edge bg-surface p-4 md:col-span-2 rounded-xl card-glow">
           <p className="text-[11px] font-medium text-fg-muted">Gastos por categoria</p>
           <p className="text-sm text-fg">Para onde foi o dinheiro</p>
           <div className="mt-3 flex items-center justify-center">
@@ -133,7 +133,7 @@ export function DashboardMockup() {
           </div>
         </div>
 
-        <div className="border border-edge bg-surface md:col-span-3">
+        <div className="border border-edge bg-surface md:col-span-3 rounded-xl card-glow overflow-hidden">
           <div className="border-b border-edge px-4 py-3">
             <p className="text-[11px] font-medium text-fg-muted">Movimento</p>
             <p className="text-sm text-fg">Transações recentes</p>

@@ -93,7 +93,7 @@ export function TransactionsPage() {
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div className="flex flex-col gap-2.5">
           <span className="text-[13px] font-medium text-fg-muted">Atividade</span>
-          <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Transações</h1>
+          <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-semibold tracking-[-0.035em] text-gradient">Transações</h1>
           <p className="text-[15px] text-fg-muted">Toda a sua movimentação em um só lugar.</p>
         </div>
         <button
@@ -109,7 +109,7 @@ export function TransactionsPage() {
       {/* Filtros */}
       <div className="mb-6 flex flex-col gap-3">
         <div className="flex flex-col gap-3">
-          <div className="relative h-9 border border-edge bg-surface">
+          <div className="relative h-9 border border-edge bg-surface rounded-lg">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fg-subtle" />
             <Input
               placeholder="Buscar transações..."
@@ -164,7 +164,7 @@ export function TransactionsPage() {
                 </SelectContent>
               </Select>
 
-              <div className="flex flex-col items-stretch gap-2 bg-surface p-2 border border-edge">
+              <div className="flex flex-col items-stretch gap-2 bg-surface p-2 border border-edge rounded-lg">
                 <div className="flex items-center justify-center gap-1">
                   {!selectedMonth.all && (
                     <Button variant="ghost" size="icon-sm" onClick={goToPrevMonth} className="rounded-lg">
