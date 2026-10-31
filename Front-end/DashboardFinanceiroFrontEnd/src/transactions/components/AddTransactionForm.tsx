@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react'
 import { AlertCircle, Check, X, Loader2 } from 'lucide-react'
-import { motion, useAnimationControls, useReducedMotion } from 'motion/react'
+import { motion, useAnimationControls } from 'motion/react'
+import { useReducedMotion } from '../../shared/motion/useReducedMotion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -319,7 +320,7 @@ export function AddTransactionForm({ isOpen, onClose, onAdd, onEdit, initialData
             <Label>Categoria</Label>
             {availableCategories.length === 0 && !creatingCategory ? (
               <div className="flex flex-col gap-2">
-                <p className="border border-dashed border-edge px-4 py-3 text-sm text-fg-muted">
+                <p className="rounded-xl border border-dashed border-edge px-4 py-3 text-sm text-fg-muted">
                   Nenhuma categoria de {type === 'income' ? 'receita' : 'despesa'} ainda.
                 </p>
                 <button

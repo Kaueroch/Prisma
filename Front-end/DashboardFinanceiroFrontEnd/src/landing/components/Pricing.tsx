@@ -9,11 +9,11 @@ export function Pricing() {
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">{pricing.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-normal tracking-[-0.02em] text-fg sm:text-4xl">{pricing.kicker}</h2>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-gradient sm:text-4xl">{pricing.kicker}</h2>
         </Reveal>
 
         <Reveal className="mx-auto mt-12 max-w-md" delay={0.05}>
-          <div className="relative flex h-full flex-col  border border-edge bg-surface p-7">
+          <div className="relative flex h-full flex-col border border-edge bg-surface p-7 rounded-xl card-glow">
             <div className="flex items-center justify-between">
               <h3 className="font-display text-lg font-medium text-fg">{pricing.free.name}</h3>
               <span className=" bg-brand-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand border border-brand/40">

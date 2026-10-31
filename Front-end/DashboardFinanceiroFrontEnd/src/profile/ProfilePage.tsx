@@ -97,7 +97,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
       body: rows,
       startY: 42,
       styles: { fontSize: 9 },
-      headStyles: { fillColor: [251, 191, 36], textColor: [0, 0, 0] },
+      headStyles: { fillColor: [10, 10, 10], textColor: [255, 255, 255] },
     })
 
     const receitas = filtered.filter((e: any) => e.type === 'income').reduce((s: number, e: any) => s + (e.amount || 0), 0)
@@ -114,18 +114,25 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
 
   return (
     <>
-    <div className="flex-1 overflow-y-auto p-6 lg:p-8 max-w-3xl mx-auto w-full space-y-6">
+    <main className="bg-page-grid flex-1 overflow-y-auto px-4 pt-9 pb-10 sm:px-6 lg:px-10">
+    <div className="max-w-3xl w-full space-y-6">
+      <header className="mb-7 flex flex-col gap-2.5">
+        <span className="text-[13px] font-medium text-fg-muted">Conta</span>
+        <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-semibold tracking-[-0.035em] text-gradient">Configurações</h1>
+        <p className="text-[15px] text-fg-muted">Seus dados, sua senha e seus relatórios.</p>
+      </header>
+
       {/* Perfil */}
       <div className="space-y-4">
-        <div className="flex flex-col items-center gap-4">
-          <Avatar className="w-24 h-24 border-2 border-border">
-            <AvatarFallback className="text-2xl bg-muted text-muted-foreground">
+        <div className="flex items-center gap-4">
+          <Avatar className="size-14 border border-edge">
+            <AvatarFallback className="text-lg bg-surface-raised text-fg-muted">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold tracking-tight">{user?.name || 'Usuário'}</h2>
-            <p className="text-muted-foreground text-sm">{user?.email || ''}</p>
+          <div className="min-w-0">
+            <h2 className="truncate text-lg font-medium tracking-[-0.01em]">{user?.name || 'Usuário'}</h2>
+            <p className="truncate text-muted-foreground text-sm">{user?.email || ''}</p>
           </div>
         </div>
 
@@ -209,7 +216,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
       {/* Conta */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Conta</h2>
+          <h2 className="font-display text-xl font-medium tracking-[-0.02em]">Sessão</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Você gerencia seus dados e sua sessão.
           </p>
@@ -265,6 +272,7 @@ export function ProfilePage({ setActiveTab }: { setActiveTab?: (tab: any) => voi
         </div>
       </div>
     </div>
+    </main>
 
       <Dialog open={exportOpen} onOpenChange={setExportOpen}>
         <DialogContent className="sm:max-w-md">

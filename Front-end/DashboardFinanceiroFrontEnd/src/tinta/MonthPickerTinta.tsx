@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../shared/motion/useReducedMotion'
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatMonthYear, getCurrentMonth } from '../shared/utils/formatters'
 import { DURATION, EASE } from '../shared/motion/tokens'
@@ -23,7 +24,7 @@ export function MonthPickerTinta({
 
   if (value.all) {
     return (
-      <div className="flex flex-col items-stretch gap-2 border border-edge px-3.5 py-2.5">
+      <div className="flex flex-col items-stretch gap-2 border border-edge px-3.5 py-2.5 rounded-lg">
         <div className="flex items-center justify-center gap-2.5">
           <Calendar className="size-3.5 text-fg-muted" strokeWidth={1.8} />
           <span className="min-w-[130px] text-center text-[13px] text-fg capitalize tabular-nums">Todos os meses</span>
@@ -40,7 +41,7 @@ export function MonthPickerTinta({
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-2 border border-edge px-3.5 py-2.5">
+    <div className="flex flex-col items-stretch gap-2 border border-edge px-3.5 py-2.5 rounded-lg">
       <div className="flex items-center justify-center gap-2.5">
         <Calendar className="size-3.5 text-fg-muted" strokeWidth={1.8} />
         <motion.button

@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -40,26 +39,11 @@ const toneIcon: Record<Tone, string> = {
   neutral: 'text-fg-muted',
 }
 
-function Cross({ className, style }: { className?: string; style?: CSSProperties }) {
-  return (
-    <svg
-      aria-hidden
-      width="9"
-      height="9"
-      viewBox="0 0 9 9"
-      className={cn('pointer-events-none absolute -translate-x-1/2', className)}
-      style={style}
-    >
-      <path d="M4.5 0v9M0 4.5h9" stroke="white" strokeOpacity="0.6" />
-    </svg>
-  )
-}
-
 /** Single KPI strip — signature detail of the Tinta system. */
 export function KpiStrip({ items, loading = false, mask = false }: { items: KpiItem[]; loading?: boolean; mask?: boolean }) {
   const n = items.length
   return (
-    <section className="relative flex flex-col border border-edge bg-surface/60 sm:flex-row">
+    <section className="relative flex flex-col border border-edge bg-surface/60 sm:flex-row rounded-xl card-glow overflow-hidden">
       {items.map(({ label, value, icon: Icon, tone = 'neutral', delta, progress }, i) => {
         const hasDelta = typeof delta === 'number' && Number.isFinite(delta)
         const deltaUp = hasDelta && (delta as number) > 0
@@ -94,7 +78,7 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
                 {progress && !progress.emptyText && (
                   <span className="text-[12px] font-medium tabular-nums text-fg-subtle">{Math.round(progress.pct)}%</span>
                 )}
-                <span className="flex size-7 shrink-0 items-center justify-center border border-edge">
+                <span className="flex size-7 shrink-0 items-center justify-center border border-edge rounded-lg">
                   <Icon className={cn('size-4', toneIcon[tone])} strokeWidth={1.8} />
                 </span>
               </span>
@@ -133,12 +117,6 @@ export function KpiStrip({ items, loading = false, mask = false }: { items: KpiI
           </div>
         )
       })}
-      {Array.from({ length: n + 1 }).map((_, i) => (
-        <span key={i} className="hidden sm:contents">
-          <Cross className="-top-[5px]" style={{ left: `${(i / n) * 100}%` }} />
-          <Cross className="-bottom-[5px]" style={{ left: `${(i / n) * 100}%` }} />
-        </span>
-      ))}
     </section>
   )
 }

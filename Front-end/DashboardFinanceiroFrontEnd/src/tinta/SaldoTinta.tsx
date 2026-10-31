@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../shared/motion/useReducedMotion'
 import { formatBRL } from '../shared/utils/formatters'
 import { AnimatedNumber } from '../shared/motion/AnimatedNumber'
 import { Crossfade } from '../shared/motion/Crossfade'
@@ -24,7 +25,7 @@ export function SaldoTinta({ total, count, loading = false, mask = false }: { to
   }, [total])
 
   return (
-    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-none border border-edge bg-surface p-6">
+    <section className="flex h-full min-h-[300px] flex-col justify-between gap-6 rounded-xl border border-edge bg-surface p-6 card-glow">
       <div className="flex items-center justify-between gap-4">
         <span className="text-[13px] font-medium text-fg-muted">Saldo atual</span>
         <span className="text-xs text-fg-subtle">

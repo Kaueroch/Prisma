@@ -53,10 +53,10 @@ export function CategoryDonutTinta({ data, loading = false }: { data: DonutDatum
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   return (
-    <section className="flex flex-col gap-6 border border-edge bg-surface p-6">
+    <section className="flex flex-col gap-6 border border-edge bg-surface p-6 rounded-xl card-glow">
       <div className="flex flex-col gap-1.5">
         <span className="text-[13px] font-medium text-fg-muted">Gastos por categoria</span>
-        <h2 className="font-display text-2xl font-normal tracking-[-0.02em] text-fg break-words">
+        <h2 className="font-display text-xl font-medium tracking-[-0.02em] text-fg break-words">
           Para onde foi o dinheiro
         </h2>
       </div>

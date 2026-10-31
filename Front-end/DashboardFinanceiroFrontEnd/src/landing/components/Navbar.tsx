@@ -20,7 +20,7 @@ export function Navbar() {
     <header
       className={cn(
         'sticky top-0 z-50 border-b backdrop-blur-md transition-colors duration-200',
-        scrolled ? 'border-edge bg-[#0b0d12]/95' : 'border-transparent bg-[#0b0d12]/60',
+        scrolled ? 'border-edge bg-surface/95' : 'border-transparent bg-surface/60',
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">

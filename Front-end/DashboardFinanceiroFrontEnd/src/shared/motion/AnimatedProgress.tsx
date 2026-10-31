@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from './useReducedMotion'
 import { DURATION, EASE } from './tokens'
 
 interface AnimatedProgressProps {

@@ -97,7 +97,7 @@ export function HomePage({ setActiveTab }: HomePageProps = {}) {
         <div className="flex flex-col gap-2.5">
           <span className="text-[13px] font-medium text-fg-muted">{todayLabel}</span>
           <div className="flex items-center gap-4">
-            <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Olá, {firstName}</h1>
+            <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-semibold tracking-[-0.035em] text-gradient">Olá, {firstName}</h1>
             <button
               type="button"
               onClick={toggleMask}

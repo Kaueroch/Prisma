@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, type FormEvent } from 'react'
+import { useState, useMemo, useEffect, type FormEvent } from 'react'
 import { Wallet, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle, XCircle, Sparkles, ArrowRight, ArrowLeft, TrendingUp, BarChart3 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -27,7 +27,6 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
   const [success, setSuccess] = useState('')
   const [popupMessage, setPopupMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [displayedText, setDisplayedText] = useState('')
 
   useEffect(() => {
     setTab(initialTab)
@@ -37,34 +36,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
     setConfirmPassword('')
   }, [initialTab])
 
-  const particles = useMemo(() =>
-    Array.from({ length: 8 }, () => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 16 + 14,
-      delay: Math.random() * 8,
-      xDrift: (Math.random() - 0.5) * 40,
-      yDrift: (Math.random() - 0.5) * 40,
-    })), []
-  )
-
-  const typewriterDone = useRef(false)
   const fullSubtitle = "Seu painel financeiro completo. Organize receitas, despesas e categorias em um só lugar."
-
-  useEffect(() => {
-    if (typewriterDone.current) return
-    let i = 0
-    const interval = setInterval(() => {
-      i++
-      setDisplayedText(fullSubtitle.slice(0, i))
-      if (i >= fullSubtitle.length) {
-        clearInterval(interval)
-        typewriterDone.current = true
-      }
-    }, 22)
-    return () => clearInterval(interval)
-  }, [])
 
   const switchToLogin = () => {
     setTab('login')
@@ -164,139 +136,39 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex bg-[#0c0a08]"
+      className="min-h-screen flex bg-ink"
     >
       {/* Hero */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center p-12">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, #1a1408, #0c0a08, #080604)',
-            backgroundSize: '200% 200%',
-          }}
-          animate={{ backgroundPosition: ['0% 0%', '50% 50%', '0% 0%'] }}
-          transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {particles.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white pointer-events-none"
-            style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
-            animate={{ x: [0, p.xDrift, 0], y: [0, p.yDrift, 0], opacity: [0.03, 0.08, 0.03] }}
-            transition={{ duration: p.duration, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
-          />
-        ))}
-
-        <motion.div
-          animate={{ scale: [1, 1.08, 1], opacity: [0.1, 0.16, 0.1] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-brand/[0.05] blur-[120px] rounded-full"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.06, 0.1, 0.06] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-[-10%] right-[-10%] w-[450px] h-[450px] bg-white/[0.02] blur-[130px] rounded-full"
-        />
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[20%] right-[15%] w-[200px] h-[200px] bg-white/[0.02] blur-[80px] rounded-full"
-        />
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute bottom-[25%] left-[10%] w-[250px] h-[250px] bg-white/[0.02] blur-[90px] rounded-full"
-        />
-
-        <div className="relative z-10 text-center max-w-md">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center border-r border-edge bg-page-grid p-12 xl:p-20">
+        <div className="relative z-10 max-w-md">
+          <button
+            type="button"
             onClick={onBack}
+            disabled={!onBack}
             title={onBack ? 'Voltar para a página inicial' : undefined}
-            className="w-16 h-16 rounded-xl bg-brand flex items-center justify-center mx-auto mb-8 cursor-pointer"
+            className="mb-10 flex size-12 items-center justify-center rounded-xl bg-brand text-black transition-colors hover:bg-brand-strong"
           >
-            <motion.div
-              animate={{ rotate: [0, -6, 6, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <Wallet className="w-8 h-8 text-white" />
-            </motion.div>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            onClick={onBack}
-            title={onBack ? 'Voltar para a página inicial' : undefined}
-            className="text-5xl font-bold text-white tracking-tight mb-4 cursor-pointer hover:opacity-80 transition-opacity"
-          >
+            <Wallet className="size-6" />
+          </button>
+          <h1 className="text-gradient font-display text-5xl font-semibold leading-[1.05] tracking-[-0.04em]">
             Prisma Finance
-          </motion.h1>
-
-          <div className="h-14 flex items-center justify-center">
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="text-xl text-zinc-400 leading-relaxed"
-            >
-              {displayedText}
-              {displayedText.length < fullSubtitle.length && (
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="inline-block w-[2px] h-5 bg-zinc-400 ml-0.5 align-middle"
-                />
-              )}
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-10 grid grid-cols-3 gap-6 text-center"
-          >
-            {heroFeatures.map((f, i) => (
-              <motion.div
-                key={f.label}
-                whileHover={{ y: -3, scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-              >
-                <f.icon className="w-6 h-6 text-zinc-300 mx-auto mb-2" />
-                <div className="text-zinc-500 text-sm">{f.label}</div>
-              </motion.div>
+          </h1>
+          <p className="mt-5 text-lg leading-relaxed text-fg-muted">{fullSubtitle}</p>
+          <ul className="mt-10 flex flex-col gap-3">
+            {heroFeatures.map((f) => (
+              <li key={f.label} className="flex items-center gap-3 text-sm text-fg-muted">
+                <span className="flex size-8 items-center justify-center rounded-lg border border-edge bg-surface card-glow">
+                  <f.icon className="size-4 text-fg" strokeWidth={1.8} />
+                </span>
+                {f.label}
+              </li>
             ))}
-          </motion.div>
+          </ul>
         </div>
       </div>
 
       {/* Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative overflow-hidden">
-        {particles.slice(0, 6).map((p, i) => (
-          <motion.div
-            key={`fp-${i}`}
-            className="absolute rounded-full bg-white pointer-events-none"
-            style={{ width: p.size, height: p.size, left: `${p.x}%`, top: `${p.y}%` }}
-            animate={{ x: [0, -p.xDrift, 0], y: [0, -p.yDrift, 0], opacity: [0.02, 0.06, 0.02] }}
-            transition={{ duration: p.duration + 4, repeat: Infinity, ease: 'easeInOut', delay: p.delay + 2 }}
-          />
-        ))}
-
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.04, 0.07, 0.04] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-20%] right-[-15%] w-[500px] h-[500px] bg-brand/[0.04] blur-[150px] rounded-full"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.02, 0.05, 0.02] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-          className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-white/[0.02] blur-[120px] rounded-full"
-        />
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -332,7 +204,7 @@ export function AuthPage({ initialTab = 'login', onBack }: AuthPageProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <Card className="rounded-xl border-edge bg-surface">
+            <Card className="rounded-xl border-edge bg-surface card-glow">
               <CardContent className="pt-6 pb-6">
                 <Tabs value={tab} onValueChange={setTab}>
                   <motion.div

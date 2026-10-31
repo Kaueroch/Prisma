@@ -1,9 +1,9 @@
 /**
- * Prisma Finance palette — preta e âmbar.
+ * Prisma Finance palette — preto e branco (estilo Resend).
  *
  * Fonte única de verdade das cores de dado. O app tem três grupos:
  *
- *  - **Identidade**: preto + âmbar (`--color-brand` em `src/index.css`).
+ *  - **Identidade**: preto + branco (`--color-brand` em `src/index.css`).
  *  - **Semântica**: verde = receita/entrada, rosa = despesa/saída.
  *    Usada por KPIs, legendas de gráfico e barras de meta.
  *  - **Categórica**: o conjunto de joias muted, uma cor por categoria.

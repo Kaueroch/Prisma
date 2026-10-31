@@ -146,7 +146,7 @@ export function CategoriesPage() {
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="border border-edge bg-surface p-6">
+            <div key={i} className="border border-edge bg-surface p-6 rounded-xl card-glow">
               <div className="flex items-center gap-4 animate-shimmer">
                 <div className="w-12 h-12 bg-surface-raised" />
                 <div className="flex-1 space-y-2">
@@ -169,7 +169,7 @@ export function CategoriesPage() {
           <header className="mb-7 flex flex-wrap items-end justify-between gap-6">
             <div className="flex flex-col gap-2.5">
               <span className="text-[13px] font-medium text-fg-muted">Organização</span>
-              <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-normal tracking-[-0.02em] text-fg">Categorias</h1>
+              <h1 className="font-display text-3xl leading-tight sm:text-5xl sm:leading-[52px] font-semibold tracking-[-0.035em] text-gradient">Categorias</h1>
               <p className="text-[15px] text-fg-muted">Organize suas categorias e acompanhe os gastos.</p>
             </div>
             <button
@@ -269,7 +269,7 @@ export function CategoriesPage() {
           {categories.length === 0 && !categoriesError ? (
             /* Sem categorias: a tela ficava preta. Agora ela diz o que falta
                e oferece o caminho para resolver. */
-            <div className="flex flex-col items-center gap-3 border border-edge bg-surface px-6 py-16 text-center">
+            <div className="flex flex-col items-center gap-3 border border-edge bg-surface px-6 py-16 text-center rounded-xl card-glow">
               <span className="flex size-12 items-center justify-center rounded-xl bg-brand-soft">
                 <Tags className="size-6 text-brand" strokeWidth={1.8} />
               </span>

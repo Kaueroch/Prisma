@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useReducedMotion } from '../motion/useReducedMotion'
 import { AlertCircle, CheckCircle2, X } from 'lucide-react'
 import { DURATION, EASE } from '../motion/tokens'
 

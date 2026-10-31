@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
+import { useReducedMotion } from '../../shared/motion/useReducedMotion'
 import {
   ArrowRight,
   ChartPie,
@@ -124,7 +125,7 @@ export function OrganizerFlow({ onNavigate, expenses: scopedExpenses }: Organize
   const readyCount = nodes.filter((n) => n.ready).length
 
   return (
-    <section className="mb-7 border border-edge bg-surface" aria-label="Como o Prisma Finance organiza seu dinheiro">
+    <section className="mb-7 border border-edge bg-surface rounded-xl card-glow overflow-hidden" aria-label="Como o Prisma Finance organiza seu dinheiro">
       <div className="flex flex-col lg:flex-row">
         <div className="flex items-start justify-between gap-3 border-b border-edge px-5 py-4 lg:w-[230px] lg:shrink-0 lg:border-b-0 lg:border-r">
           <span className="min-w-0 text-[13px] font-medium text-fg-muted">Como o Prisma Finance organiza seu dinheiro</span>
